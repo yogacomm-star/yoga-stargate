@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
-import { setSessionCookie } from "@/lib/session";
+import { setSessionCookie, getSession } from "@/lib/session";
 import { exchangeGoogleCode, fetchGoogleProfile, publicOrigin } from "@/lib/googleAuth";
 
 const STATE_COOKIE = "ys_google_state";
@@ -16,8 +16,19 @@ export async function GET(request: Request) {
   const expectedState = cookieStore.get(STATE_COOKIE)?.value;
   cookieStore.delete(STATE_COOKIE);
 
-  if (!code || !state || !expectedState || state !== expectedState) {
+  // Alcuni browser richiamano due volte l'URL di callback (prefetch, doppio redirect):
+  // se esiste già una sessione valida (creata dal primo tentativo riuscito), evitiamo
+  // di mostrare un errore e mandiamo semplicemente la persona nella sua area.
+  async function alreadyLoggedInOrFailed() {
+    const session = await getSession();
+    if (session) {
+      return NextResponse.redirect(new URL(session.role === "ADMIN" ? "/admin" : "/account", origin));
+    }
     return NextResponse.redirect(new URL("/login?error=google_failed", origin));
+  }
+
+  if (!code || !state || !expectedState || state !== expectedState) {
+    return alreadyLoggedInOrFailed();
   }
 
   try {
@@ -54,6 +65,6 @@ export async function GET(request: Request) {
     const destination = account.role === "ADMIN" ? "/admin" : account.phone ? "/account" : "/account?completeProfile=1";
     return NextResponse.redirect(new URL(destination, origin));
   } catch {
-    return NextResponse.redirect(new URL("/login?error=google_failed", origin));
+    return alreadyLoggedInOrFailed();
   }
 }
