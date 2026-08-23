@@ -1,0 +1,168 @@
+// Prisma schema — Yoga Stargate
+
+generator client {
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma"
+  previewFeatures = ["queryCompiler", "driverAdapters"]
+  engineType      = "client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum TargetType {
+  RETREAT
+  COURSE
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+}
+
+model Account {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String?  // nullo per gli account creati via Google OAuth
+  googleId     String?  @unique
+  phone        String?
+  name         String
+  role         Role     @default(MEMBER)
+  level        Int      @default(1) // 1=Base, 2=Intermedio, 3=Avanzato (rilevante solo per MEMBER)
+  avatar       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  favorites            Favorite[]
+  courseProgresses     CourseProgress[]
+  reviews              Review[]
+  passwordResetTokens  PasswordResetToken[]
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  token     String    @unique
+  accountId String
+  account   Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Retreat {
+  id            String        @id @default(cuid())
+  slug          String        @unique
+  title         String
+  category      String
+  location      String
+  excerpt       String
+  description   String
+  startDate     DateTime?
+  endDate       DateTime?
+  price         Float?
+  images        String        @default("[]") // JSON array di path immagini
+  itinerary     String        @default("[]") // JSON array di { day, title, description }
+  requiredLevel Int? // null = aperto a tutti
+  ctaLabel      String        @default("Richiedi informazioni")
+  ctaUrl        String?
+  status        ContentStatus @default(DRAFT)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  leads ContactLead[]
+}
+
+model Course {
+  id            String        @id @default(cuid())
+  slug          String        @unique
+  title         String
+  category      String
+  excerpt       String
+  description   String
+  lessons       String        @default("[]") // JSON array di { title, videoUrl, content }
+  coverImage    String?
+  requiredLevel Int? // null = aperto a tutti
+  status        ContentStatus @default(DRAFT)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model BlogPost {
+  id              String        @id @default(cuid())
+  slug            String        @unique
+  title           String
+  category        String
+  excerpt         String
+  content         String
+  featuredImage   String?
+  author          String        @default("Tina Mastandrea")
+  status          ContentStatus @default(DRAFT)
+  publishedAt     DateTime?
+  readTimeMinutes Int           @default(1)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model ContactLead {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  message   String
+  retreatId String?
+  retreat   Retreat? @relation(fields: [retreatId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model Favorite {
+  id        String     @id @default(cuid())
+  accountId String
+  account   Account    @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  targetType TargetType
+  targetId  String
+  createdAt DateTime   @default(now())
+
+  @@unique([accountId, targetType, targetId])
+}
+
+model CourseProgress {
+  id          String    @id @default(cuid())
+  accountId   String
+  account     Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  courseId    String
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@unique([accountId, courseId])
+}
+
+model Review {
+  id         String       @id @default(cuid())
+  accountId  String
+  account    Account      @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  targetType TargetType
+  targetId   String
+  rating     Int
+  comment    String
+  status     ReviewStatus @default(PENDING)
+  createdAt  DateTime     @default(now())
+}

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Site Index — yoga stargate</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #faf7f1;
+    --surface: #ffffff;
+    --surface-accent: #eef1ea;
+    --text: #22201c;
+    --muted: #766b5c;
+    --border: #e8e2d6;
+    --accent: #4f6b57;
+    --accent-strong: #3a4f40;
+    --get: #4f6b57;
+    --get-bg: #e7ede8;
+    --write: #a5622f;
+    --write-bg: #f4e9de;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17160f;
+      --surface: #201e17;
+      --surface-accent: #262319;
+      --text: #ede8dd;
+      --muted: #a89d8b;
+      --border: #37331f;
+      --accent: #8fa893;
+      --accent-strong: #b1c7b4;
+      --get: #8fa893;
+      --get-bg: #263025;
+      --write: #d99a63;
+      --write-bg: #322820;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17160f;
+    --surface: #201e17;
+    --surface-accent: #262319;
+    --text: #ede8dd;
+    --muted: #a89d8b;
+    --border: #37331f;
+    --accent: #8fa893;
+    --accent-strong: #b1c7b4;
+    --get: #8fa893;
+    --get-bg: #263025;
+    --write: #d99a63;
+    --write-bg: #322820;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.5;
+  }
+  a { color: inherit; }
+  ::selection { background: var(--surface-accent); }
+
+  .shell {
+    max-width: 76rem;
+    margin: 0 auto;
+    padding: 3.5rem 1.75rem 6rem;
+    display: grid;
+    grid-template-columns: 15rem 1fr;
+    gap: 3rem;
+  }
+
+  header.hero {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding-bottom: 2.25rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0.5rem;
+  }
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(2.1rem, 4vw, 2.8rem);
+    margin: 0;
+    text-wrap: balance;
+  }
+  .hero p {
+    max-width: 46rem;
+    color: var(--muted);
+    font-size: 1rem;
+    margin: 0;
+  }
+  .hero code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    background: var(--surface-accent);
+    padding: 0.15rem 0.4rem;
+    border-radius: 0.3rem;
+    font-size: 0.9em;
+  }
+
+  nav.toc {
+    position: sticky;
+    top: 3.5rem;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+  nav.toc a {
+    text-decoration: none;
+    font-size: 0.9rem;
+    color: var(--muted);
+    padding: 0.3rem 0;
+    border-left: 2px solid transparent;
+    padding-left: 0.75rem;
+  }
+  nav.toc a:hover, nav.toc a:focus-visible {
+    color: var(--text);
+    border-left-color: var(--accent);
+  }
+  nav.toc .count {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    opacity: 0.7;
+  }
+
+  main { display: flex; flex-direction: column; gap: 3.25rem; min-width: 0; }
+
+  section h2 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 500;
+    font-size: 1.4rem;
+    margin: 0 0 0.3rem;
+  }
+  section .section-desc {
+    color: var(--muted);
+    font-size: 0.92rem;
+    margin: 0 0 1.1rem;
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem 1.1rem;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: inherit;
+  }
+  .row:last-child { border-bottom: none; }
+  a.row:hover, a.row:focus-visible {
+    background: var(--surface-accent);
+  }
+  .row .label {
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+  .row .path {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.82rem;
+    color: var(--muted);
+    display: block;
+    margin-top: 0.15rem;
+    overflow-wrap: anywhere;
+  }
+  .row .path .param {
+    color: var(--accent-strong);
+  }
+  .method {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.3rem;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  .method.get { color: var(--get); background: var(--get-bg); }
+  .method.write { color: var(--write); background: var(--write-bg); }
+
+  .note {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 0.75rem;
+  }
+
+  footer {
+    grid-column: 1 / -1;
+    margin-top: 1rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  @media (max-width: 760px) {
+    .shell { grid-template-columns: 1fr; }
+    nav.toc {
+      position: static;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.4rem 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+    }
+    nav.toc a { padding-left: 0; border-left: none; }
+    .row { grid-template-columns: 1fr; }
+    .method { justify-self: start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <header class="hero">
+    <span class="eyebrow">yoga stargate — indice locale</span>
+    <h1>Site Index</h1>
+    <p>Tutte le rotte dell'app, raggruppate per area. Avvia il server con <code>npm run dev</code>, poi usa i link qui sotto (puntano a <code>localhost:3000</code>). Le rotte con <code>[parametro]</code> vanno completate a mano con uno slug o id reale.</p>
+  </header>
+
+  <nav class="toc" aria-label="Sezioni">
+    <a href="#pubblico">Pubblico <span class="count">16</span></a>
+    <a href="#account">Account <span class="count">2</span></a>
+    <a href="#admin">Admin <span class="count">13</span></a>
+    <a href="#api">API <span class="count">25</span></a>
+  </nav>
+
+  <main>
+    <section id="pubblico">
+      <h2>Pubblico</h2>
+      <p class="section-desc">Pagine visibili senza autenticazione.</p>
+      <div class="list">
+        <a class="row" href="http://localhost:3000/"><span><span class="label">Home</span><span class="path">/</span></span></a>
+        <a class="row" href="http://localhost:3000/chi-sono"><span><span class="label">Chi sono</span><span class="path">/chi-sono</span></span></a>
+        <a class="row" href="http://localhost:3000/corsi"><span><span class="label">Corsi</span><span class="path">/corsi</span></span></a>
+        <a class="row" href="http://localhost:3000/corsi/esempio-slug"><span><span class="label">Dettaglio corso</span><span class="path">/corsi/<span class="param">[slug]</span></span></span></a>
+        <a class="row" href="http://localhost:3000/ritiri"><span><span class="label">Ritiri</span><span class="path">/ritiri</span></span></a>
+        <a class="row" href="http://localhost:3000/ritiri/esempio-slug"><span><span class="label">Dettaglio ritiro</span><span class="path">/ritiri/<span class="param">[slug]</span></span></span></a>
+        <a class="row" href="http://localhost:3000/blog"><span><span class="label">Blog</span><span class="path">/blog</span></span></a>
+        <a class="row" href="http://localhost:3000/blog/esempio-slug"><span><span class="label">Articolo</span><span class="path">/blog/<span class="param">[slug]</span></span></span></a>
+        <a class="row" href="http://localhost:3000/risorse"><span><span class="label">Risorse</span><span class="path">/risorse</span></span></a>
+        <a class="row" href="http://localhost:3000/cerca"><span><span class="label">Cerca</span><span class="path">/cerca</span></span></a>
+        <a class="row" href="http://localhost:3000/contatti"><span><span class="label">Contatti</span><span class="path">/contatti</span></span></a>
+        <a class="row" href="http://localhost:3000/login"><span><span class="label">Login</span><span class="path">/login</span></span></a>
+        <a class="row" href="http://localhost:3000/registrati"><span><span class="label">Registrati</span><span class="path">/registrati</span></span></a>
+        <a class="row" href="http://localhost:3000/my-yoga"><span><span class="label">My Yoga</span><span class="path">/my-yoga</span></span></a>
+        <a class="row" href="http://localhost:3000/privacy"><span><span class="label">Privacy</span><span class="path">/privacy</span></span></a>
+        <a class="row" href="http://localhost:3000/cookie"><span><span class="label">Cookie policy</span><span class="path">/cookie</span></span></a>
+      </div>
+    </section>
+
+    <section id="account">
+      <h2>Account</h2>
+      <p class="section-desc">Richiede sessione utente autenticata.</p>
+      <div class="list">
+        <a class="row" href="http://localhost:3000/account"><span><span class="label">Il mio account</span><span class="path">/account</span></span></a>
+        <a class="row" href="http://localhost:3000/account/preferiti"><span><span class="label">Preferiti</span><span class="path">/account/preferiti</span></span></a>
+      </div>
+    </section>
+
+    <section id="admin">
+      <h2>Admin</h2>
+      <p class="section-desc">Pannello di gestione — richiede login admin.</p>
+      <div class="list">
+        <a class="row" href="http://localhost:3000/admin/login"><span><span class="label">Login admin</span><span class="path">/admin/login</span></span></a>
+        <a class="row" href="http://localhost:3000/admin"><span><span class="label">Dashboard</span><span class="path">/admin</span></span></a>
+        <a class="row" href="http://localhost:3000/admin/corsi"><span><span class="label">Corsi</span><span class="path">/admin/corsi</span></span></a>
+        <a class="row" href="http://localhost:3000/admin/corsi/nuovo"><span><span class="label">Nuovo corso</span><span class="path">/admin/corsi/nuovo</span></span></a>
+        <a class="row" href="http://localhost:3000/admin/corsi/esempio-id"><span><span class="label">Modifica corso</span><span class="path">/admin/corsi/<span class="param">[id]</span></span></span></a>
+        <a class="row" href="http://localhost:3000/admin/ritiri"><span><span class="label">Ritiri</span><span class="path">/admin/ritiri</span></span></a>
+        <a class="row" href="http://localhost:3000/admin/ritiri/nuovo"><span><span class="label">Nuovo ritiro</span><span class="path">/admin/ritiri/nuovo</span></span></a>
+        <a class="row" href="http://localhost:3000/admin/ritiri/esempio-id"><span><span class="label">Modifica ritiro</span><span class="path">/admin/ritiri/<span class="param">[id]</span></span></span></a>
+        <a class="row" href="http://localhost:3000/admin/blog"><span><span class="label">Blog</span><span class="path">/admin/blog</span></span></a>
+        <a class="row" href="http://localhost:3000/admin/blog/nuovo"><span><span class="label">Nuovo articolo</span><span class="path">/admin/blog/nuovo</span></span></a>
+        <a class="row" href="http://localhost:3000/admin/blog/esempio-id"><span><span class="label">Modifica articolo</span><span class="path">/admin/blog/<span class="param">[id]</span></span></span></a>
+        <a class="row" href="http://localhost:3000/admin/email"><span><span class="label">Email</span><span class="path">/admin/email</span></span></a>
+        <a class="row" href="http://localhost:3000/admin/utenti"><span><span class="label">Utenti</span><span class="path">/admin/utenti</span></span></a>
+      </div>
+    </section>
+
+    <section id="api">
+      <h2>API</h2>
+      <p class="section-desc">Endpoint applicativi. Solo le rotte <span class="method get" style="padding:0.05rem 0.35rem;">GET</span> sono navigabili da browser; le altre richiedono un client HTTP o vengono chiamate dall'interfaccia.</p>
+      <div class="list">
+        <a class="row" href="http://localhost:3000/api/calendar/lezioni.ics"><span><span class="label">Calendario lezioni (.ics)</span><span class="path">/api/calendar/lezioni.ics</span></span><span class="method get">GET</span></a>
+        <a class="row" href="http://localhost:3000/api/auth/google"><span><span class="label">Google OAuth — avvio</span><span class="path">/api/auth/google</span></span><span class="method get">GET</span></a>
+        <a class="row" href="http://localhost:3000/api/auth/google/callback"><span><span class="label">Google OAuth — callback</span><span class="path">/api/auth/google/callback</span></span><span class="method get">GET</span></a>
+        <a class="row" href="http://localhost:3000/api/admin/export/leads"><span><span class="label">Export lead (CSV)</span><span class="path">/api/admin/export/leads</span></span><span class="method get">GET</span></a>
+        <a class="row" href="http://localhost:3000/api/admin/export/newsletter"><span><span class="label">Export newsletter (CSV)</span><span class="path">/api/admin/export/newsletter</span></span><span class="method get">GET</span></a>
+
+        <div class="row"><span><span class="label">Login</span><span class="path">/api/auth/login</span></span><span class="method write">POST</span></div>
+        <div class="row"><span><span class="label">Registrazione</span><span class="path">/api/auth/register</span></span><span class="method write">POST</span></div>
+        <div class="row"><span><span class="label">Profilo account</span><span class="path">/api/account/profile</span></span><span class="method write">PATCH</span></div>
+        <div class="row"><span><span class="label">Lead / contatti</span><span class="path">/api/leads</span></span><span class="method write">POST</span></div>
+        <div class="row"><span><span class="label">Newsletter</span><span class="path">/api/newsletter</span></span><span class="method write">POST</span></div>
+        <div class="row"><span><span class="label">Preferiti</span><span class="path">/api/favorites</span></span><span class="method write">POST</span></div>
+        <div class="row"><span><span class="label">Recensioni</span><span class="path">/api/reviews</span></span><span class="method write">POST</span></div>
+        <div class="row"><span><span class="label">Avanzamento corso</span><span class="path">/api/courses/<span class="param">[id]</span>/progress</span></span><span class="method write">POST</span></div>
+        <div class="row"><span><span class="label">Assistente</span><span class="path">/api/assistant</span></span><span class="method write">POST</span></div>
+
+        <div class="row"><span><span class="label">Corsi (crea)</span><span class="path">/api/admin/courses</span></span><span class="method write">POST</span></div>
+        <div class="row"><span><span class="label">Corsi (modifica/elimina)</span><span class="path">/api/admin/courses/<span class="param">[id]</span></span></span><span class="method write">PUT · DELETE</span></div>
+        <div class="row"><span><span class="label">Ritiri (crea)</span><span class="path">/api/admin/retreats</span></span><span class="method write">POST</span></div>
+        <div class="row"><span><span class="label">Ritiri (modifica/elimina)</span><span class="path">/api/admin/retreats/<span class="param">[id]</span></span></span><span class="method write">PUT · DELETE</span></div>
+        <div class="row"><span><span class="label">Ritiri — tagline</span><span class="path">/api/admin/retreats/<span class="param">[id]</span>/tagline</span></span><span class="method write">POST</span></div>
+        <div class="row"><span><span class="label">Articoli (crea)</span><span class="path">/api/admin/posts</span></span><span class="method write">POST</span></div>
+        <div class="row"><span><span class="label">Articoli (modifica/elimina)</span><span class="path">/api/admin/posts/<span class="param">[id]</span></span></span><span class="method write">PUT · DELETE</span></div>
+        <div class="row"><span><span class="label">Recensioni admin</span><span class="path">/api/admin/reviews/<span class="param">[id]</span></span></span><span class="method write">PATCH · DELETE</span></div>
+        <div class="row"><span><span class="label">Utenti admin</span><span class="path">/api/admin/users/<span class="param">[id]</span></span></span><span class="method write">PATCH</span></div>
+        <div class="row"><span><span class="label">Email broadcast</span><span class="path">/api/admin/email/broadcast</span></span><span class="method write">POST</span></div>
+        <div class="row"><span><span class="label">Upload file</span><span class="path">/api/admin/upload</span></span><span class="method write">POST</span></div>
+      </div>
+      <p class="note">Le rotte admin richiedono un cookie di sessione admin valido; chiamale dall'interfaccia o passa i cookie al client HTTP.</p>
+    </section>
+  </main>
+
+  <footer>
+    yoga stargate · generato dalla struttura corrente di <code style="font-family:'IBM Plex Mono',monospace;background:var(--surface-accent);padding:0.1rem 0.35rem;border-radius:0.25rem;">src/app</code> · aggiorna questo file se aggiungi nuove rotte
+  </footer>
+</div>
+
+</body>
+</html>

@@ -1,26 +1,90 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-primary: #0284c7;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #7dd3fc;
+  --color-secondary-foreground: #0c4a6e;
+  --color-accent: #0369a1;
+  --color-accent-foreground: #ffffff;
+
+  --color-background: #f0f9ff;
+  --color-foreground: #0c4a6e;
+
+  --color-card: #ffffff;
+  --color-card-foreground: #0c4a6e;
+
+  --color-muted: #e0f2fe;
+  --color-muted-foreground: #475569;
+
+  --color-border: #bae6fd;
+  --color-ring: #0284c7;
+
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #ffffff;
+
+  --color-warm-surface: #f1f5f9;
+  --color-warm-surface-foreground: #334155;
+
+  --radius-card: 1rem;
+  --radius-control: 0.5rem;
+  --radius-pill: 999px;
+
+  --shadow-soft-sm: 0 1px 2px rgba(12, 74, 110, 0.06);
+  --shadow-soft-md: 0 4px 6px rgba(12, 74, 110, 0.1);
+  --shadow-soft-lg: 0 10px 25px rgba(12, 74, 110, 0.12);
+  --shadow-soft-xl: 0 20px 40px rgba(12, 74, 110, 0.16);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading), Georgia, serif;
+}
+
+::selection {
+  background: var(--color-secondary);
+  color: var(--color-primary-foreground);
+}
+
+.badge-level {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: var(--color-muted);
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-open {
+  background: var(--color-warm-surface);
+  color: var(--color-accent);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
