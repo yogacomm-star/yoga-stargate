@@ -14,6 +14,18 @@ export function emailConfigured(): boolean {
   return !!process.env.RESEND_API_KEY;
 }
 
+// Neutralizza i caratteri HTML in testo libero (oggetto/messaggio broadcast, estratti,
+// nomi) prima di inserirlo in un template email: senza questo, un account admin
+// compromesso potrebbe iniettare HTML/script arbitrario nelle email inviate a tutti i membri.
+export function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export async function sendEmail({
   to,
   subject,
@@ -63,7 +75,7 @@ export async function notifyNewContent({
     const kindLabel = kind === "ritiro" ? "Nuovo ritiro" : kind === "corso" ? "Nuovo corso" : "Nuovo articolo";
     const html = brandedEmail({
       title: `${kindLabel}: ${title}`,
-      bodyHtml: `<p style="margin:0 0 12px;">${excerpt}</p>`,
+      bodyHtml: `<p style="margin:0 0 12px;">${escapeHtml(excerpt)}</p>`,
       ctaLabel: "Scopri di più",
       ctaUrl: url,
     });
@@ -104,7 +116,7 @@ export function brandedEmail({
               </tr>
               <tr>
                 <td style="padding:32px;">
-                  <h1 style="margin:0 0 16px;font-size:22px;color:#0c4a6e;font-family:Georgia,serif;">${title}</h1>
+                  <h1 style="margin:0 0 16px;font-size:22px;color:#0c4a6e;font-family:Georgia,serif;">${escapeHtml(title)}</h1>
                   <div style="font-size:15px;line-height:1.6;color:#334155;">${bodyHtml}</div>
                   ${
                     ctaLabel && ctaUrl

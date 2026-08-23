@@ -13,6 +13,11 @@ const schema = z.object({
 const GENERIC_ERROR = "Email o password non corretti.";
 const RATE_LIMIT_ERROR = "Troppi tentativi di accesso. Riprova tra qualche minuto.";
 
+// Hash "finto" con cui confrontare la password quando l'account non esiste (o non ha
+// una password, es. account creati via Google): mantiene lo stesso tempo di risposta
+// del caso "password sbagliata", per non far scoprire quali email sono registrate.
+const DUMMY_HASH = "$2b$10$CwTycUXWue0Thq9StjUM0uJ8jHiQdVv3F/N.j.YGLE.a2y8ZLoUYq";
+
 export async function POST(request: Request) {
   const { allowed } = rateLimit(`login:${clientIp(request)}`, 8, 5 * 60 * 1000);
   if (!allowed) return NextResponse.json({ error: RATE_LIMIT_ERROR }, { status: 429 });
@@ -24,12 +29,8 @@ export async function POST(request: Request) {
   }
 
   const account = await prisma.account.findUnique({ where: { email: parsed.data.email.toLowerCase() } });
-  if (!account || !account.passwordHash) {
-    return NextResponse.json({ error: GENERIC_ERROR }, { status: 401 });
-  }
-
-  const valid = await verifyPassword(parsed.data.password, account.passwordHash);
-  if (!valid) {
+  const valid = await verifyPassword(parsed.data.password, account?.passwordHash ?? DUMMY_HASH);
+  if (!account || !account.passwordHash || !valid) {
     return NextResponse.json({ error: GENERIC_ERROR }, { status: 401 });
   }
 
