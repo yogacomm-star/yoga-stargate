@@ -33,23 +33,23 @@ enum ReviewStatus {
 }
 
 model Account {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  passwordHash String?  // nullo per gli account creati via Google OAuth
-  googleId     String?  @unique
-  phone        String?
-  name         String
-  role         Role     @default(MEMBER)
-  level        Int      @default(1) // 1=Base, 2=Intermedio, 3=Avanzato (rilevante solo per MEMBER)
-  avatar       String?
-  marketingConsent Boolean @default(false) // consenso a ricevere email su corsi/ritiri/novità, dato in registrazione
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id               String   @id @default(cuid())
+  email            String   @unique
+  passwordHash     String? // nullo per gli account creati via Google OAuth
+  googleId         String?  @unique
+  phone            String?
+  name             String
+  role             Role     @default(MEMBER)
+  level            Int      @default(1) // 1=Base, 2=Intermedio, 3=Avanzato (rilevante solo per MEMBER)
+  avatar           String?
+  marketingConsent Boolean  @default(false) // consenso a ricevere email su corsi/ritiri/novità, dato in registrazione
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  favorites            Favorite[]
-  courseProgresses     CourseProgress[]
-  reviews              Review[]
-  passwordResetTokens  PasswordResetToken[]
+  favorites           Favorite[]
+  courseProgresses    CourseProgress[]
+  reviews             Review[]
+  passwordResetTokens PasswordResetToken[]
 }
 
 model PasswordResetToken {
@@ -128,12 +128,12 @@ model ContactLead {
 }
 
 model Favorite {
-  id        String     @id @default(cuid())
-  accountId String
-  account   Account    @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  id         String     @id @default(cuid())
+  accountId  String
+  account    Account    @relation(fields: [accountId], references: [id], onDelete: Cascade)
   targetType TargetType
-  targetId  String
-  createdAt DateTime   @default(now())
+  targetId   String
+  createdAt  DateTime   @default(now())
 
   @@unique([accountId, targetType, targetId])
 }
@@ -160,4 +160,22 @@ model Review {
   comment    String
   status     ReviewStatus @default(PENDING)
   createdAt  DateTime     @default(now())
+}
+
+// Traccia ogni file caricato su Cloudflare R2 (immagini e audio), per calcolare lo
+// spazio totale usato e poter applicare il tetto di sicurezza sul piano gratuito.
+model MediaAsset {
+  id        String   @id @default(cuid())
+  key       String   @unique // percorso dell'oggetto nel bucket R2
+  url       String
+  sizeBytes Int
+  mimeType  String
+  createdAt DateTime @default(now())
+}
+
+// Riga singola di impostazioni globali del sito, gestibili dal pannello admin.
+model AppSettings {
+  id                  String  @id @default("singleton")
+  storageLimitEnabled Boolean @default(true)
+  storageLimitBytes   BigInt  @default(9500000000) // ~9.5GB, sotto i 10GB gratuiti di Cloudflare R2
 }

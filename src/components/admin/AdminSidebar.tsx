@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Compass, GraduationCap, Newspaper, Users, Mail, ExternalLink } from "lucide-react";
+import { LayoutDashboard, Compass, GraduationCap, Newspaper, Users, Mail, Settings, ExternalLink } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth";
 
 const items = [
@@ -13,6 +13,7 @@ const items = [
   { href: "/admin/blog", label: "Blog", icon: Newspaper },
   { href: "/admin/utenti", label: "Utenti", icon: Users },
   { href: "/admin/email", label: "Email", icon: Mail },
+  { href: "/admin/impostazioni", label: "Impostazioni", icon: Settings },
 ];
 
 export default function AdminSidebar({ adminName }: { adminName: string }) {
