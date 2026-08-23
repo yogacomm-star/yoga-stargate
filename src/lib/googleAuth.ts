@@ -4,11 +4,15 @@ export function googleAuthConfigured(): boolean {
   return !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET;
 }
 
+// In produzione l'origin della richiesta può non corrispondere all'indirizzo pubblico
+// (es. dietro il proxy di Render vede l'host interno): usiamo sempre SITE_URL.
+// In sviluppo usiamo l'origin della richiesta corrente (es. http://localhost:3000).
+export function publicOrigin(requestOrigin: string): string {
+  return process.env.NODE_ENV === "production" ? SITE_URL : requestOrigin;
+}
+
 export function googleRedirectUri(origin: string): string {
-  // In sviluppo usiamo l'origin della richiesta corrente (es. http://localhost:3000);
-  // in produzione questo coincide comunque con SITE_URL.
-  const base = process.env.NODE_ENV === "production" ? SITE_URL : origin;
-  return `${base}/api/auth/google/callback`;
+  return `${publicOrigin(origin)}/api/auth/google/callback`;
 }
 
 export function buildGoogleAuthUrl(origin: string, state: string): string {

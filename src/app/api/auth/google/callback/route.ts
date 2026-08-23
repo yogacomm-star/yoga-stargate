@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { setSessionCookie } from "@/lib/session";
-import { exchangeGoogleCode, fetchGoogleProfile } from "@/lib/googleAuth";
+import { exchangeGoogleCode, fetchGoogleProfile, publicOrigin } from "@/lib/googleAuth";
 
 const STATE_COOKIE = "ys_google_state";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
+  const origin = publicOrigin(url.origin);
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
 
@@ -16,7 +17,7 @@ export async function GET(request: Request) {
   cookieStore.delete(STATE_COOKIE);
 
   if (!code || !state || !expectedState || state !== expectedState) {
-    return NextResponse.redirect(new URL("/login?error=google_failed", url.origin));
+    return NextResponse.redirect(new URL("/login?error=google_failed", origin));
   }
 
   try {
@@ -51,8 +52,8 @@ export async function GET(request: Request) {
     await setSessionCookie({ accountId: account.id, role: account.role });
 
     const destination = account.role === "ADMIN" ? "/admin" : account.phone ? "/account" : "/account?completeProfile=1";
-    return NextResponse.redirect(new URL(destination, url.origin));
+    return NextResponse.redirect(new URL(destination, origin));
   } catch {
-    return NextResponse.redirect(new URL("/login?error=google_failed", url.origin));
+    return NextResponse.redirect(new URL("/login?error=google_failed", origin));
   }
 }
