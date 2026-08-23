@@ -12,6 +12,7 @@ export type MemberRow = {
   email: string;
   phone: string | null;
   level: number;
+  marketingConsent: boolean;
   createdAt: string;
 };
 
@@ -48,6 +49,7 @@ export default function MembersTable({ members }: { members: MemberRow[] }) {
                 <th className="px-5 py-3">Telefono</th>
                 <th className="px-5 py-3">Registrato il</th>
                 <th className="px-5 py-3">Livello</th>
+                <th className="px-5 py-3">Email marketing</th>
                 <th className="px-5 py-3">Password</th>
                 <th className="px-5 py-3" />
               </tr>
@@ -65,6 +67,17 @@ export default function MembersTable({ members }: { members: MemberRow[] }) {
                     <LevelSelect accountId={m.id} initialLevel={m.level} />
                   </td>
                   <td className="px-5 py-3">
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                        m.marketingConsent
+                          ? "bg-primary/10 text-primary"
+                          : "bg-foreground/5 text-foreground/50"
+                      }`}
+                    >
+                      {m.marketingConsent ? "Sì" : "No"}
+                    </span>
+                  </td>
+                  <td className="px-5 py-3">
                     <MemberPasswordActions accountId={m.id} />
                   </td>
                   <td className="px-5 py-3">
@@ -77,7 +90,7 @@ export default function MembersTable({ members }: { members: MemberRow[] }) {
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-5 py-8 text-center text-foreground/50">
+                  <td colSpan={8} className="px-5 py-8 text-center text-foreground/50">
                     {members.length === 0 ? "Nessun membro registrato." : "Nessun membro trovato per questa ricerca."}
                   </td>
                 </tr>

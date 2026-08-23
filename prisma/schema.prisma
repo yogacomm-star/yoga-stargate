@@ -42,6 +42,7 @@ model Account {
   role         Role     @default(MEMBER)
   level        Int      @default(1) // 1=Base, 2=Intermedio, 3=Avanzato (rilevante solo per MEMBER)
   avatar       String?
+  marketingConsent Boolean @default(false) // consenso a ricevere email su corsi/ritiri/novità, dato in registrazione
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -123,12 +124,6 @@ model ContactLead {
   message   String
   retreatId String?
   retreat   Retreat? @relation(fields: [retreatId], references: [id])
-  createdAt DateTime @default(now())
-}
-
-model NewsletterSubscriber {
-  id        String   @id @default(cuid())
-  email     String   @unique
   createdAt DateTime @default(now())
 }
 

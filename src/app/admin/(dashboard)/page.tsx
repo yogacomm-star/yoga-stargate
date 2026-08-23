@@ -17,7 +17,7 @@ export default async function AdminDashboardPage() {
     membersTotal,
     membersByLevel,
     leadsTotal,
-    newsletterTotal,
+    consentingTotal,
     pendingReviews,
   ] = await Promise.all([
     prisma.retreat.count(),
@@ -29,7 +29,7 @@ export default async function AdminDashboardPage() {
     prisma.account.count({ where: { role: "MEMBER" } }),
     prisma.account.groupBy({ by: ["level"], where: { role: "MEMBER" }, _count: true }),
     prisma.contactLead.count(),
-    prisma.newsletterSubscriber.count(),
+    prisma.account.count({ where: { role: "MEMBER", marketingConsent: true } }),
     prisma.review.count({ where: { status: "PENDING" } }),
   ]);
 
@@ -59,7 +59,7 @@ export default async function AdminDashboardPage() {
     { label: "Articoli blog", value: postsTotal, hint: `${postsPublished} pubblicati`, icon: Newspaper, href: "/admin/blog" },
     { label: "Membri", value: membersTotal, hint: `Base ${levelCounts[1]} · Interm. ${levelCounts[2]} · Avanz. ${levelCounts[3]}`, icon: Users, href: "/admin/utenti" },
     { label: "Richieste ricevute", value: leadsTotal, hint: "Lead da ritiri e contatti", icon: MessageSquare, href: "/admin/utenti" },
-    { label: "Iscritti newsletter", value: newsletterTotal, hint: pendingReviews > 0 ? `${pendingReviews} recensioni da moderare` : "Tutto moderato", icon: Mail, href: "/admin/utenti" },
+    { label: "Consenso email", value: consentingTotal, hint: pendingReviews > 0 ? `${pendingReviews} recensioni da moderare` : "Tutto moderato", icon: Mail, href: "/admin/utenti" },
   ];
 
   return (

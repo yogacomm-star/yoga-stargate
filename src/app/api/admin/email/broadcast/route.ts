@@ -5,7 +5,7 @@ import { requireAdmin } from "@/lib/auth";
 import { sendEmail, brandedEmail, emailConfigured } from "@/lib/email";
 
 const schema = z.object({
-  audience: z.enum(["newsletter", "members", "all"]),
+  audience: z.enum(["consenting", "members"]),
   subject: z.string().trim().min(1).max(200),
   message: z.string().trim().min(1).max(5000),
 });
@@ -30,14 +30,11 @@ export async function POST(request: Request) {
   const { audience, subject, message } = parsed.data;
 
   const emails = new Set<string>();
-  if (audience === "newsletter" || audience === "all") {
-    const subs = await prisma.newsletterSubscriber.findMany({ select: { email: true } });
-    subs.forEach((s) => emails.add(s.email));
-  }
-  if (audience === "members" || audience === "all") {
-    const members = await prisma.account.findMany({ where: { role: "MEMBER" }, select: { email: true } });
-    members.forEach((m) => emails.add(m.email));
-  }
+  const members = await prisma.account.findMany({
+    where: { role: "MEMBER", ...(audience === "consenting" ? { marketingConsent: true } : {}) },
+    select: { email: true },
+  });
+  members.forEach((m) => emails.add(m.email));
 
   const html = brandedEmail({
     title: subject,

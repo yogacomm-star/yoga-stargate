@@ -66,7 +66,7 @@ export const adminTourSteps: TourStep[] = [
     href: "/admin/utenti",
     target: "admin-nav-utenti",
     title: "Sezione Utenti",
-    description: "Qui trovi i membri registrati, le richieste ricevute e gli iscritti alla newsletter.",
+    description: "Qui trovi i membri registrati e le richieste ricevute dai form del sito.",
   },
   {
     href: "/admin/utenti",
@@ -80,19 +80,13 @@ export const adminTourSteps: TourStep[] = [
     target: "admin-members",
     title: "Account: crea, elimina, reimposta password",
     description:
-      "Con \"Crea nuovo account\" registri un membro manualmente. Su ogni riga puoi impostare subito una nuova password (icona chiave), inviare all'utente un'email con un link per reimpostarla da solo (icona busta) o eliminare l'account (icona cestino).",
+      "Con \"Crea nuovo account\" registri un membro manualmente. Su ogni riga puoi impostare subito una nuova password (icona chiave), inviare all'utente un'email con un link per reimpostarla da solo (icona busta), eliminare l'account (icona cestino) e vedere se ha dato il consenso a ricevere email.",
   },
   {
     href: "/admin/utenti",
     target: "admin-leads",
     title: "Richieste ricevute",
     description: "Le richieste di informazioni sui ritiri e i messaggi dal form contatti arrivano qui e sono esportabili in CSV.",
-  },
-  {
-    href: "/admin/utenti",
-    target: "admin-newsletter",
-    title: "Iscritti alla newsletter",
-    description: "L'elenco di chi si è iscritto dal sito, esportabile in CSV per le tue campagne email.",
   },
   {
     href: "/admin",
@@ -114,9 +108,9 @@ export const adminTourSteps: TourStep[] = [
   },
   {
     href: "/admin",
-    title: "Recensioni, ricerca e newsletter",
+    title: "Recensioni, ricerca ed email",
     description:
-      "Il sito pubblico ha una ricerca globale su ritiri, corsi e blog, un modulo newsletter collegato al database e un calendario scaricabile per le lezioni settimanali di Milano.",
+      "Il sito pubblico ha una ricerca globale su ritiri, corsi e blog e un calendario scaricabile per le lezioni settimanali di Milano. Chi si registra dà il consenso a ricevere email su corsi, ritiri e novità: da qui puoi scrivergli con la sezione Email.",
   },
   {
     href: "/admin",

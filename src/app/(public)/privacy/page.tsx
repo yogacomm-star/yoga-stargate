@@ -32,11 +32,8 @@ export default function PrivacyPage() {
           <ul className="mt-2 list-disc space-y-1 pl-5">
             <li>
               <strong>Account:</strong> nome, email e password (memorizzata in forma crittografata) quando ti
-              registri per accedere a corsi e ritiri riservati.
-            </li>
-            <li>
-              <strong>Newsletter:</strong> l&apos;indirizzo email che ci lasci per ricevere aggiornamenti e il dono
-              gratuito &ldquo;7 Giorni per Meditare Bene&rdquo;.
+              registri per accedere a corsi e ritiri riservati. In fase di registrazione ci autorizzi anche a
+              inviarti comunicazioni via email su corsi, ritiri e novità.
             </li>
             <li>
               <strong>Richieste di contatto:</strong> nome, email, telefono (facoltativo) e messaggio quando compili
@@ -52,9 +49,9 @@ export default function PrivacyPage() {
           <h2 className="font-heading text-lg font-semibold text-foreground">Come usiamo i tuoi dati</h2>
           <p className="mt-2">
             Utilizziamo i tuoi dati esclusivamente per gestire il tuo account, fornirti accesso ai contenuti in base
-            al tuo livello, rispondere alle tue richieste, inviarti la newsletter (solo se ti sei iscritto) e
-            moderare le recensioni prima della pubblicazione. Non vendiamo né condividiamo i tuoi dati con terze
-            parti per finalità di marketing.
+            al tuo livello, rispondere alle tue richieste, inviarti comunicazioni su corsi, ritiri e novità (solo se
+            hai dato il consenso in registrazione) e moderare le recensioni prima della pubblicazione. Non vendiamo
+            né condividiamo i tuoi dati con terze parti per finalità di marketing.
           </p>
         </section>
 
@@ -74,7 +71,7 @@ export default function PrivacyPage() {
           <h2 className="font-heading text-lg font-semibold text-foreground">I tuoi diritti</h2>
           <p className="mt-2">
             In qualsiasi momento puoi richiedere l&apos;accesso, la rettifica o la cancellazione dei tuoi dati
-            personali, oppure revocare il consenso alla newsletter (tramite il link presente in ogni email o
+            personali, oppure revocare il consenso a ricevere email (tramite il link presente in ogni email o
             scrivendoci direttamente). Puoi esercitare questi diritti scrivendo a{" "}
             <a href="mailto:info@yogastargate.com" className="font-medium text-primary underline underline-offset-2">
               info@yogastargate.com

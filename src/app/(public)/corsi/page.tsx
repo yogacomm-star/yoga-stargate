@@ -22,7 +22,7 @@ function countLessons(raw: string): number {
 export default async function CorsiPage() {
   const courses = await prisma.course.findMany({
     // "Risorsa gratuita" (es. il dono "7 Giorni per Meditare Bene") è un contenuto a sé,
-    // promosso dalla home e da Risorse: non compare nella libreria generale dei corsi.
+    // promosso dalla home: non compare nella libreria generale dei corsi.
     where: { status: "PUBLISHED", NOT: { category: "Risorsa gratuita" } },
     orderBy: { createdAt: "desc" },
   });

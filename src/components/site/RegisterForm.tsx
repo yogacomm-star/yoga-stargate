@@ -2,22 +2,28 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function RegisterForm() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", password: "" });
+  const [consent, setConsent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (!consent) {
+      setError("Devi accettare i termini per registrarti.");
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, marketingConsent: consent }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -89,6 +95,19 @@ export default function RegisterForm() {
         />
         <p className="mt-1 text-xs text-foreground/50">Almeno 8 caratteri.</p>
       </div>
+      <label className="flex items-start gap-2 text-xs text-foreground/60">
+        <input
+          type="checkbox"
+          checked={consent}
+          onChange={(e) => setConsent(e.target.checked)}
+          className="mt-0.5 cursor-pointer"
+        />
+        Accetto i{" "}
+        <Link href="/privacy" className="cursor-pointer font-semibold text-primary">
+          Termini e la Privacy Policy
+        </Link>
+        , e autorizzo Yoga Stargate a inviarmi comunicazioni via email su corsi, ritiri e novità.
+      </label>
       {error && <p className="text-sm font-medium text-destructive">{error}</p>}
       <button
         type="submit"

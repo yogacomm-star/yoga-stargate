@@ -30,7 +30,7 @@ const businessJsonLd = {
 const pathways = [
   {
     icon: Sunrise,
-    title: "My Yoga — Lezioni",
+    title: "Metodo — Lezioni",
     description: "Il percorso base per costruire una pratica solida: respiro, postura e presenza.",
     href: "/my-yoga",
   },

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Mail, Phone, MapPin } from "lucide-react";
-import NewsletterForm from "@/components/site/NewsletterForm";
 
 function InstagramIcon() {
   return (
@@ -26,7 +25,7 @@ const columns = [
     title: "Esplora",
     links: [
       { href: "/chi-sono", label: "Chi Sono" },
-      { href: "/my-yoga", label: "My Yoga" },
+      { href: "/my-yoga", label: "Metodo" },
       { href: "/ritiri", label: "Ritiri" },
       { href: "/corsi", label: "Corsi" },
       { href: "/blog", label: "Blog" },
@@ -35,7 +34,6 @@ const columns = [
   {
     title: "Informazioni",
     links: [
-      { href: "/risorse", label: "Risorse" },
       { href: "/contatti", label: "Contatti" },
       { href: "/login", label: "Accedi" },
       { href: "/registrati", label: "Registrati" },
@@ -105,12 +103,17 @@ export default function Footer() {
           ))}
 
           <div>
-            <h3 className="font-heading text-sm font-semibold text-foreground">Iscriviti alla newsletter</h3>
+            <h3 className="font-heading text-sm font-semibold text-foreground">Resta aggiornata/o</h3>
             <p className="mt-3 text-sm text-foreground/70">
-              Pratiche, riflessioni e novità sui prossimi ritiri, direttamente nella tua casella.
+              Registrati per ricevere pratiche, riflessioni e novità sui prossimi ritiri direttamente via email.
             </p>
             <div className="mt-4">
-              <NewsletterForm />
+              <Link
+                href="/registrati"
+                className="inline-flex cursor-pointer items-center rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5"
+              >
+                Crea un account
+              </Link>
             </div>
           </div>
         </div>

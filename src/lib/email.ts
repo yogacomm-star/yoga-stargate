@@ -36,9 +36,9 @@ export async function sendEmail({
 }
 
 /**
- * Notifica automaticamente gli iscritti alla newsletter quando viene pubblicato
- * un nuovo ritiro, corso o articolo. Non blocca né fa fallire la richiesta chiamante
- * se l'invio non è configurato o fallisce: è un "best effort" in background.
+ * Notifica automaticamente i membri che hanno dato il consenso email quando viene
+ * pubblicato un nuovo ritiro, corso o articolo. Non blocca né fa fallire la richiesta
+ * chiamante se l'invio non è configurato o fallisce: è un "best effort" in background.
  */
 export async function notifyNewContent({
   kind,
@@ -54,7 +54,10 @@ export async function notifyNewContent({
   if (!emailConfigured()) return;
 
   try {
-    const subs = await prisma.newsletterSubscriber.findMany({ select: { email: true } });
+    const subs = await prisma.account.findMany({
+      where: { role: "MEMBER", marketingConsent: true },
+      select: { email: true },
+    });
     if (subs.length === 0) return;
 
     const kindLabel = kind === "ritiro" ? "Nuovo ritiro" : kind === "corso" ? "Nuovo corso" : "Nuovo articolo";
@@ -73,7 +76,7 @@ export async function notifyNewContent({
 
 /**
  * Template email brandizzato (HTML con stili inline, compatibile con i client email)
- * usato sia per la newsletter broadcast sia per le notifiche automatiche di nuovi contenuti.
+ * usato sia per le email broadcast dell'admin sia per le notifiche automatiche di nuovi contenuti.
  */
 export function brandedEmail({
   title,

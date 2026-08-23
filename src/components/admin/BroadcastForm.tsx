@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import { Send } from "lucide-react";
 
 export default function BroadcastForm({ emailConfigured }: { emailConfigured: boolean }) {
-  const [audience, setAudience] = useState<"newsletter" | "members" | "all">("newsletter");
+  const [audience, setAudience] = useState<"consenting" | "members">("consenting");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
@@ -61,10 +61,15 @@ export default function BroadcastForm({ emailConfigured }: { emailConfigured: bo
             onChange={(e) => setAudience(e.target.value as typeof audience)}
             className={inputClass}
           >
-            <option value="newsletter">Iscritti alla newsletter</option>
-            <option value="members">Membri registrati</option>
-            <option value="all">Tutti (newsletter + membri)</option>
+            <option value="consenting">Membri che hanno dato il consenso email</option>
+            <option value="members">Tutti i membri registrati</option>
           </select>
+          {audience === "members" && (
+            <p className="mt-1 text-xs text-foreground/50">
+              Include anche chi non ha dato il consenso a ricevere comunicazioni promozionali: usa questa opzione solo
+              per comunicazioni essenziali legate all&apos;account, non per contenuti di marketing.
+            </p>
+          )}
         </div>
         <div>
           <label htmlFor="broadcast-subject" className="mb-1 block text-sm font-medium text-foreground">

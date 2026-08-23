@@ -13,11 +13,10 @@ import type { NavAccount } from "@/lib/types";
 const links = [
   { href: "/", label: "Home" },
   { href: "/chi-sono", label: "Chi Sono" },
-  { href: "/my-yoga", label: "My Yoga" },
+  { href: "/my-yoga", label: "Metodo" },
   { href: "/ritiri", label: "Ritiri" },
   { href: "/corsi", label: "Corsi" },
   { href: "/blog", label: "Blog" },
-  { href: "/risorse", label: "Risorse" },
   { href: "/contatti", label: "Contatti" },
 ];
 

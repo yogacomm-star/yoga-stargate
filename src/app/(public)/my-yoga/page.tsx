@@ -5,7 +5,7 @@ import Hero from "@/components/site/Hero";
 import { CheckCircle2 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "My Yoga",
+  title: "Metodo",
   description: "Le lezioni settimanali di Yoga Stargate a Milano: mattino, teenager, adulti e livello avanzato.",
   alternates: { canonical: "/my-yoga" },
 };
@@ -48,7 +48,7 @@ export default function MyYogaPage() {
   return (
     <>
       <Hero
-        eyebrow="My Yoga"
+        eyebrow="Metodo"
         title="Le lezioni settimanali a Milano"
         subtitle="Un punto fermo nella settimana per ritrovare corpo, respiro e presenza, in un piccolo gruppo guidato da Tina Mastandrea."
         primaryCta={{ label: "Prenota una lezione di prova", href: "/contatti" }}
