@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus, X } from "lucide-react";
 import { slugify } from "@/lib/slug";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import AiDraftButton from "@/components/admin/AiDraftButton";
 
 type Lesson = { title: string; videoUrl: string; content: string };
 
@@ -153,7 +154,16 @@ export default function CourseForm({ initial }: { initial?: CourseFormData }) {
       </div>
 
       <div>
-        <label htmlFor="course-excerpt" className={labelClass}>Estratto (anteprima card)</label>
+        <div className="mb-1 flex items-center justify-between">
+          <label htmlFor="course-excerpt" className={labelClass + " mb-0"}>Estratto (anteprima card)</label>
+          <AiDraftButton
+            kind="course"
+            field="excerpt"
+            title={form.title}
+            category={form.category}
+            onGenerated={(text) => setForm((f) => ({ ...f, excerpt: text }))}
+          />
+        </div>
         <textarea
           id="course-excerpt"
           required
@@ -165,7 +175,17 @@ export default function CourseForm({ initial }: { initial?: CourseFormData }) {
       </div>
 
       <div>
-        <label htmlFor="course-description" className={labelClass}>Descrizione completa</label>
+        <div className="mb-1 flex items-center justify-between">
+          <label htmlFor="course-description" className={labelClass + " mb-0"}>Descrizione completa</label>
+          <AiDraftButton
+            kind="course"
+            field="description"
+            title={form.title}
+            category={form.category}
+            notes={form.excerpt}
+            onGenerated={(text) => setForm((f) => ({ ...f, description: text }))}
+          />
+        </div>
         <textarea
           id="course-description"
           required

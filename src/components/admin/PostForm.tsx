@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { slugify } from "@/lib/slug";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import AiDraftButton from "@/components/admin/AiDraftButton";
 
 export type PostFormData = {
   id?: string;
@@ -134,7 +135,16 @@ export default function PostForm({ initial }: { initial?: PostFormData }) {
       </div>
 
       <div>
-        <label htmlFor="post-excerpt" className={labelClass}>Estratto (anteprima card)</label>
+        <div className="mb-1 flex items-center justify-between">
+          <label htmlFor="post-excerpt" className={labelClass + " mb-0"}>Estratto (anteprima card)</label>
+          <AiDraftButton
+            kind="post"
+            field="excerpt"
+            title={form.title}
+            category={form.category}
+            onGenerated={(text) => setForm((f) => ({ ...f, excerpt: text }))}
+          />
+        </div>
         <textarea
           id="post-excerpt"
           required
@@ -146,7 +156,17 @@ export default function PostForm({ initial }: { initial?: PostFormData }) {
       </div>
 
       <div>
-        <label htmlFor="post-content" className={labelClass}>Contenuto (supporta markdown)</label>
+        <div className="mb-1 flex items-center justify-between">
+          <label htmlFor="post-content" className={labelClass + " mb-0"}>Contenuto (supporta markdown)</label>
+          <AiDraftButton
+            kind="post"
+            field="content"
+            title={form.title}
+            category={form.category}
+            notes={form.excerpt}
+            onGenerated={(text) => setForm((f) => ({ ...f, content: text }))}
+          />
+        </div>
         <textarea
           id="post-content"
           required

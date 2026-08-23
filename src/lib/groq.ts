@@ -22,6 +22,9 @@ export async function groqChat(messages: ChatMessage[], maxTokens = 500): Promis
       messages,
       max_tokens: maxTokens,
       temperature: 0.6,
+      // gpt-oss-120b è un modello "reasoning": senza limitare lo sforzo di ragionamento,
+      // può consumare l'intero budget di token pensando e restituire una risposta vuota.
+      reasoning_effort: "low",
     }),
   });
 

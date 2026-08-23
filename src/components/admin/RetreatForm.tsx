@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus, X } from "lucide-react";
 import { slugify } from "@/lib/slug";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import AiDraftButton from "@/components/admin/AiDraftButton";
 
 type ItineraryDay = { day: number; title: string; description: string };
 
@@ -184,7 +185,17 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
       </div>
 
       <div>
-        <label htmlFor="retreat-excerpt" className={labelClass}>Estratto (anteprima card)</label>
+        <div className="mb-1 flex items-center justify-between">
+          <label htmlFor="retreat-excerpt" className={labelClass + " mb-0"}>Estratto (anteprima card)</label>
+          <AiDraftButton
+            kind="retreat"
+            field="excerpt"
+            title={form.title}
+            category={form.category}
+            location={form.location}
+            onGenerated={(text) => setForm((f) => ({ ...f, excerpt: text }))}
+          />
+        </div>
         <textarea
           id="retreat-excerpt"
           required
@@ -196,7 +207,18 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
       </div>
 
       <div>
-        <label htmlFor="retreat-description" className={labelClass}>Descrizione completa</label>
+        <div className="mb-1 flex items-center justify-between">
+          <label htmlFor="retreat-description" className={labelClass + " mb-0"}>Descrizione completa</label>
+          <AiDraftButton
+            kind="retreat"
+            field="description"
+            title={form.title}
+            category={form.category}
+            location={form.location}
+            notes={form.excerpt}
+            onGenerated={(text) => setForm((f) => ({ ...f, description: text }))}
+          />
+        </div>
         <textarea
           id="retreat-description"
           required
