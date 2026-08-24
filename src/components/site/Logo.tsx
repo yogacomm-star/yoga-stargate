@@ -15,7 +15,7 @@ export default function Logo({
   return (
     <span className={`inline-flex items-center gap-2 ${className}`}>
       <Image
-        src="/icon-512.png"
+        src="/logo-icon.png"
         alt="Yoga Stargate"
         width={512}
         height={512}
