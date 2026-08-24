@@ -3,6 +3,7 @@ import { Plus, Pencil } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import StatusBadge from "@/components/admin/StatusBadge";
 import DeleteButton from "@/components/admin/DeleteButton";
+import DriveImportButton from "@/components/admin/DriveImportButton";
 import { levelLabel } from "@/lib/levels";
 
 export default async function AdminCorsiPage() {
@@ -10,19 +11,22 @@ export default async function AdminCorsiPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-heading text-2xl font-semibold text-foreground">Corsi</h1>
           <p className="mt-1 text-sm text-foreground/60">{courses.length} corsi totali</p>
         </div>
-        <Link
-          href="/admin/corsi/nuovo"
-          data-tour="admin-new-course"
-          className="flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"
-        >
-          <Plus className="h-4 w-4" aria-hidden="true" />
-          Nuovo corso
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <DriveImportButton />
+          <Link
+            href="/admin/corsi/nuovo"
+            data-tour="admin-new-course"
+            className="flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"
+          >
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            Nuovo corso
+          </Link>
+        </div>
       </div>
 
       <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-card">
