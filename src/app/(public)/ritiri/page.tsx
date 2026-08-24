@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Users } from "lucide-react";
 import Hero from "@/components/site/Hero";
 import RetreatCard, { type RetreatCardData } from "@/components/site/RetreatCard";
+import LeadForm from "@/components/site/LeadForm";
 import { prisma } from "@/lib/prisma";
 import { firstImage } from "@/lib/images";
 
@@ -79,6 +81,27 @@ export default async function RitiriPage({
             ))}
           </div>
         )}
+
+        <div className="mt-16 rounded-3xl border border-border bg-card p-6 sm:p-10">
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <Users className="h-6 w-6" aria-hidden="true" />
+            </span>
+            <h2 className="mt-4 font-heading text-2xl font-semibold text-foreground">Hai un gruppo grande?</h2>
+            <p className="mt-2 text-sm text-foreground/70">
+              Se siete un gruppo numeroso, non serve aspettare una data già in calendario: possiamo organizzare una
+              lezione o un ritiro privato pensato solo per voi, nel luogo e nel periodo che preferite. Raccontaci
+              qualcosa in più e ti risponderemo per definire i dettagli.
+            </p>
+          </div>
+          <div className="mx-auto mt-8 max-w-xl">
+            <LeadForm
+              showGroupSize
+              defaultMessage="Vorremmo organizzare una lezione/ritiro privato per il nostro gruppo. Ecco qualche dettaglio: luogo o zona preferita, periodo indicativo, tipo di esperienza che cerchiamo..."
+              submitLabel="Richiedi un'esperienza privata"
+            />
+          </div>
+        </div>
       </section>
     </>
   );

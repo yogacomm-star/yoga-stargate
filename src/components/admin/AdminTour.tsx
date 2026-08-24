@@ -116,7 +116,7 @@ export default function AdminTour() {
         type="button"
         onClick={startTour}
         data-tour="admin-guida-button"
-        className="fixed right-6 bottom-6 z-[90] flex cursor-pointer items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-soft-lg transition-transform hover:-translate-y-0.5"
+        className="fixed right-24 bottom-6 z-[90] flex cursor-pointer items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-soft-lg transition-transform hover:-translate-y-0.5"
       >
         <Compass className="h-4 w-4" aria-hidden="true" />
         Guida

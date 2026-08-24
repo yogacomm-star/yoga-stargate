@@ -5,14 +5,14 @@ import { PlayCircle } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getCurrentAccount } from "@/lib/auth";
 import { canAccess } from "@/lib/levels";
-import { LevelBadge, LevelLockedNotice } from "@/components/site/LevelLock";
+import { LevelBadge, LevelLockedNotice, PurchaseLockedNotice } from "@/components/site/LevelLock";
 import MarkdownContent from "@/components/site/MarkdownContent";
 import CourseProgressToggle from "@/components/site/CourseProgressToggle";
 import FavoriteButton from "@/components/site/FavoriteButton";
 import ReviewsSection from "@/components/site/ReviewsSection";
 import { isAllowedEmbedUrl } from "@/lib/embed";
 
-type Lesson = { title: string; videoUrl: string; content: string };
+type Lesson = { title: string; videoUrl: string; content: string; audioUrl?: string; audioKey?: string };
 
 function parseLessons(raw: string): Lesson[] {
   try {
@@ -39,7 +39,10 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
   if (!course || course.status !== "PUBLISHED") notFound();
 
   const account = await getCurrentAccount();
-  const unlocked = canAccess(course.requiredLevel, account?.level);
+  const isPaid = !!course.price;
+  // Finché l'acquisto tramite Stripe non è attivo, un corso a pagamento è sbloccato
+  // solo per l'admin (anteprima/verifica): nessun visitatore può accedervi gratis.
+  const unlocked = isPaid ? account?.role === "ADMIN" : canAccess(course.requiredLevel, account?.level);
   const lessons = parseLessons(course.lessons);
 
   let completed = false;
@@ -80,7 +83,11 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
 
       <section className="mx-auto max-w-3xl px-4 pt-10 pb-20 sm:px-6">
         {!unlocked ? (
-          <LevelLockedNotice requiredLevel={course.requiredLevel as number} loggedIn={!!account} />
+          isPaid ? (
+            <PurchaseLockedNotice price={course.price as number} />
+          ) : (
+            <LevelLockedNotice requiredLevel={course.requiredLevel as number} loggedIn={!!account} />
+          )
         ) : (
           <>
             <MarkdownContent content={course.description} />
@@ -110,6 +117,16 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
                         </p>
                       </div>
                       {lesson.content && <p className="mt-3 text-sm text-foreground/70">{lesson.content}</p>}
+                      {lesson.audioUrl && (
+                        <audio controls controlsList="nodownload" preload="none" className="mt-3 w-full">
+                          <source src={lesson.audioUrl} type="audio/mpeg" />
+                        </audio>
+                      )}
+                      {lesson.audioKey && (
+                        <audio controls controlsList="nodownload" preload="none" className="mt-3 w-full">
+                          <source src={`/api/courses/${course.id}/lessons/${i}/stream`} type="audio/mpeg" />
+                        </audio>
+                      )}
                       {lesson.videoUrl && isAllowedEmbedUrl(lesson.videoUrl) && (
                         <div className="mt-3 aspect-video overflow-hidden rounded-lg border border-border">
                           <iframe

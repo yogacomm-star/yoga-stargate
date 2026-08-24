@@ -33,6 +33,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       lessons: JSON.stringify(d.lessons),
       coverImage: d.coverImage || null,
       requiredLevel: d.requiredLevel ?? null,
+      price: d.price ?? null,
       status: d.status,
     },
   });

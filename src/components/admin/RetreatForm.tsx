@@ -6,6 +6,7 @@ import { Plus, X } from "lucide-react";
 import { slugify } from "@/lib/slug";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import AiDraftButton from "@/components/admin/AiDraftButton";
+import GenerateFullDraftButton from "@/components/admin/GenerateFullDraftButton";
 
 type ItineraryDay = { day: number; title: string; description: string };
 
@@ -55,6 +56,30 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
   const [slugTouched, setSlugTouched] = useState(isEdit);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  type RetreatDraft = {
+    title: string;
+    slug: string;
+    category: string;
+    location: string;
+    excerpt: string;
+    description: string;
+    itinerary: ItineraryDay[];
+  };
+
+  function applyDraft(draft: RetreatDraft) {
+    setSlugTouched(true);
+    setForm((f) => ({
+      ...f,
+      title: draft.title,
+      slug: draft.slug,
+      category: draft.category,
+      location: draft.location,
+      excerpt: draft.excerpt,
+      description: draft.description,
+      itinerary: draft.itinerary,
+    }));
+  }
 
   function updateItinerary(index: number, patch: Partial<ItineraryDay>) {
     setForm((f) => ({
@@ -126,6 +151,7 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {!isEdit && <GenerateFullDraftButton<RetreatDraft> kind="retreat" onGenerated={applyDraft} />}
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="retreat-title" className={labelClass}>Titolo</label>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { slugify } from "@/lib/slug";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import AiDraftButton from "@/components/admin/AiDraftButton";
+import GenerateFullDraftButton from "@/components/admin/GenerateFullDraftButton";
 
 export type PostFormData = {
   id?: string;
@@ -38,6 +39,20 @@ export default function PostForm({ initial }: { initial?: PostFormData }) {
   const [slugTouched, setSlugTouched] = useState(isEdit);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  type PostDraft = { title: string; slug: string; category: string; excerpt: string; content: string };
+
+  function applyDraft(draft: PostDraft) {
+    setSlugTouched(true);
+    setForm((f) => ({
+      ...f,
+      title: draft.title,
+      slug: draft.slug,
+      category: draft.category,
+      excerpt: draft.excerpt,
+      content: draft.content,
+    }));
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -82,6 +97,7 @@ export default function PostForm({ initial }: { initial?: PostFormData }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {!isEdit && <GenerateFullDraftButton<PostDraft> kind="post" onGenerated={applyDraft} />}
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="post-title" className={labelClass}>Titolo</label>

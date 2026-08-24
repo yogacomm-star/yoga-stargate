@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Compass, GraduationCap, Newspaper, Users, Mail, Settings, ExternalLink } from "lucide-react";
+import { LayoutDashboard, Compass, GraduationCap, Newspaper, Users, Mail, Settings, ExternalLink, Menu, X } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth";
 
 const items = [
@@ -18,14 +19,30 @@ const items = [
 
 export default function AdminSidebar({ adminName }: { adminName: string }) {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const [lastPathname, setLastPathname] = useState<string | null>(null);
 
-  return (
-    <aside className="flex h-screen w-64 shrink-0 flex-col border-r border-border bg-card">
-      <div className="border-b border-border px-6 py-5">
-        <Link href="/admin" className="flex items-center">
+  // Chiude il menu mobile quando cambia pagina (pattern "adjusting state during render").
+  if (pathname !== lastPathname) {
+    setLastPathname(pathname);
+    if (open) setOpen(false);
+  }
+
+  const sidebarContent = (
+    <>
+      <div className="flex items-center justify-between border-b border-border px-6 py-5 lg:justify-start">
+        <Link href="/admin" className="flex items-center gap-2.5">
           <Image src="/images/logo.png" alt="Yoga Stargate" width={500} height={500} className="h-12 w-12 object-contain" />
+          <span className="font-heading text-sm font-semibold text-foreground">Pannello Admin</span>
         </Link>
-        <p className="mt-1 text-xs text-foreground/50">Pannello Admin</p>
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          aria-label="Chiudi il menu"
+          className="cursor-pointer rounded-lg p-2 text-foreground/60 hover:bg-muted lg:hidden"
+        >
+          <X className="h-5 w-5" aria-hidden="true" />
+        </button>
       </div>
 
       <nav className="flex-1 space-y-1 px-3 py-4">
@@ -66,6 +83,41 @@ export default function AdminSidebar({ adminName }: { adminName: string }) {
           </button>
         </form>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Barra superiore mobile: solo il pulsante per aprire il menu, sotto i lg diventa la sidebar fissa. */}
+      <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-card px-4 py-3 lg:hidden">
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label="Apri il menu"
+          className="cursor-pointer rounded-lg p-2 text-foreground/70 hover:bg-muted"
+        >
+          <Menu className="h-5 w-5" aria-hidden="true" />
+        </button>
+        <Image src="/images/logo.png" alt="Yoga Stargate" width={500} height={500} className="h-8 w-8 object-contain" />
+        <span className="font-heading text-sm font-semibold text-foreground">Pannello Admin</span>
+      </div>
+
+      {open && (
+        <button
+          type="button"
+          aria-label="Chiudi il menu"
+          onClick={() => setOpen(false)}
+          className="fixed inset-0 z-40 cursor-default bg-black/40 lg:hidden"
+        />
+      )}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-64 shrink-0 flex-col border-r border-border bg-card transition-transform duration-200 lg:static lg:translate-x-0 ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        {sidebarContent}
+      </aside>
+    </>
   );
 }

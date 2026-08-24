@@ -6,8 +6,10 @@ import { Plus, X } from "lucide-react";
 import { slugify } from "@/lib/slug";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import AiDraftButton from "@/components/admin/AiDraftButton";
+import GenerateFullDraftButton from "@/components/admin/GenerateFullDraftButton";
+import AudioUploadField from "@/components/admin/AudioUploadField";
 
-type Lesson = { title: string; videoUrl: string; content: string };
+type Lesson = { title: string; videoUrl: string; content: string; audioUrl?: string; audioKey?: string };
 
 export type CourseFormData = {
   id?: string;
@@ -17,6 +19,7 @@ export type CourseFormData = {
   excerpt: string;
   description: string;
   requiredLevel: string;
+  price: string;
   status: "DRAFT" | "PUBLISHED";
   coverImage: string | null;
   lessons: Lesson[];
@@ -33,6 +36,7 @@ export default function CourseForm({ initial }: { initial?: CourseFormData }) {
       excerpt: "",
       description: "",
       requiredLevel: "",
+      price: "",
       status: "DRAFT",
       coverImage: null,
       lessons: [],
@@ -41,6 +45,28 @@ export default function CourseForm({ initial }: { initial?: CourseFormData }) {
   const [slugTouched, setSlugTouched] = useState(isEdit);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  type CourseDraft = {
+    title: string;
+    slug: string;
+    category: string;
+    excerpt: string;
+    description: string;
+    lessons: Lesson[];
+  };
+
+  function applyDraft(draft: CourseDraft) {
+    setSlugTouched(true);
+    setForm((f) => ({
+      ...f,
+      title: draft.title,
+      slug: draft.slug,
+      category: draft.category,
+      excerpt: draft.excerpt,
+      description: draft.description,
+      lessons: draft.lessons,
+    }));
+  }
 
   function updateLesson(index: number, patch: Partial<Lesson>) {
     setForm((f) => ({ ...f, lessons: f.lessons.map((l, i) => (i === index ? { ...l, ...patch } : l)) }));
@@ -68,6 +94,7 @@ export default function CourseForm({ initial }: { initial?: CourseFormData }) {
       lessons: form.lessons,
       coverImage: form.coverImage,
       requiredLevel: form.requiredLevel ? Number(form.requiredLevel) : null,
+      price: form.price ? Number(form.price) : null,
       status: form.status,
     };
 
@@ -97,6 +124,7 @@ export default function CourseForm({ initial }: { initial?: CourseFormData }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {!isEdit && <GenerateFullDraftButton<CourseDraft> kind="course" onGenerated={applyDraft} />}
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="course-title" className={labelClass}>Titolo</label>
@@ -151,6 +179,23 @@ export default function CourseForm({ initial }: { initial?: CourseFormData }) {
             <option value="3">Avanzato</option>
           </select>
         </div>
+      </div>
+
+      <div>
+        <label htmlFor="course-price" className={labelClass}>Prezzo (€, opzionale)</label>
+        <input
+          id="course-price"
+          type="number"
+          min={0}
+          step="0.01"
+          value={form.price}
+          onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
+          placeholder="Lascia vuoto se il corso è gratuito/incluso per livello"
+          className={inputClass + " max-w-xs"}
+        />
+        <p className="mt-1 text-xs text-foreground/50">
+          Se impostato, l&apos;audio delle lezioni è privato e riservato a chi acquista il corso.
+        </p>
       </div>
 
       <div>
@@ -238,7 +283,13 @@ export default function CourseForm({ initial }: { initial?: CourseFormData }) {
                 rows={2}
                 value={lesson.content}
                 onChange={(e) => updateLesson(i, { content: e.target.value })}
-                className={inputClass}
+                className={inputClass + " mb-2"}
+              />
+              <AudioUploadField
+                audioUrl={lesson.audioUrl}
+                audioKey={lesson.audioKey}
+                isPrivate={!!form.price}
+                onChange={(result) => updateLesson(i, { audioUrl: result.audioUrl, audioKey: result.audioKey })}
               />
             </div>
           ))}

@@ -13,6 +13,8 @@ const lessonItem = z.object({
     .default("")
     .refine(isAllowedEmbedUrl, "Il video deve provenire da YouTube o Vimeo."),
   content: z.string().default(""),
+  audioUrl: z.string().trim().max(500).optional(),
+  audioKey: z.string().trim().max(300).optional(),
 });
 
 export const courseSchema = z.object({
@@ -24,6 +26,7 @@ export const courseSchema = z.object({
   lessons: z.array(lessonItem).default([]),
   coverImage: z.string().trim().max(300).nullable().optional(),
   requiredLevel: z.number().int().min(1).max(3).nullable().optional(),
+  price: z.number().min(0).max(9999).nullable().optional(),
   status: z.enum(["DRAFT", "PUBLISHED"]).default("DRAFT"),
 });
 
@@ -51,6 +54,7 @@ export async function POST(request: Request) {
       lessons: JSON.stringify(d.lessons),
       coverImage: d.coverImage || null,
       requiredLevel: d.requiredLevel ?? null,
+      price: d.price ?? null,
       status: d.status,
     },
   });

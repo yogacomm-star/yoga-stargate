@@ -20,6 +20,7 @@ export default async function EditCorsoPage({ params }: { params: Promise<{ id: 
     excerpt: course.excerpt,
     description: course.description,
     requiredLevel: course.requiredLevel != null ? String(course.requiredLevel) : "",
+    price: course.price != null ? String(course.price) : "",
     status: course.status,
     coverImage: course.coverImage,
     lessons,

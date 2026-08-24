@@ -53,7 +53,10 @@ export default function ChatWidget({ variant }: { variant: "public" | "admin" })
     }
   }
 
-  const positionClass = variant === "admin" ? "left-6" : "right-6";
+  // Sempre a destra: in basso a destra convive con il pulsante "Guida" del pannello
+  // admin (posizionato più a sinistra apposta, vedi AdminTour) e non si sovrappone
+  // mai ai controlli della barra laterale admin, che occupano il bordo sinistro.
+  const positionClass = "right-6";
 
   return (
     <>

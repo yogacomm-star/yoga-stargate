@@ -92,9 +92,10 @@ model Course {
   category      String
   excerpt       String
   description   String
-  lessons       String        @default("[]") // JSON array di { title, videoUrl, content }
+  lessons       String        @default("[]") // JSON array di { title, videoUrl, audioKey, content }
   coverImage    String?
   requiredLevel Int? // null = aperto a tutti
+  price         Float? // null/0 = gratuito; se impostato, l'audio è privato e richiede acquisto
   status        ContentStatus @default(DRAFT)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
@@ -122,6 +123,7 @@ model ContactLead {
   email     String
   phone     String?
   message   String
+  groupSize Int? // valorizzato per le richieste di lezione/ritiro privato per un gruppo
   retreatId String?
   retreat   Retreat? @relation(fields: [retreatId], references: [id])
   createdAt DateTime @default(now())

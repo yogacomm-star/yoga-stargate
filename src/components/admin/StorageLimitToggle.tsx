@@ -40,10 +40,10 @@ export default function StorageLimitToggle({ initialEnabled }: { initialEnabled:
       onClick={toggle}
       disabled={loading}
       aria-pressed={enabled}
-      className={`relative inline-flex h-7 w-13 cursor-pointer items-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
+      className={`relative inline-flex h-7 w-13 shrink-0 cursor-pointer items-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
         enabled ? "bg-primary" : "bg-foreground/20"
       }`}
-      style={{ width: "3.25rem" }}
+      style={{ width: "3.25rem", minWidth: "3.25rem" }}
     >
       <span
         className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-soft-sm transition-transform ${

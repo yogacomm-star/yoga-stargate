@@ -54,7 +54,7 @@ export default async function AdminUtentiPage() {
               <tr>
                 <th className="px-5 py-3">Nome</th>
                 <th className="px-5 py-3">Email</th>
-                <th className="px-5 py-3">Ritiro</th>
+                <th className="px-5 py-3">Ritiro / Gruppo</th>
                 <th className="px-5 py-3">Data</th>
               </tr>
             </thead>
@@ -63,7 +63,9 @@ export default async function AdminUtentiPage() {
                 <tr key={l.id} className="border-b border-border last:border-0">
                   <td className="px-5 py-3 font-medium text-foreground">{l.name}</td>
                   <td className="px-5 py-3 text-foreground/70">{l.email}</td>
-                  <td className="px-5 py-3 text-foreground/70">{l.retreat?.title ?? "—"}</td>
+                  <td className="px-5 py-3 text-foreground/70">
+                    {l.retreat?.title ?? (l.groupSize ? `Gruppo privato (${l.groupSize} persone)` : "—")}
+                  </td>
                   <td className="px-5 py-3 text-foreground/70">
                     {l.createdAt.toLocaleDateString("it-IT", { day: "numeric", month: "short", year: "numeric" })}
                   </td>

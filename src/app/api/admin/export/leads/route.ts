@@ -12,12 +12,13 @@ export async function GET() {
   });
 
   const csv = toCsv(
-    ["Nome", "Email", "Telefono", "Ritiro", "Messaggio", "Data"],
+    ["Nome", "Email", "Telefono", "Ritiro", "Dimensione gruppo", "Messaggio", "Data"],
     leads.map((l) => [
       l.name,
       l.email,
       l.phone,
       l.retreat?.title ?? "",
+      l.groupSize ?? "",
       l.message,
       l.createdAt.toISOString(),
     ])
