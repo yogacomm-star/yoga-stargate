@@ -167,7 +167,17 @@ export async function POST(request: Request) {
     },
   });
 
-  void runImport(course.id, folderId, parsed.data.price ?? null);
+  // Su Cloudflare Workers l'esecuzione si può interrompere subito dopo la risposta HTTP
+  // (a differenza di un processo Node persistente come Render): waitUntil dice al runtime
+  // di tenere in vita l'importazione finché non finisce. Se non giriamo su Workers (dev
+  // locale, Render), getCloudflareContext() lancia e si ricade sul semplice fire-and-forget.
+  const importPromise = runImport(course.id, folderId, parsed.data.price ?? null);
+  try {
+    const { getCloudflareContext } = await import("@opennextjs/cloudflare");
+    getCloudflareContext().ctx.waitUntil(importPromise);
+  } catch {
+    void importPromise;
+  }
 
   return NextResponse.json({ ok: true, id: course.id });
 }
