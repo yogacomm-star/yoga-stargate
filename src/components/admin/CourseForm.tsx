@@ -25,7 +25,7 @@ export type CourseFormData = {
   lessons: Lesson[];
 };
 
-export default function CourseForm({ initial }: { initial?: CourseFormData }) {
+export default function CourseForm({ initial, categories = [] }: { initial?: CourseFormData; categories?: string[] }) {
   const router = useRouter();
   const isEdit = !!initial?.id;
   const [form, setForm] = useState<CourseFormData>(
@@ -160,10 +160,16 @@ export default function CourseForm({ initial }: { initial?: CourseFormData }) {
           <input
             id="course-category"
             required
+            list="course-categories"
             value={form.category}
             onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
             className={inputClass}
           />
+          <datalist id="course-categories">
+            {categories.map((c) => (
+              <option key={c} value={c} />
+            ))}
+          </datalist>
         </div>
         <div>
           <label htmlFor="course-level" className={labelClass}>Livello richiesto</label>

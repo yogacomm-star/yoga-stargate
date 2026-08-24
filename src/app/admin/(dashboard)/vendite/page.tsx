@@ -1,12 +1,13 @@
 import { prisma } from "@/lib/prisma";
-import { getYearToDateRevenue } from "@/lib/revenue";
+import { getYearToDateRevenue, getAllTimeRevenue } from "@/lib/revenue";
 import RevenueBar from "@/components/admin/RevenueBar";
 import AddSaleForm from "@/components/admin/AddSaleForm";
 import DeleteButton from "@/components/admin/DeleteButton";
 
 export default async function AdminVenditePage() {
-  const [{ total, year }, sales] = await Promise.all([
+  const [{ total, year }, allTimeTotal, sales] = await Promise.all([
     getYearToDateRevenue(),
+    getAllTimeRevenue(),
     prisma.manualSale.findMany({ orderBy: { createdAt: "desc" }, take: 100 }),
   ]);
 
@@ -22,7 +23,7 @@ export default async function AdminVenditePage() {
       <section className="max-w-xl rounded-2xl border border-border bg-card p-6">
         <h2 className="font-heading text-base font-semibold text-foreground">Fatturato {year}</h2>
         <div className="mt-4">
-          <RevenueBar total={total} year={year} />
+          <RevenueBar total={total} year={year} allTimeTotal={allTimeTotal} />
         </div>
       </section>
 

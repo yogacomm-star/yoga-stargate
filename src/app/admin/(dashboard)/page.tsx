@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Compass, GraduationCap, Newspaper, Users, Mail, MessageSquare, Star } from "lucide-react";
 import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getYearToDateRevenue } from "@/lib/revenue";
+import { getYearToDateRevenue, getAllTimeRevenue } from "@/lib/revenue";
 import ReviewModerationActions from "@/components/admin/ReviewModerationActions";
 import RevenueBar from "@/components/admin/RevenueBar";
 
@@ -22,6 +22,7 @@ export default async function AdminDashboardPage() {
     consentingTotal,
     pendingReviews,
     revenue,
+    allTimeRevenue,
   ] = await Promise.all([
     prisma.retreat.count(),
     prisma.retreat.count({ where: { status: "PUBLISHED" } }),
@@ -35,6 +36,7 @@ export default async function AdminDashboardPage() {
     prisma.account.count({ where: { role: "MEMBER", marketingConsent: true } }),
     prisma.review.count({ where: { status: "PENDING" } }),
     getYearToDateRevenue(),
+    getAllTimeRevenue(),
   ]);
 
   const levelCounts = { 1: 0, 2: 0, 3: 0 } as Record<number, number>;
@@ -77,7 +79,7 @@ export default async function AdminDashboardPage() {
       >
         <h2 className="font-heading text-sm font-semibold text-foreground">Fatturato {revenue.year}</h2>
         <div className="mt-3">
-          <RevenueBar total={revenue.total} year={revenue.year} />
+          <RevenueBar total={revenue.total} year={revenue.year} allTimeTotal={allTimeRevenue} />
         </div>
       </Link>
 

@@ -4,8 +4,12 @@ import CourseForm, { type CourseFormData } from "@/components/admin/CourseForm";
 
 export default async function EditCorsoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const course = await prisma.course.findUnique({ where: { id } });
+  const [course, categoryRows] = await Promise.all([
+    prisma.course.findUnique({ where: { id } }),
+    prisma.course.findMany({ distinct: ["category"], select: { category: true } }),
+  ]);
   if (!course) notFound();
+  const categories = categoryRows.map((r) => r.category).sort();
 
   let lessons: CourseFormData["lessons"] = [];
   try {
@@ -30,7 +34,7 @@ export default async function EditCorsoPage({ params }: { params: Promise<{ id: 
     <div>
       <h1 className="font-heading text-2xl font-semibold text-foreground">Modifica corso</h1>
       <div className="mt-6 max-w-3xl rounded-2xl border border-border bg-card p-6 sm:p-8">
-        <CourseForm initial={initial} />
+        <CourseForm initial={initial} categories={categories} />
       </div>
     </div>
   );

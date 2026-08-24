@@ -20,7 +20,7 @@ export type PostFormData = {
   featuredImage: string | null;
 };
 
-export default function PostForm({ initial }: { initial?: PostFormData }) {
+export default function PostForm({ initial, categories = [] }: { initial?: PostFormData; categories?: string[] }) {
   const router = useRouter();
   const isEdit = !!initial?.id;
   const [form, setForm] = useState<PostFormData>(
@@ -133,10 +133,16 @@ export default function PostForm({ initial }: { initial?: PostFormData }) {
           <input
             id="post-category"
             required
+            list="post-categories"
             value={form.category}
             onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
             className={inputClass}
           />
+          <datalist id="post-categories">
+            {categories.map((c) => (
+              <option key={c} value={c} />
+            ))}
+          </datalist>
         </div>
         <div>
           <label htmlFor="post-author" className={labelClass}>Autore</label>

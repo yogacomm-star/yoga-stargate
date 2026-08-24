@@ -15,3 +15,9 @@ export async function getYearToDateRevenue(): Promise<{ total: number; year: num
 
   return { total: result._sum.amount ?? 0, year };
 }
+
+// Somma di tutte le vendite registrate manualmente, senza limiti di data.
+export async function getAllTimeRevenue(): Promise<number> {
+  const result = await prisma.manualSale.aggregate({ _sum: { amount: true } });
+  return result._sum.amount ?? 0;
+}
