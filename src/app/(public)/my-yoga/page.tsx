@@ -41,7 +41,7 @@ const includes = [
   "Piccoli gruppi per un'attenzione reale a ogni persona",
   "Materiale e tappetini disponibili in sala",
   "Possibilità di lezione di prova prima di iscriversi",
-  "Percorso graduale con verifica del livello da parte di Tina",
+  "Percorso graduale con verifica del livello",
 ];
 
 export default function MyYogaPage() {

@@ -164,6 +164,15 @@ model Review {
   createdAt  DateTime     @default(now())
 }
 
+// Vendita registrata manualmente dall'admin (pagamento ricevuto di persona, bonifico, ecc.,
+// fuori dal sito): usata per calcolare il fatturato dell'anno nella dashboard.
+model ManualSale {
+  id          String   @id @default(cuid())
+  amount      Float
+  description String?
+  createdAt   DateTime @default(now())
+}
+
 // Traccia ogni file caricato su Cloudflare R2 (immagini e audio), per calcolare lo
 // spazio totale usato e poter applicare il tetto di sicurezza sul piano gratuito.
 model MediaAsset {

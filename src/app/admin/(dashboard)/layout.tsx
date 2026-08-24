@@ -10,9 +10,9 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
   if (!admin) redirect("/admin/login");
 
   return (
-    <div className="flex flex-col lg:flex-row">
+    <div className="flex flex-col lg:h-screen lg:flex-row lg:overflow-hidden">
       <AdminSidebar adminName={admin.name} />
-      <main className="min-h-screen flex-1 overflow-x-hidden p-4 sm:p-6 lg:p-8">{children}</main>
+      <main className="flex-1 overflow-x-hidden p-4 sm:p-6 lg:h-screen lg:overflow-y-auto lg:p-8">{children}</main>
       <AdminTour />
       <ChatWidget variant="admin" />
     </div>

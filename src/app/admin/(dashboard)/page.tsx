@@ -2,7 +2,9 @@ import Link from "next/link";
 import { Compass, GraduationCap, Newspaper, Users, Mail, MessageSquare, Star } from "lucide-react";
 import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getYearToDateRevenue } from "@/lib/revenue";
 import ReviewModerationActions from "@/components/admin/ReviewModerationActions";
+import RevenueBar from "@/components/admin/RevenueBar";
 
 export default async function AdminDashboardPage() {
   const admin = await requireAdmin();
@@ -19,6 +21,7 @@ export default async function AdminDashboardPage() {
     leadsTotal,
     consentingTotal,
     pendingReviews,
+    revenue,
   ] = await Promise.all([
     prisma.retreat.count(),
     prisma.retreat.count({ where: { status: "PUBLISHED" } }),
@@ -31,6 +34,7 @@ export default async function AdminDashboardPage() {
     prisma.contactLead.count(),
     prisma.account.count({ where: { role: "MEMBER", marketingConsent: true } }),
     prisma.review.count({ where: { status: "PENDING" } }),
+    getYearToDateRevenue(),
   ]);
 
   const levelCounts = { 1: 0, 2: 0, 3: 0 } as Record<number, number>;
@@ -67,7 +71,17 @@ export default async function AdminDashboardPage() {
       <h1 className="font-heading text-2xl font-semibold text-foreground">Ciao, {admin?.name}</h1>
       <p className="mt-1 text-sm text-foreground/60">Da qui puoi gestire ritiri, corsi, blog e utenti del sito.</p>
 
-      <div data-tour="admin-stats" className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <Link
+        href="/admin/vendite"
+        className="mt-6 block max-w-xl cursor-pointer rounded-2xl border border-border bg-card p-5 shadow-soft-sm transition-transform hover:-translate-y-1"
+      >
+        <h2 className="font-heading text-sm font-semibold text-foreground">Fatturato {revenue.year}</h2>
+        <div className="mt-3">
+          <RevenueBar total={revenue.total} year={revenue.year} />
+        </div>
+      </Link>
+
+      <div data-tour="admin-stats" className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {stats.map((s) => (
           <Link
             key={s.label}
