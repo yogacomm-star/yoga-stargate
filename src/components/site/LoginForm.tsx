@@ -42,7 +42,9 @@ export default function LoginForm({ adminHint = false }: { adminHint?: boolean }
         </label>
         <input
           id="login-email"
+          name="email"
           type="email"
+          autoComplete="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -55,7 +57,9 @@ export default function LoginForm({ adminHint = false }: { adminHint?: boolean }
         </label>
         <input
           id="login-password"
+          name="password"
           type="password"
+          autoComplete="current-password"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
