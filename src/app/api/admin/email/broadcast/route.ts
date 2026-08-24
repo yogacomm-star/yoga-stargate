@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
-import { sendEmail, brandedEmail, emailConfigured, escapeHtml } from "@/lib/email";
+import { sendEmail, brandedEmail, emailConfigured, messageToHtml } from "@/lib/email";
 
 const schema = z.object({
   audience: z.enum(["consenting", "members"]),
@@ -36,13 +36,7 @@ export async function POST(request: Request) {
   });
   members.forEach((m) => emails.add(m.email));
 
-  const html = brandedEmail({
-    title: subject,
-    bodyHtml: message
-      .split(/\n{2,}/)
-      .map((p) => `<p style="margin:0 0 12px;">${escapeHtml(p).replace(/\n/g, "<br/>")}</p>`)
-      .join(""),
-  });
+  const html = brandedEmail({ title: subject, bodyHtml: messageToHtml(message) });
 
   const recipients = Array.from(emails);
   let sent = 0;
