@@ -95,18 +95,20 @@ export default function RegisterForm() {
         />
         <p className="mt-1 text-xs text-foreground/50">Almeno 8 caratteri.</p>
       </div>
-      <label className="flex items-start gap-2 text-xs text-foreground/60">
+      <label className="flex items-start gap-3 text-sm text-foreground/70">
         <input
           type="checkbox"
           checked={consent}
           onChange={(e) => setConsent(e.target.checked)}
-          className="mt-0.5 cursor-pointer"
+          className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-primary"
         />
-        Accetto i{" "}
-        <Link href="/privacy" className="cursor-pointer font-semibold text-primary">
-          Termini e la Privacy Policy
-        </Link>
-        , e autorizzo Yoga Stargate a inviarmi comunicazioni via email su corsi, ritiri e novità.
+        <span className="leading-relaxed">
+          Accetto i{" "}
+          <Link href="/privacy" className="cursor-pointer font-semibold text-primary">
+            Termini e la Privacy Policy
+          </Link>
+          , e autorizzo Yoga Stargate a inviarmi comunicazioni via email su corsi, ritiri e novità.
+        </span>
       </label>
       {error && <p className="text-sm font-medium text-destructive">{error}</p>}
       <button
