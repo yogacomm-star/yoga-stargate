@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Compass, GraduationCap, Newspaper, Users, Mail, Settings, ExternalLink, Menu, X } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth";
+import Logo from "@/components/site/Logo";
 
 const items = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -31,9 +31,9 @@ export default function AdminSidebar({ adminName }: { adminName: string }) {
   const sidebarContent = (
     <>
       <div className="flex items-center justify-between border-b border-border px-6 py-5 lg:justify-start">
-        <Link href="/admin" className="flex items-center gap-2.5">
-          <Image src="/images/logo.png" alt="Yoga Stargate" width={500} height={500} className="h-12 w-12 object-contain" />
-          <span className="font-heading text-sm font-semibold text-foreground">Pannello Admin</span>
+        <Link href="/admin" className="flex items-center gap-2">
+          <Logo iconSize={40} textClassName="text-base" />
+          <span className="text-xs text-foreground/40">Admin</span>
         </Link>
         <button
           type="button"
@@ -98,8 +98,8 @@ export default function AdminSidebar({ adminName }: { adminName: string }) {
         >
           <Menu className="h-5 w-5" aria-hidden="true" />
         </button>
-        <Image src="/images/logo.png" alt="Yoga Stargate" width={500} height={500} className="h-8 w-8 object-contain" />
-        <span className="font-heading text-sm font-semibold text-foreground">Pannello Admin</span>
+        <Logo iconSize={28} textClassName="text-sm" />
+        <span className="text-xs text-foreground/40">Admin</span>
       </div>
 
       {open && (

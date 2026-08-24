@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -9,6 +8,7 @@ import { Menu, X, Search, User, ShieldCheck } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth";
 import { levelLabel } from "@/lib/levels";
 import type { NavAccount } from "@/lib/types";
+import Logo from "@/components/site/Logo";
 
 const links = [
   { href: "/", label: "Home" },
@@ -64,7 +64,7 @@ export default function Navbar({ account }: { account: NavAccount }) {
     >
       <nav className="relative z-[60] mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
         <Link href="/" className="flex items-center">
-          <Image src="/images/logo.png" alt="Yoga Stargate" width={500} height={500} className="h-14 w-14 object-contain" priority />
+          <Logo iconSize={48} textClassName="text-lg hidden sm:inline" />
         </Link>
 
         <div className="flex items-center gap-1 sm:gap-2">

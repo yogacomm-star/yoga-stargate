@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Mail, Phone, MapPin } from "lucide-react";
+import Logo from "@/components/site/Logo";
 
 function InstagramIcon() {
   return (
@@ -48,7 +48,7 @@ export default function Footer() {
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
           <div>
             <Link href="/" className="flex items-center">
-              <Image src="/images/logo.png" alt="Yoga Stargate" width={500} height={500} className="h-16 w-16 object-contain" />
+              <Logo iconSize={52} textClassName="text-xl" />
             </Link>
             <p className="mt-3 max-w-sm text-sm text-foreground/70">
               Yoga multidimensionale per il risveglio interiore, con Tina Mastandrea. Milano e non solo.
