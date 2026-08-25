@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Lock, Sparkle } from "lucide-react";
 import { canAccess, levelLabel } from "@/lib/levels";
+import BuyCourseButton from "@/components/site/BuyCourseButton";
 
 export function LevelBadge({ requiredLevel }: { requiredLevel: number | null }) {
   if (requiredLevel == null) {
@@ -34,18 +35,32 @@ export function LevelGate({
   return <>{fallback}</>;
 }
 
-export function PurchaseLockedNotice({ price }: { price: number }) {
+export function PurchaseLockedNotice({
+  courseId,
+  price,
+  loggedIn,
+}: {
+  courseId: string;
+  price: number;
+  loggedIn: boolean;
+}) {
   return (
     <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-muted/60 px-6 py-10 text-center">
       <Lock className="h-8 w-8 text-primary" aria-hidden="true" />
       <p className="font-heading text-lg font-semibold text-foreground">Contenuto a pagamento — {price.toFixed(2)}€</p>
-      <p className="max-w-sm text-sm text-foreground/70">
-        L&apos;acquisto online sarà presto disponibile direttamente qui. Nel frattempo scrivici per accedere a questo
-        corso.
-      </p>
-      <a href="/contatti" className="mt-1 cursor-pointer rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground">
-        Contattaci
-      </a>
+      {loggedIn ? (
+        <>
+          <p className="max-w-sm text-sm text-foreground/70">Sblocca questo corso con un pagamento sicuro tramite Stripe.</p>
+          <BuyCourseButton courseId={courseId} />
+        </>
+      ) : (
+        <>
+          <p className="max-w-sm text-sm text-foreground/70">Accedi o registrati per acquistare questo corso.</p>
+          <a href="/login" className="mt-1 cursor-pointer rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground">
+            Accedi
+          </a>
+        </>
+      )}
     </div>
   );
 }

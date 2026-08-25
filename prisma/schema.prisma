@@ -50,6 +50,7 @@ model Account {
   courseProgresses    CourseProgress[]
   reviews             Review[]
   passwordResetTokens PasswordResetToken[]
+  coursePurchases     CoursePurchase[]
 }
 
 model PasswordResetToken {
@@ -162,6 +163,20 @@ model Review {
   comment    String
   status     ReviewStatus @default(PENDING)
   createdAt  DateTime     @default(now())
+}
+
+// Acquisto di un corso a pagamento via Stripe Checkout: sblocca l'accesso all'account che
+// l'ha effettuato. Una riga per acquisto riuscito (creata dal webhook Stripe).
+model CoursePurchase {
+  id                    String   @id @default(cuid())
+  accountId             String
+  account               Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  courseId              String
+  amount                Float
+  stripeCheckoutSession String   @unique
+  createdAt             DateTime @default(now())
+
+  @@unique([accountId, courseId])
 }
 
 // Vendita registrata manualmente dall'admin (pagamento ricevuto di persona, bonifico, ecc.,

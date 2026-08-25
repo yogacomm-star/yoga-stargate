@@ -26,6 +26,7 @@
     "react-easy-crop": "^6.2.3",
     "react-markdown": "^10.1.0",
     "resend": "^6.21.0",
+    "stripe": "^18.5.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

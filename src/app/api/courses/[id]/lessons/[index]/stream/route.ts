@@ -28,10 +28,13 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   if (!account) return NextResponse.json({ error: "Non autorizzato." }, { status: 401 });
 
   if (course.price) {
-    // Corso a pagamento: finché l'acquisto tramite Stripe non è attivo, l'audio
-    // privato è riproducibile solo dall'account admin (per verifica/anteprima).
     if (account.role !== "ADMIN") {
-      return NextResponse.json({ error: "Questo corso richiede l'acquisto per essere ascoltato." }, { status: 403 });
+      const purchase = await prisma.coursePurchase.findUnique({
+        where: { accountId_courseId: { accountId: account.id, courseId: course.id } },
+      });
+      if (!purchase) {
+        return NextResponse.json({ error: "Questo corso richiede l'acquisto per essere ascoltato." }, { status: 403 });
+      }
     }
   } else if (!canAccess(course.requiredLevel, account.level)) {
     return NextResponse.json({ error: "Non hai accesso a questo corso." }, { status: 403 });

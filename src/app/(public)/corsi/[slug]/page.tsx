@@ -11,6 +11,7 @@ import CourseProgressToggle from "@/components/site/CourseProgressToggle";
 import FavoriteButton from "@/components/site/FavoriteButton";
 import ReviewsSection from "@/components/site/ReviewsSection";
 import { isAllowedEmbedUrl } from "@/lib/embed";
+import { getStripe } from "@/lib/stripe";
 
 type Lesson = { title: string; videoUrl: string; content: string; audioUrl?: string; audioKey?: string };
 
@@ -33,16 +34,57 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return { title: course.title, description: course.excerpt };
 }
 
-export default async function CourseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function CourseDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ session_id?: string }>;
+}) {
   const { slug } = await params;
   const course = await getCourse(slug);
   if (!course || course.status !== "PUBLISHED") notFound();
 
   const account = await getCurrentAccount();
   const isPaid = !!course.price;
-  // Finché l'acquisto tramite Stripe non è attivo, un corso a pagamento è sbloccato
-  // solo per l'admin (anteprima/verifica): nessun visitatore può accedervi gratis.
-  const unlocked = isPaid ? account?.role === "ADMIN" : canAccess(course.requiredLevel, account?.level);
+
+  let purchased = false;
+  if (isPaid && account) {
+    const existing = await prisma.coursePurchase.findUnique({
+      where: { accountId_courseId: { accountId: account.id, courseId: course.id } },
+    });
+    purchased = !!existing;
+
+    // Ritorno da Stripe Checkout: il webhook potrebbe non essere ancora arrivato, quindi
+    // verifichiamo subito la sessione per sbloccare senza far aspettare l'utente.
+    const { session_id: sessionId } = await searchParams;
+    if (!purchased && sessionId) {
+      try {
+        const checkoutSession = await getStripe().checkout.sessions.retrieve(sessionId);
+        if (
+          checkoutSession.payment_status === "paid" &&
+          checkoutSession.metadata?.courseId === course.id &&
+          checkoutSession.metadata?.accountId === account.id
+        ) {
+          await prisma.coursePurchase.upsert({
+            where: { stripeCheckoutSession: checkoutSession.id },
+            create: {
+              accountId: account.id,
+              courseId: course.id,
+              amount: (checkoutSession.amount_total ?? 0) / 100,
+              stripeCheckoutSession: checkoutSession.id,
+            },
+            update: {},
+          });
+          purchased = true;
+        }
+      } catch {
+        // sessione non valida/scaduta: resta bloccato, il webhook farà comunque il suo corso se il pagamento è andato a buon fine.
+      }
+    }
+  }
+
+  const unlocked = isPaid ? account?.role === "ADMIN" || purchased : canAccess(course.requiredLevel, account?.level);
   const lessons = parseLessons(course.lessons);
 
   let completed = false;
@@ -84,7 +126,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
       <section className="mx-auto max-w-3xl px-4 pt-10 pb-20 sm:px-6">
         {!unlocked ? (
           isPaid ? (
-            <PurchaseLockedNotice price={course.price as number} />
+            <PurchaseLockedNotice courseId={course.id} price={course.price as number} loggedIn={!!account} />
           ) : (
             <LevelLockedNotice requiredLevel={course.requiredLevel as number} loggedIn={!!account} />
           )
