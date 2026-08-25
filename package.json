@@ -7,7 +7,7 @@
     "dev": "next dev",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate && node scripts/fetch-libsql-linux.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1116.0",

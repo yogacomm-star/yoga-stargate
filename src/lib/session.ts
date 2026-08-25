@@ -1,12 +1,5 @@
 import { cookies } from "next/headers";
 
-if (process.env.NODE_ENV === "production" && !process.env.SESSION_SECRET) {
-  throw new Error(
-    "SESSION_SECRET non configurato: impostalo nelle variabili d'ambiente prima di avviare in produzione."
-  );
-}
-
-const SECRET = process.env.SESSION_SECRET || "dev-insecure-secret-change-me";
 export const SESSION_COOKIE = "ys_session";
 const MAX_AGE_SECONDS = 60 * 60 * 24 * 30; // 30 giorni
 
@@ -20,8 +13,19 @@ export type SessionPayload = {
 // del middleware): funziona in modo identico su Node, edge e Cloudflare Workers.
 const encoder = new TextEncoder();
 
+// Il controllo va fatto qui dentro (non a livello di modulo): alcuni bundler eseguono il
+// modulo a build-time, prima che le variabili d'ambiente della piattaforma siano disponibili.
+function getSecret(): string {
+  if (process.env.NODE_ENV === "production" && !process.env.SESSION_SECRET) {
+    throw new Error(
+      "SESSION_SECRET non configurato: impostalo nelle variabili d'ambiente prima di avviare in produzione."
+    );
+  }
+  return process.env.SESSION_SECRET || "dev-insecure-secret-change-me";
+}
+
 function getKey(): Promise<CryptoKey> {
-  return crypto.subtle.importKey("raw", encoder.encode(SECRET), { name: "HMAC", hash: "SHA-256" }, false, [
+  return crypto.subtle.importKey("raw", encoder.encode(getSecret()), { name: "HMAC", hash: "SHA-256" }, false, [
     "sign",
     "verify",
   ]);
