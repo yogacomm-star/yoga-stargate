@@ -1,10 +1,9 @@
-# Mettere online Yoga Stargate (gratis, tutto su Cloudflare)
+# Mettere online Yoga Stargate (gratis)
 
-Schema: **Cloudflare Workers** fa girare il sito (due Worker separati: sito pubblico e
-pannello admin, per stare sotto il limite di dimensione del piano gratuito), **Turso**
-conserva i dati, **Cloudflare R2** ospita immagini e audio, **Cloudflare** gestisce anche
-il dominio. Nessuna carta di credito richiesta in nessuno dei passaggi (il piano gratuito
-di R2 non richiede carta; Workers/DNS nemmeno).
+Schema: **Netlify** fa girare il sito (identico a "npm run dev" ma sempre acceso, senza
+limiti artificiali di dimensione del bundle), **Turso** conserva i dati, **Cloudflare R2**
+ospita immagini e audio, **Cloudflare** gestisce il dominio (solo DNS). Nessuna carta di
+credito richiesta in nessuno dei passaggi.
 
 ## 1. Database — Turso
 
@@ -41,6 +40,7 @@ di R2 non richiede carta; Workers/DNS nemmeno).
 Immagini (copertine ritiri/corsi/blog) e audio delle lezioni vivono su due bucket R2:
 uno pubblico (`yoga-stargate-media`) e uno privato senza accesso diretto
 (`yoga-stargate-media-private`, per l'audio dei corsi a pagamento — vedi `src/lib/r2.ts`).
+R2 è indipendente dall'hosting: resta lo stesso qualunque piattaforma esegua il sito.
 
 1. Nella dashboard Cloudflare: **R2 > Crea bucket**, crealo due volte con questi nomi
    (o nomi a tua scelta, purché poi coincidano con `R2_BUCKET_NAME`/`R2_PRIVATE_BUCKET_NAME`):
@@ -55,96 +55,78 @@ uno pubblico (`yoga-stargate-media`) e uno privato senza accesso diretto
 4. `R2_ACCOUNT_ID` è l'ID account Cloudflare, visibile nella barra laterale destra della
    dashboard (o nell'URL `dash.cloudflare.com/<account-id>/...`).
 
-## 3. Hosting — Cloudflare Workers
+## 3. Hosting — Netlify
 
-Il bundle di tutta l'app supera il limite di 3 MiB (compresso) del piano Workers gratuito,
-quindi si compila e si deploya come **due Worker separati** dallo stesso codice: uno con solo
-le pagine pubbliche (`yoga-stargate-public`), uno con solo il pannello admin
-(`yoga-stargate-admin`). Lo fa `scripts/build-split.mjs`, richiamato dagli script npm sotto —
-non serve lanciarlo a mano.
-
-1. Crea un account su https://cloudflare.com (gratis, senza carta) se non l'hai già.
-2. Login da terminale, nella cartella del progetto:
+1. Crea un account su https://netlify.com (gratis, senza carta, si può accedere anche con GitHub).
+2. Login da terminale, nella cartella del progetto (apre il browser per l'autorizzazione):
    ```
-   npx wrangler login
+   npx netlify-cli login
    ```
-3. Imposta i segreti (variabili d'ambiente lette a runtime dal Worker) **su entrambi** i Worker
-   — servono su tutti e due perché condividono buona parte del codice server (`src/lib/*`):
+3. Collega la cartella del progetto a un progetto Netlify (una volta sola):
    ```
-   for cfg in wrangler.public.toml wrangler.admin.toml; do
-     npx wrangler secret put TURSO_DATABASE_URL --config $cfg
-     npx wrangler secret put TURSO_AUTH_TOKEN --config $cfg
-     npx wrangler secret put SESSION_SECRET --config $cfg
-     npx wrangler secret put ADMIN_EMAIL --config $cfg
-     npx wrangler secret put ADMIN_PASSWORD --config $cfg
-     npx wrangler secret put RESEND_API_KEY --config $cfg
-     npx wrangler secret put EMAIL_FROM --config $cfg
-     npx wrangler secret put GROQ_API_KEY --config $cfg
-     npx wrangler secret put GOOGLE_CLIENT_ID --config $cfg
-     npx wrangler secret put GOOGLE_CLIENT_SECRET --config $cfg
-     npx wrangler secret put GOOGLE_DRIVE_API_KEY --config $cfg
-     npx wrangler secret put R2_ACCOUNT_ID --config $cfg
-     npx wrangler secret put R2_ACCESS_KEY_ID --config $cfg
-     npx wrangler secret put R2_SECRET_ACCESS_KEY --config $cfg
-     npx wrangler secret put R2_PUBLIC_URL --config $cfg
-   done
+   npx netlify-cli sites:create --name yoga-stargate
    ```
-   Ogni comando chiede il valore da terminale (non resta nella history della shell).
+   (se il nome è già preso, Netlify te ne propone uno alternativo). Il comando collega
+   automaticamente il progetto alla cartella corrente.
+4. Imposta le variabili d'ambiente (lette a runtime dal sito):
+   ```
+   npx netlify-cli env:set TURSO_DATABASE_URL "<dal passo 1.4>"
+   npx netlify-cli env:set TURSO_AUTH_TOKEN "<dal passo 1.4>"
+   npx netlify-cli env:set SESSION_SECRET "<stringa lunga e casuale, es. openssl rand -base64 32>"
+   npx netlify-cli env:set NEXT_PUBLIC_SITE_URL "https://yoga-stargate.netlify.app"
+   npx netlify-cli env:set ADMIN_EMAIL "<email admin>"
+   npx netlify-cli env:set ADMIN_PASSWORD "<password admin>"
+   npx netlify-cli env:set RESEND_API_KEY "<dal tuo account Resend>"
+   npx netlify-cli env:set EMAIL_FROM "<mittente email>"
+   npx netlify-cli env:set GROQ_API_KEY "<dal tuo account Groq>"
+   npx netlify-cli env:set GOOGLE_CLIENT_ID "<da Google Cloud Console>"
+   npx netlify-cli env:set GOOGLE_CLIENT_SECRET "<da Google Cloud Console>"
+   npx netlify-cli env:set GOOGLE_DRIVE_API_KEY "<da Google Cloud Console>"
+   npx netlify-cli env:set R2_ACCOUNT_ID "<dal passo 2.4>"
+   npx netlify-cli env:set R2_ACCESS_KEY_ID "<dal passo 2.3>"
+   npx netlify-cli env:set R2_SECRET_ACCESS_KEY "<dal passo 2.3>"
+   npx netlify-cli env:set R2_PUBLIC_URL "<dal passo 2.2>"
+   ```
+   `NEXT_PUBLIC_SITE_URL` va aggiornata al passo 4.4 col dominio definitivo.
    `R2_BUCKET_NAME`/`R2_PRIVATE_BUCKET_NAME` sono facoltativi: se li salti, il codice usa
    di default `yoga-stargate-media`/`yoga-stargate-media-private` (vedi passo 2).
-
-   `NEXT_PUBLIC_SITE_URL` **non** va messa qui: è una variabile pubblica che Next.js incorpora
-   nel codice JavaScript durante la compilazione, non letta a runtime — va impostata nella shell
-   prima di ogni build (passo 4), con lo **stesso valore** (`https://www.yogastargate.com`) sia
-   per la build pubblica che per quella admin, perché entrambe la usano per generare link assoluti
-   verso il sito pubblico (reset password, redirect OAuth Google, sitemap...).
-
-4. Compila e pubblica ciascun Worker (uno alla volta: le due build usano la stessa cartella
-   `.open-next` e non possono coesistere sul disco):
+5. Avvia il deploy:
    ```
-   export NEXT_PUBLIC_SITE_URL="https://www.yogastargate.com"
-   npm run cf:deploy:public
-   npm run cf:deploy:admin
+   npx netlify-cli deploy --build --prod
    ```
-   Ogni comando compila (`opennextjs-cloudflare build`) e pubblica (`wrangler deploy`) con la
-   rispettiva configurazione (`wrangler.public.toml` / `wrangler.admin.toml`).
-5. Al termine avrai due indirizzi tipo `https://yoga-stargate-public.<tuo-account>.workers.dev`
-   e `https://yoga-stargate-admin.<tuo-account>.workers.dev`, già funzionanti: utilizzabili da
-   subito, anche prima di collegare un dominio.
+   Compila il sito (`next build`, con `@netlify/plugin-nextjs` che adatta l'output al
+   runtime Netlify) e lo pubblica. Al termine avrai un indirizzo tipo
+   `https://yoga-stargate.netlify.app` già funzionante.
 
-Nota dimensione bundle: al momento della stesura di questa guida entrambe le build stanno
-appena sotto il limite gratuito di 3 MiB compressi (circa il 96-98% del limite). Se il sito
-cresce (nuove dipendenze, nuove pagine) e una build supera il limite, `npm run cf:deploy:*`
-fallisce con un errore chiaro di `wrangler` sulla dimensione — a quel punto va ridotta una
-dipendenza pesante o passato al piano Workers a pagamento.
+Nota: a differenza del piano gratuito di Render, le funzioni Netlify non "si addormentano"
+dopo un periodo di inattività — nessuna attesa sulla prima richiesta del giorno.
 
 ## 4. Dominio — Cloudflare
 
-Il pannello admin vive su un sottodominio separato dal sito pubblico
-(`admin.yogastargate.com`), così i due Worker non si contendono gli stessi file statici
-(`_next/*`) sullo stesso host. `wrangler.public.toml` e `wrangler.admin.toml` dichiarano già
-i domini da collegare.
+Se vuoi un dominio tuo (es. `yogastargate.com`) invece del `.netlify.app`:
 
-1. Se il dominio non è ancora su Cloudflare: registralo (su Cloudflare Registrar o altrove) e
-   aggiungilo come zona DNS al tuo account Cloudflare.
-2. Rilancia `npm run cf:deploy:public` e `npm run cf:deploy:admin` (passo 3.4): `wrangler`
-   legge i blocchi `routes` con `custom_domain = true` nei due file `wrangler.*.toml` e crea
-   automaticamente i record DNS e i certificati SSL per:
-   - `yogastargate.com` e `www.yogastargate.com` → Worker pubblico
-   - `admin.yogastargate.com` → Worker admin
-3. Il pannello admin resta comunque sotto il percorso `/admin` anche sul sottodominio
-   (es. `admin.yogastargate.com/admin`): la form di login reindirizza automaticamente chi
-   visita una pagina protetta senza sessione.
-4. `NEXT_PUBLIC_SITE_URL` (passo 3.3) deve restare il dominio pubblico
-   (`https://www.yogastargate.com`) anche per la build admin — non `admin.yogastargate.com`.
+1. Registra il dominio (su Cloudflare Registrar o altrove) e aggiungilo al tuo account
+   Cloudflare come zona DNS, se non l'hai già fatto.
+2. Su Netlify: **Site configuration > Domain management > Add a domain**, inserisci il tuo
+   dominio (sia `yogastargate.com` che `www.yogastargate.com`). Netlify mostra i record DNS
+   da creare (in genere un `CNAME` verso `<nome-progetto>.netlify.app` per `www`, e un record
+   `A`/`ALIAS` per l'apex `yogastargate.com`).
+3. Su Cloudflare, nella sezione DNS della tua zona, crea quei record con i valori indicati da
+   Netlify. Lascia il proxy Cloudflare (nuvoletta arancione) attivo se vuoi anche la
+   protezione/CDN gratuita di Cloudflare.
+4. Aggiorna `NEXT_PUBLIC_SITE_URL` su Netlify col dominio definitivo e rilancia il deploy:
+   ```
+   npx netlify-cli env:set NEXT_PUBLIC_SITE_URL "https://www.yogastargate.com"
+   npx netlify-cli deploy --build --prod
+   ```
+
+Il pannello admin resta sotto `/admin` sullo stesso dominio del sito pubblico (es.
+`yogastargate.com/admin`) — non serve un sottodominio separato: Netlify non ha il limite di
+dimensione del bundle che su Cloudflare Workers costringeva a dividere la build in due.
 
 ## File di questo progetto legati al deploy
 
-- `wrangler.public.toml` / `wrangler.admin.toml` — configurazione dei due Worker (build,
-  domini personalizzati, binding degli asset statici).
-- `scripts/build-split.mjs` — compila due Worker separati dallo stesso `src/app` spostando
-  temporaneamente le cartelle non pertinenti prima della build.
-- `open-next.config.ts` — configurazione dell'adapter `@opennextjs/cloudflare`.
+- `netlify.toml` — configurazione del build Netlify (comando, plugin Next.js).
 - `src/lib/prisma.ts` — si collega automaticamente a Turso in produzione (quando
   `TURSO_DATABASE_URL` è impostata) e al file locale in sviluppo: nessun'altra modifica
   al codice è necessaria.

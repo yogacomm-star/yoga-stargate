@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth";
@@ -167,17 +167,10 @@ export async function POST(request: Request) {
     },
   });
 
-  // Su Cloudflare Workers l'esecuzione si può interrompere subito dopo la risposta HTTP
-  // (a differenza di un processo Node persistente come Render): waitUntil dice al runtime
-  // di tenere in vita l'importazione finché non finisce. Se non giriamo su Workers (dev
-  // locale, Render), getCloudflareContext() lancia e si ricade sul semplice fire-and-forget.
-  const importPromise = runImport(course.id, folderId, parsed.data.price ?? null);
-  try {
-    const { getCloudflareContext } = await import("@opennextjs/cloudflare");
-    getCloudflareContext().ctx.waitUntil(importPromise);
-  } catch {
-    void importPromise;
-  }
+  // Su piattaforme serverless (Netlify) l'esecuzione può interrompersi subito dopo la
+  // risposta HTTP: after() dice al runtime di tenere in vita l'importazione finché non
+  // finisce, invece del fire-and-forget che basterebbe su un processo Node persistente.
+  after(runImport(course.id, folderId, parsed.data.price ?? null));
 
   return NextResponse.json({ ok: true, id: course.id });
 }

@@ -7,11 +7,7 @@
     "dev": "next dev",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma generate",
-    "cf:build:public": "node scripts/build-split.mjs public",
-    "cf:build:admin": "node scripts/build-split.mjs admin",
-    "cf:deploy:public": "npm run cf:build:public && wrangler deploy --config wrangler.public.toml",
-    "cf:deploy:admin": "npm run cf:build:admin && wrangler deploy --config wrangler.admin.toml"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1116.0",
@@ -33,7 +29,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@opennextjs/cloudflare": "^1.20.2",
+    "@netlify/plugin-nextjs": "^5.15.13",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
@@ -43,7 +39,6 @@
     "eslint-config-next": "16.3.2",
     "tailwindcss": "^4",
     "tsx": "^4.23.12",
-    "typescript": "^5",
-    "wrangler": "^4.125.0"
+    "typescript": "^5"
   }
 }

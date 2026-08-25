@@ -37,10 +37,6 @@ const nextConfig: NextConfig = {
   // next/image le blocca finché l'host non è esplicitamente autorizzato qui.
   images: {
     remotePatterns: [{ protocol: "https", hostname: "*.r2.dev" }],
-    // Cloudflare Workers non esegue l'ottimizzatore immagini di Next (basato su sharp,
-    // un binding nativo non supportato sul runtime Workers). Le immagini vengono già
-    // ridimensionate/ritagliate lato admin prima del caricamento su R2.
-    unoptimized: true,
   },
   async headers() {
     return [
