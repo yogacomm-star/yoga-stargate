@@ -5,8 +5,10 @@ import { getStripe } from "@/lib/stripe";
 
 export async function POST(request: Request) {
   const signature = request.headers.get("stripe-signature");
+  if (!signature) return NextResponse.json({ error: "Firma mancante." }, { status: 400 });
+
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
-  if (!signature || !secret) return NextResponse.json({ error: "Webhook non configurato." }, { status: 500 });
+  if (!secret) return NextResponse.json({ error: "Webhook non configurato." }, { status: 500 });
 
   const body = await request.text();
 
