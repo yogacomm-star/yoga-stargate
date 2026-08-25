@@ -1,7 +1,11 @@
-name = "yoga-stargate"
+name = "yoga-stargate-admin"
 main = ".open-next/worker.js"
 compatibility_date = "2026-08-24"
 compatibility_flags = ["nodejs_compat"]
+
+routes = [
+  { pattern = "admin.yogastargate.com", custom_domain = true },
+]
 
 [assets]
 directory = ".open-next/assets"

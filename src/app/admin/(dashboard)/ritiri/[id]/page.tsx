@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import RetreatForm, { type RetreatFormData } from "@/components/admin/RetreatForm";
-import BannerGenerator from "@/components/admin/BannerGenerator";
 
 function toDateInput(d: Date | null): string {
   if (!d) return "";
@@ -48,7 +47,6 @@ export default async function EditRitiroPage({ params }: { params: Promise<{ id:
         <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
           <RetreatForm initial={initial} />
         </div>
-        <BannerGenerator retreatId={retreat.id} />
       </div>
     </div>
   );

@@ -48,6 +48,9 @@ next-env.d.ts
 
 # OpenNext
 .open-next
+.open-next-public
+.open-next-admin
+.build-split-holding
 
 # wrangler files
 .wrangler
