@@ -1,17 +1,22 @@
-// L'indirizzo di ritorno per Google deve corrispondere esattamente a dove l'utente sta
-// davvero navigando (es. il dominio temporaneo *.netlify.app finché non è collegato quello
-// definitivo): usiamo sempre l'origin della richiesta in corso, mai un dominio fisso, così
-// il login funziona su qualunque indirizzo il sito sia effettivamente raggiungibile.
 export function googleAuthConfigured(): boolean {
   return !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET;
 }
 
-export function publicOrigin(requestOrigin: string): string {
-  return requestOrigin;
+// L'indirizzo di ritorno per Google deve corrispondere esattamente a dove l'utente sta
+// davvero navigando (es. il dominio temporaneo *.netlify.app finché non è collegato quello
+// definitivo). new URL(request.url).origin non basta: dietro il proxy di Netlify riflette
+// un URL di deploy interno che cambia ad ogni pubblicazione, non il dominio pubblico stabile
+// — bisogna leggere l'host dagli header standard che il proxy inoltra dalla richiesta reale.
+export function publicOrigin(request: Request): string {
+  const headers = request.headers;
+  const host = headers.get("x-forwarded-host") || headers.get("host");
+  const proto = headers.get("x-forwarded-proto") || "https";
+  if (host) return `${proto}://${host}`;
+  return new URL(request.url).origin;
 }
 
 export function googleRedirectUri(origin: string): string {
-  return `${publicOrigin(origin)}/api/auth/google/callback`;
+  return `${origin}/api/auth/google/callback`;
 }
 
 export function buildGoogleAuthUrl(origin: string, state: string): string {

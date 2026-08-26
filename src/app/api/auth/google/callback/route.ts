@@ -8,7 +8,7 @@ const STATE_COOKIE = "ys_google_state";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const origin = publicOrigin(url.origin);
+  const origin = publicOrigin(request);
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
 
@@ -32,7 +32,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const tokens = await exchangeGoogleCode(code, url.origin);
+    const tokens = await exchangeGoogleCode(code, origin);
     const profile = await fetchGoogleProfile(tokens.access_token);
 
     if (!profile.email) throw new Error("Email mancante nel profilo Google.");
