@@ -6,7 +6,7 @@ export default function RootLoading() {
         muted
         loop
         playsInline
-        className="h-40 w-40 object-contain sm:h-56 sm:w-56"
+        className="h-40 w-40 object-cover sm:h-56 sm:w-56"
       >
         <source src="/stargate-loading.mp4" type="video/mp4" />
       </video>
