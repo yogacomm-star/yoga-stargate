@@ -5,6 +5,7 @@ export default function GoogleLoginButton({ from }: { from?: "admin" }) {
   return (
     <Link
       href={href}
+      prefetch={false}
       className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-border bg-card px-6 py-2.5 text-sm font-semibold text-foreground transition-colors hover:border-primary"
     >
       <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
