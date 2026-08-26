@@ -1,14 +1,13 @@
-import { SITE_URL } from "@/lib/site";
-
+// L'indirizzo di ritorno per Google deve corrispondere esattamente a dove l'utente sta
+// davvero navigando (es. il dominio temporaneo *.netlify.app finché non è collegato quello
+// definitivo): usiamo sempre l'origin della richiesta in corso, mai un dominio fisso, così
+// il login funziona su qualunque indirizzo il sito sia effettivamente raggiungibile.
 export function googleAuthConfigured(): boolean {
   return !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET;
 }
 
-// In produzione l'origin della richiesta può non corrispondere all'indirizzo pubblico
-// (es. dietro il proxy di Render vede l'host interno): usiamo sempre SITE_URL.
-// In sviluppo usiamo l'origin della richiesta corrente (es. http://localhost:3000).
 export function publicOrigin(requestOrigin: string): string {
-  return process.env.NODE_ENV === "production" ? SITE_URL : requestOrigin;
+  return requestOrigin;
 }
 
 export function googleRedirectUri(origin: string): string {
