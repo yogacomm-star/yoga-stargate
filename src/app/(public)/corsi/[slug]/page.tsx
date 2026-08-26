@@ -110,7 +110,7 @@ export default async function CourseDetailPage({
           <h1 className="mt-2 font-heading text-3xl font-semibold text-foreground sm:text-4xl">{course.title}</h1>
           <p className="mt-4 text-foreground/70">{course.excerpt}</p>
           <div className="mt-4 flex justify-center">
-            <LevelBadge requiredLevel={course.requiredLevel} />
+            <LevelBadge requiredLevel={course.requiredLevel} price={course.price} />
           </div>
         </div>
       </section>

@@ -46,6 +46,7 @@ export default async function PreferitiPage() {
       category: c.category,
       excerpt: c.excerpt,
       requiredLevel: c.requiredLevel,
+      price: c.price,
       lessonCount: count,
       image: c.coverImage,
     };

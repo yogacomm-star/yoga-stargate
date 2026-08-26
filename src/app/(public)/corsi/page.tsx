@@ -33,6 +33,7 @@ export default async function CorsiPage() {
     category: c.category,
     excerpt: c.excerpt,
     requiredLevel: c.requiredLevel,
+    price: c.price,
     lessonCount: countLessons(c.lessons),
     image: c.coverImage,
   }));

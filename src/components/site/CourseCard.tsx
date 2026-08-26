@@ -12,6 +12,7 @@ export type CourseCardData = {
   category: string;
   excerpt: string;
   requiredLevel: number | null;
+  price?: number | null;
   lessonCount: number;
   image?: string | null;
 };
@@ -39,7 +40,7 @@ export default function CourseCard({ course }: { course: CourseCardData }) {
         </div>
         <div className="p-5">
           <div className="mb-2 flex items-center justify-between gap-2">
-            <LevelBadge requiredLevel={course.requiredLevel} />
+            <LevelBadge requiredLevel={course.requiredLevel} price={course.price} />
             <span className="text-xs font-medium text-foreground/60">
               {course.lessonCount} {course.lessonCount === 1 ? "lezione" : "lezioni"}
             </span>

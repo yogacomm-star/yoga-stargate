@@ -3,7 +3,17 @@ import { Lock, Sparkle } from "lucide-react";
 import { canAccess, levelLabel } from "@/lib/levels";
 import BuyCourseButton from "@/components/site/BuyCourseButton";
 
-export function LevelBadge({ requiredLevel }: { requiredLevel: number | null }) {
+export function LevelBadge({ requiredLevel, price }: { requiredLevel: number | null; price?: number | null }) {
+  // Un corso a pagamento non è mai "aperto a tutti" (serve l'acquisto), indipendentemente
+  // dal livello richiesto: evita di mostrare un badge "gratuito" su un contenuto a pagamento.
+  if (price) {
+    return (
+      <span className="badge-level">
+        <Lock className="h-3 w-3" aria-hidden="true" />
+        Corso a pagamento
+      </span>
+    );
+  }
   if (requiredLevel == null) {
     return (
       <span className="badge-level badge-open">

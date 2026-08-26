@@ -67,6 +67,7 @@ export default async function CercaPage({ searchParams }: { searchParams: Promis
       category: c.category,
       excerpt: c.excerpt,
       requiredLevel: c.requiredLevel,
+      price: c.price,
       lessonCount: count,
       image: c.coverImage,
     };
