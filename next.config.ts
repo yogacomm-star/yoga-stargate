@@ -11,7 +11,9 @@ const csp = [
   // 'unsafe-eval' serve solo in sviluppo (Fast Refresh/Turbopack); in produzione React non usa mai eval().
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://*.r2.dev",
+  // yoga-stargate.netlify.app in più a 'self': l'anteprima email carica sempre il logo da lì
+  // (vedi EMAIL_ASSET_BASE) anche quando il pannello admin gira sul dominio personalizzato.
+  "img-src 'self' data: blob: https://*.r2.dev https://yoga-stargate.netlify.app",
   "media-src 'self' https://*.r2.dev https://*.r2.cloudflarestorage.com",
   "font-src 'self' data:",
   "connect-src 'self' https://*.r2.dev https://*.r2.cloudflarestorage.com",

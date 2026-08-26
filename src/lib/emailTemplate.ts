@@ -1,4 +1,4 @@
-import { SITE_URL } from "@/lib/site";
+import { SITE_URL, EMAIL_ASSET_BASE } from "@/lib/site";
 
 // Modulo senza dipendenze server-only (niente Resend/Node): può essere importato sia
 // dal server (invio reale) sia dal client (anteprima dal vivo nel form di broadcast),
@@ -53,7 +53,7 @@ export function brandedEmail({
               <tr>
                 <td style="background:linear-gradient(135deg,#0c4a6e,#0284c7);padding:36px 32px;text-align:center;">
                   <img
-                    src="${SITE_URL}/logo-icon.png"
+                    src="${EMAIL_ASSET_BASE}/logo-icon.png"
                     width="52"
                     height="52"
                     alt="Yoga Stargate"
