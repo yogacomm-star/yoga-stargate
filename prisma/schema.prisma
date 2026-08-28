@@ -40,6 +40,7 @@ model Account {
   phone            String?
   name             String
   role             Role     @default(MEMBER)
+  isOwner          Boolean  @default(false) // account del titolare del sito: unico a poter bloccare/sbloccare il sito da /admin
   level            Int      @default(1) // 1=Base, 2=Intermedio, 3=Avanzato (rilevante solo per MEMBER)
   avatar           String?
   marketingConsent Boolean  @default(false) // consenso a ricevere email su corsi/ritiri/novità, dato in registrazione
@@ -124,10 +125,17 @@ model ContactLead {
   email     String
   phone     String?
   message   String
-  groupSize Int? // valorizzato per le richieste di lezione/ritiro privato per un gruppo
-  retreatId String?
-  retreat   Retreat? @relation(fields: [retreatId], references: [id])
-  createdAt DateTime @default(now())
+  // Provenienza del messaggio (form contatti generico, richiesta gruppo, richiesta ritiro,
+  // richiesta Metodo, prenotazione lezione di prova...): permette di dividerli per categoria
+  // nel pannello admin invece di vederli tutti mescolati.
+  source                String  @default("Contatti generali")
+  groupSize             Int? // valorizzato per le richieste di lezione/ritiro privato per un gruppo
+  retreatId             String?
+  retreat               Retreat? @relation(fields: [retreatId], references: [id])
+  // Id della sessione Stripe che ha generato questo lead (solo prenotazioni lezione di prova):
+  // permette una deduplica pulita invece di cercare l'id dentro il testo libero del messaggio.
+  stripeCheckoutSession String? @unique
+  createdAt             DateTime @default(now())
 }
 
 model Favorite {
@@ -204,4 +212,8 @@ model AppSettings {
   id                  String  @id @default("singleton")
   storageLimitEnabled Boolean @default(true)
   storageLimitBytes   BigInt  @default(9500000000) // ~9.5GB, sotto i 10GB gratuiti di Cloudflare R2
+  // Blocco dell'intero sito (incluso /admin) dietro un codice generato casualmente
+  // dal titolare del sito: vedi src/lib/siteLock.ts.
+  siteLocked          Boolean @default(false)
+  siteLockCodeHash    String? // hash SHA-256 esadecimale del codice corrente; null quando non c'è un codice attivo
 }

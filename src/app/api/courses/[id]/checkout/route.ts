@@ -21,7 +21,6 @@ export async function POST(_request: Request, { params }: { params: Promise<{ id
 
   const checkoutSession = await getStripe().checkout.sessions.create({
     mode: "payment",
-    payment_method_types: ["card"],
     line_items: [
       {
         price_data: {

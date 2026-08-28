@@ -6,6 +6,7 @@ const STATIC_PAGES = [
   { path: "", priority: 1, changeFrequency: "weekly" as const },
   { path: "/chi-sono", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/my-yoga", priority: 0.8, changeFrequency: "monthly" as const },
+  { path: "/metodo", priority: 0.8, changeFrequency: "monthly" as const },
   { path: "/ritiri", priority: 0.9, changeFrequency: "weekly" as const },
   { path: "/corsi", priority: 0.9, changeFrequency: "weekly" as const },
   { path: "/blog", priority: 0.8, changeFrequency: "weekly" as const },

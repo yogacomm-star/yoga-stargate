@@ -30,7 +30,7 @@ export default function BuyCourseButton({ courseId }: { courseId: string }) {
         type="button"
         onClick={buy}
         disabled={loading}
-        className="mt-1 cursor-pointer rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-1 cursor-pointer rounded-lg bg-accent px-5 py-2 text-sm font-semibold text-accent-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? "Un attimo..." : "Acquista ora"}
       </button>

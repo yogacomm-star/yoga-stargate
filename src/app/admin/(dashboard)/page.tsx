@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { getYearToDateRevenue, getAllTimeRevenue } from "@/lib/revenue";
 import ReviewModerationActions from "@/components/admin/ReviewModerationActions";
 import RevenueBar from "@/components/admin/RevenueBar";
+import DashboardStatsGrid, { type DashboardStat } from "@/components/admin/DashboardStatsGrid";
 
 export default async function AdminDashboardPage() {
   const admin = await requireAdmin();
@@ -59,13 +60,14 @@ export default async function AdminDashboardPage() {
       ? retreatTitles.find((r) => r.id === targetId)?.title
       : courseTitles.find((c) => c.id === targetId)?.title;
 
-  const stats = [
-    { label: "Ritiri", value: retreatsTotal, hint: `${retreatsPublished} pubblicati`, icon: Compass, href: "/admin/ritiri" },
-    { label: "Corsi", value: coursesTotal, hint: `${coursesPublished} pubblicati`, icon: GraduationCap, href: "/admin/corsi" },
-    { label: "Articoli blog", value: postsTotal, hint: `${postsPublished} pubblicati`, icon: Newspaper, href: "/admin/blog" },
-    { label: "Membri", value: membersTotal, hint: `Base ${levelCounts[1]} · Interm. ${levelCounts[2]} · Avanz. ${levelCounts[3]}`, icon: Users, href: "/admin/utenti" },
-    { label: "Richieste ricevute", value: leadsTotal, hint: "Lead da ritiri e contatti", icon: MessageSquare, href: "/admin/utenti" },
-    { label: "Consenso email", value: consentingTotal, hint: pendingReviews > 0 ? `${pendingReviews} recensioni da moderare` : "Tutto moderato", icon: Mail, href: "/admin/utenti" },
+  const iconClass = "h-5 w-5";
+  const stats: DashboardStat[] = [
+    { label: "Ritiri", value: retreatsTotal, hint: `${retreatsPublished} pubblicati`, icon: <Compass className={iconClass} aria-hidden="true" />, href: "/admin/ritiri" },
+    { label: "Corsi", value: coursesTotal, hint: `${coursesPublished} pubblicati`, icon: <GraduationCap className={iconClass} aria-hidden="true" />, href: "/admin/corsi" },
+    { label: "Articoli blog", value: postsTotal, hint: `${postsPublished} pubblicati`, icon: <Newspaper className={iconClass} aria-hidden="true" />, href: "/admin/blog" },
+    { label: "Membri", value: membersTotal, hint: `Base ${levelCounts[1]} · Interm. ${levelCounts[2]} · Avanz. ${levelCounts[3]}`, icon: <Users className={iconClass} aria-hidden="true" />, href: "/admin/utenti" },
+    { label: "Messaggi ricevuti", value: leadsTotal, hint: "Lead da ritiri, gruppi, Metodo e contatti", icon: <MessageSquare className={iconClass} aria-hidden="true" />, href: "/admin/messaggi" },
+    { label: "Consenso email", value: consentingTotal, hint: pendingReviews > 0 ? `${pendingReviews} recensioni da moderare` : "Tutto moderato", icon: <Mail className={iconClass} aria-hidden="true" />, href: "/admin/utenti" },
   ];
 
   return (
@@ -83,25 +85,8 @@ export default async function AdminDashboardPage() {
         </div>
       </Link>
 
-      <div data-tour="admin-stats" className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {stats.map((s) => (
-          <Link
-            key={s.label}
-            href={s.href}
-            className="flex cursor-pointer flex-col gap-3 rounded-2xl border border-border bg-card p-5 shadow-soft-sm transition-transform hover:-translate-y-1"
-          >
-            <div className="flex items-center justify-between">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <s.icon className="h-5 w-5" aria-hidden="true" />
-              </span>
-              <span className="font-heading text-2xl font-semibold text-foreground">{s.value}</span>
-            </div>
-            <div>
-              <p className="font-heading text-sm font-semibold text-foreground">{s.label}</p>
-              <p className="mt-0.5 text-xs text-foreground/60">{s.hint}</p>
-            </div>
-          </Link>
-        ))}
+      <div className="mt-6">
+        <DashboardStatsGrid stats={stats} />
       </div>
 
       {pendingReviewsList.length > 0 && (

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import Hero from "@/components/site/Hero";
-import { Sparkles, BrainCircuit, HeartHandshake } from "lucide-react";
+import { ArrowRight, Sparkles, BrainCircuit, HeartHandshake } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Chi Sono",
@@ -38,9 +39,9 @@ export default function ChiSonoPage() {
   return (
     <>
       <Hero
-        eyebrow="Chi Sono"
+        eyebrow="Master Yoga Teacher International"
         title="Tina Mastandrea"
-        subtitle="Master Yoga Teacher e fondatrice di Yoga Stargate — un metodo nato dall'incontro tra pratica yogica, neuroscienza ed esplorazione spirituale."
+        subtitle="Master Yoga Teacher International e fondatrice di Yoga Stargate — uno yoga contemporaneo nato dall'unione tra tradizione yogica e neuroscienze."
         backgroundImage="/images/tina-lezione-interno.jpeg"
       />
 
@@ -63,15 +64,25 @@ export default function ChiSonoPage() {
               all&apos;esplorazione della coscienza.
             </p>
             <p>
-              Yoga Stargate è il nome che ho scelto per raccontare questo percorso: un portale, uno
-              &ldquo;stargate&rdquo; appunto, verso una nuova frequenza di consapevolezza. Non un semplice
-              allenamento fisico, ma un vero e proprio cammino multidimensionale che tocca corpo, mente ed energia.
+              Sono <strong>Master Yoga Teacher International</strong>, un riconoscimento che rappresenta il livello
+              più alto di formazione nell&apos;insegnamento dello yoga. Yoga Stargate è il nome che ho scelto per
+              raccontare il mio metodo: un portale, uno &ldquo;stargate&rdquo; appunto, verso una nuova frequenza di
+              consapevolezza. Non un semplice allenamento fisico, ma un cammino multidimensionale che tocca corpo,
+              mente ed energia.
             </p>
             <p>
-              Insegno ogni settimana a Milano, in Via Zanella 56, e guido ritiri e viaggi spirituali in Italia e nel
-              mondo: dalla via micaelica di Assisi ai luoghi sacri del Marocco. Il mio obiettivo è sempre lo stesso:
-              offrire strumenti reali, concreti e trasformativi, adatti a chi inizia oggi come a chi pratica da anni.
+              Insegno ogni settimana a Milano, in Via Zanella 56, e guido ritiri e viaggi in Italia e nel mondo su
+              temi come mental reset, riconnessione al sé e formazione. Accompagno manager, professionisti, coach,
+              ricercatori spirituali e insegnanti olistici e di yoga: persone che cercano strumenti reali, concreti e
+              trasformativi per la propria evoluzione.
             </p>
+            <Link
+              href="/metodo"
+              className="inline-flex cursor-pointer items-center gap-1 pt-2 text-base font-semibold text-primary"
+            >
+              Scopri il Metodo & Percorso di formazione
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
           </div>
         </div>
       </section>

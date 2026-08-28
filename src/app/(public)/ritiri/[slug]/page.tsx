@@ -158,6 +158,7 @@ export default async function RetreatDetailPage({ params }: { params: Promise<{ 
                     retreatId={retreat.id}
                     defaultMessage={`Vorrei ricevere informazioni sul ritiro "${retreat.title}".`}
                     submitLabel={retreat.ctaLabel}
+                    source="Richiesta ritiro"
                   />
                 </div>
               </div>

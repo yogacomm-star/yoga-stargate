@@ -1,13 +1,9 @@
-import { Download } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import MembersTable, { type MemberRow } from "@/components/admin/MembersTable";
 import CreateMemberForm from "@/components/admin/CreateMemberForm";
 
 export default async function AdminUtentiPage() {
-  const [members, leads] = await Promise.all([
-    prisma.account.findMany({ where: { role: "MEMBER" }, orderBy: { createdAt: "desc" } }),
-    prisma.contactLead.findMany({ include: { retreat: true }, orderBy: { createdAt: "desc" }, take: 20 }),
-  ]);
+  const members = await prisma.account.findMany({ where: { role: "MEMBER" }, orderBy: { createdAt: "desc" } });
 
   const memberRows: MemberRow[] = members.map((m) => ({
     id: m.id,
@@ -33,54 +29,6 @@ export default async function AdminUtentiPage() {
         </div>
         <div className="mt-4">
           <MembersTable members={memberRows} />
-        </div>
-      </section>
-
-      <section data-tour="admin-leads">
-        <div className="flex items-center justify-between">
-          <h2 className="font-heading text-lg font-semibold text-foreground">Richieste ricevute</h2>
-          <a
-            href="/api/admin/export/leads"
-            className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-primary"
-          >
-            <Download className="h-4 w-4" aria-hidden="true" />
-            Esporta CSV
-          </a>
-        </div>
-        <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
-          <div className="max-h-96 overflow-y-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="sticky top-0 z-10 border-b border-border bg-muted/95 text-xs uppercase text-foreground/50 backdrop-blur-sm">
-              <tr>
-                <th className="px-5 py-3">Nome</th>
-                <th className="px-5 py-3">Email</th>
-                <th className="px-5 py-3">Ritiro / Gruppo</th>
-                <th className="px-5 py-3">Data</th>
-              </tr>
-            </thead>
-            <tbody>
-              {leads.map((l) => (
-                <tr key={l.id} className="border-b border-border last:border-0">
-                  <td className="px-5 py-3 font-medium text-foreground">{l.name}</td>
-                  <td className="px-5 py-3 text-foreground/70">{l.email}</td>
-                  <td className="px-5 py-3 text-foreground/70">
-                    {l.retreat?.title ?? (l.groupSize ? `Gruppo privato (${l.groupSize} persone)` : "—")}
-                  </td>
-                  <td className="px-5 py-3 text-foreground/70">
-                    {l.createdAt.toLocaleDateString("it-IT", { day: "numeric", month: "short", year: "numeric" })}
-                  </td>
-                </tr>
-              ))}
-              {leads.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="px-5 py-8 text-center text-foreground/50">
-                    Nessuna richiesta ricevuta.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-          </div>
         </div>
       </section>
     </div>

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { rateLimit, clientIp } from "@/lib/rateLimit";
+import { LEAD_SOURCES } from "@/lib/leadSources";
 
 const schema = z.object({
   name: z.string().trim().min(1).max(120),
@@ -10,6 +11,7 @@ const schema = z.object({
   message: z.string().trim().min(1).max(2000),
   retreatId: z.string().trim().max(60).optional().or(z.literal("")),
   groupSize: z.number().int().min(2).max(500).optional(),
+  source: z.enum(LEAD_SOURCES).optional(),
 });
 
 export async function POST(request: Request) {
@@ -22,7 +24,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Dati non validi." }, { status: 400 });
   }
 
-  const { name, email, phone, message, retreatId, groupSize } = parsed.data;
+  const { name, email, phone, message, retreatId, groupSize, source } = parsed.data;
 
   await prisma.contactLead.create({
     data: {
@@ -32,6 +34,7 @@ export async function POST(request: Request) {
       message,
       retreatId: retreatId || null,
       groupSize: groupSize ?? null,
+      source: source ?? "Contatti generali",
     },
   });
 

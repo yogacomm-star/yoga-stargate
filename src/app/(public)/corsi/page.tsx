@@ -4,8 +4,8 @@ import CourseCard, { type CourseCardData } from "@/components/site/CourseCard";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
-  title: "Corsi di Yoga Online",
-  description: "La libreria dei corsi Yoga Stargate: alcuni aperti a tutti, altri riservati per livello.",
+  title: "Percorsi Online",
+  description: "I Percorsi Online di Yoga Stargate: pratiche guidate, rituali di trasformazione ed ebook, dove e quando vuoi.",
   alternates: { canonical: "/corsi" },
 };
 
@@ -41,14 +41,14 @@ export default async function CorsiPage() {
   return (
     <>
       <Hero
-        eyebrow="Corsi"
-        title="La libreria dei corsi"
-        subtitle="Percorsi in video e testo per approfondire la pratica: alcuni sono aperti a tutti, altri si sbloccano salendo di livello."
+        eyebrow="Percorsi Online"
+        title="I Percorsi Online"
+        subtitle="Pratiche guidate, rituali di trasformazione ed ebook da vivere dove vuoi, quando vuoi: alcuni aperti a tutti, altri si sbloccano proseguendo nel percorso."
       />
 
       <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
         {cards.length === 0 ? (
-          <p className="text-sm text-foreground/60">Nessun corso disponibile al momento.</p>
+          <p className="text-sm text-foreground/60">Nessun percorso disponibile al momento.</p>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {cards.map((c) => (

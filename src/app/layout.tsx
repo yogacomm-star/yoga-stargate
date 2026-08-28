@@ -1,7 +1,18 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Lora, Raleway } from "next/font/google";
 import "./globals.css";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, SITE_KEYWORDS } from "@/lib/site";
+
+const OG_IMAGE = {
+  url: "/images/hero-meditazione-arcobaleno.jpg",
+  width: 1200,
+  height: 630,
+  alt: "Yoga Stargate — Tina Mastandrea",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#1673b6",
+};
 
 const lora = Lora({
   variable: "--font-heading",
@@ -12,7 +23,9 @@ const lora = Lora({
 const raleway = Raleway({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  // 900 è caricato in più solo per la scritta "Stargate" del logo (font-black), più
+  // massiccia del semplice grassetto: senza il peso reale il browser la simulerebbe.
+  weight: ["300", "400", "500", "600", "700", "900"],
 });
 
 export const metadata: Metadata = {
@@ -33,11 +46,13 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     title: "Yoga Stargate — Yoga Multidimensionale con Tina Mastandrea a Milano",
     description: SITE_DESCRIPTION,
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: "Yoga Stargate — Yoga Multidimensionale con Tina Mastandrea",
     description: SITE_DESCRIPTION,
+    images: [OG_IMAGE.url],
   },
 };
 

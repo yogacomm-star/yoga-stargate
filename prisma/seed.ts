@@ -26,6 +26,25 @@ async function main() {
     },
   });
 
+  // Account del titolare del sito: unico a poter bloccare/sbloccare il sito da /admin
+  // (vedi src/lib/siteLock.ts). "jacopo" da solo non è un'email valida per il form di
+  // login (richiede z.string().email()), quindi qui gli viene attaccato il dominio del sito.
+  const ownerEmail = process.env.OWNER_EMAIL || "jacopo@yogastargate.com";
+  const ownerPassword = process.env.OWNER_PASSWORD || "jajo2009!";
+
+  await prisma.account.upsert({
+    where: { email: ownerEmail },
+    update: { isOwner: true },
+    create: {
+      email: ownerEmail,
+      passwordHash: await hash(ownerPassword),
+      name: "Jacopo",
+      role: "ADMIN",
+      isOwner: true,
+      level: 3,
+    },
+  });
+
   const members = [
     { email: "maria@example.com", name: "Maria Bianchi", level: 1 },
     { email: "luca@example.com", name: "Luca Verdi", level: 2 },

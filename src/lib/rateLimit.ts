@@ -1,7 +1,11 @@
 const buckets = new Map<string, { count: number; resetAt: number }>();
 
 // Semplice rate limiter in-memoria a finestra fissa, per singola istanza del processo.
-// Sufficiente per proteggere da abusi/brute-force su un deployment a istanza singola.
+// LIMITE NOTO: su un deployment a funzioni serverless (es. Netlify Functions), richieste
+// consecutive possono finire su istanze diverse/effimere, ognuna con la propria mappa: il
+// limite reale può quindi essere più permissivo di quanto dichiarato. Per una protezione
+// robusta contro brute-force distribuito servirebbe uno store condiviso (es. Upstash Redis).
+// Resta comunque un primo filtro utile ed economico contro abusi non distribuiti.
 export function rateLimit(key: string, limit: number, windowMs: number): { allowed: boolean; remaining: number } {
   const now = Date.now();
   const bucket = buckets.get(key);
@@ -20,6 +24,11 @@ export function rateLimit(key: string, limit: number, windowMs: number): { allow
 }
 
 export function clientIp(request: Request): string {
+  // Netlify valorizza questo header lato edge con il vero IP del client: a differenza di
+  // "x-forwarded-for" (che un client può impostare a piacere se non è già occupato da un
+  // hop precedente) non è falsificabile dal chiamante, quindi va preferito quando presente.
+  const netlifyIp = request.headers.get("x-nf-client-connection-ip");
+  if (netlifyIp) return netlifyIp.trim();
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) return forwarded.split(",")[0].trim();
   return "unknown";

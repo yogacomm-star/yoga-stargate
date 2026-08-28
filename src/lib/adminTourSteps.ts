@@ -66,7 +66,7 @@ export const adminTourSteps: TourStep[] = [
     href: "/admin/utenti",
     target: "admin-nav-utenti",
     title: "Sezione Utenti",
-    description: "Qui trovi i membri registrati e le richieste ricevute dai form del sito.",
+    description: "Qui trovi tutti i membri registrati sul sito.",
   },
   {
     href: "/admin/utenti",
@@ -83,10 +83,11 @@ export const adminTourSteps: TourStep[] = [
       "Con \"Crea nuovo account\" registri un membro manualmente. Su ogni riga puoi impostare subito una nuova password (icona chiave), inviare all'utente un'email con un link per reimpostarla da solo (icona busta), eliminare l'account (icona cestino) e vedere se ha dato il consenso a ricevere email.",
   },
   {
-    href: "/admin/utenti",
-    target: "admin-leads",
-    title: "Richieste ricevute",
-    description: "Le richieste di informazioni sui ritiri e i messaggi dal form contatti arrivano qui e sono esportabili in CSV.",
+    href: "/admin/messaggi",
+    target: "admin-nav-messaggi",
+    title: "Sezione Messaggi",
+    description:
+      "Tutte le richieste ricevute dal sito arrivano qui, già divise per categoria (contatti generali, gruppo, ritiro, Metodo, lezione di prova): scegli una categoria per filtrare, o esporta tutto in CSV.",
   },
   {
     href: "/admin",

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Compass, GraduationCap, Newspaper, Users, Mail, Euro, Settings, ExternalLink, Menu, X } from "lucide-react";
+import { LayoutDashboard, Compass, GraduationCap, Newspaper, Users, MessageSquare, Mail, Euro, Settings, ExternalLink, Menu, X } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth";
 import Logo from "@/components/site/Logo";
 
@@ -13,6 +13,7 @@ const items = [
   { href: "/admin/corsi", label: "Corsi", icon: GraduationCap },
   { href: "/admin/blog", label: "Blog", icon: Newspaper },
   { href: "/admin/utenti", label: "Utenti", icon: Users },
+  { href: "/admin/messaggi", label: "Messaggi", icon: MessageSquare },
   { href: "/admin/vendite", label: "Vendite", icon: Euro },
   { href: "/admin/email", label: "Email", icon: Mail },
   { href: "/admin/impostazioni", label: "Impostazioni", icon: Settings },
@@ -33,7 +34,7 @@ export default function AdminSidebar({ adminName }: { adminName: string }) {
     <>
       <div className="flex items-center justify-between border-b border-border px-6 py-5 lg:justify-start">
         <Link href="/admin" className="flex items-center gap-2">
-          <Logo iconSize={40} textClassName="text-base" />
+          <Logo iconSize={40} textClassName="flex flex-col text-base" />
           <span className="text-xs text-foreground/40">Admin</span>
         </Link>
         <button
@@ -99,7 +100,7 @@ export default function AdminSidebar({ adminName }: { adminName: string }) {
         >
           <Menu className="h-5 w-5" aria-hidden="true" />
         </button>
-        <Logo iconSize={28} textClassName="text-sm" />
+        <Logo iconSize={28} textClassName="flex flex-col text-sm" />
         <span className="text-xs text-foreground/40">Admin</span>
       </div>
 

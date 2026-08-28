@@ -51,7 +51,7 @@ export function brandedEmail({
           <td align="center">
             <table role="presentation" width="100%" style="max-width:520px;background:#ffffff;border-radius:24px;overflow:hidden;border:1px solid #d5eaf9;box-shadow:0 2px 24px rgba(12,74,110,0.08);">
               <tr>
-                <td style="background:linear-gradient(135deg,#0c4a6e,#0284c7);padding:36px 32px;text-align:center;">
+                <td style="background:linear-gradient(135deg,#8e7cc3,#1673b6);padding:36px 32px;text-align:center;">
                   <img
                     src="${EMAIL_ASSET_BASE}/logo-icon.png"
                     width="52"
@@ -64,12 +64,12 @@ export function brandedEmail({
               </tr>
               <tr>
                 <td style="padding:36px 32px 8px;">
-                  <h1 style="margin:0 0 18px;font-size:23px;line-height:1.3;color:#0c4a6e;font-family:Georgia,serif;">${escapeHtml(title)}</h1>
+                  <h1 style="margin:0 0 18px;font-size:23px;line-height:1.3;color:#1f333f;font-family:Georgia,serif;">${escapeHtml(title)}</h1>
                   <div style="font-size:15px;line-height:1.65;color:#334155;">${bodyHtml}</div>
                   ${
                     ctaLabel && ctaUrl
                       ? `<div style="margin-top:30px;text-align:center;">
-                          <a href="${ctaUrl}" style="display:inline-block;background:#0284c7;color:#ffffff;text-decoration:none;font-weight:600;font-size:14px;padding:13px 30px;border-radius:10px;">${escapeHtml(ctaLabel)}</a>
+                          <a href="${ctaUrl}" style="display:inline-block;background:#1673b6;color:#ffffff;text-decoration:none;font-weight:600;font-size:14px;padding:13px 30px;border-radius:10px;">${escapeHtml(ctaLabel)}</a>
                          </div>`
                       : ""
                   }
@@ -79,7 +79,7 @@ export function brandedEmail({
                 <td style="padding:26px 32px;background:#f5fafe;text-align:center;border-top:1px solid #e5f1fa;">
                   <p style="margin:0;font-size:12px;line-height:1.6;color:#64748b;">
                     Yoga Stargate — Via Zanella 56, Milano<br/>
-                    <a href="${SITE_URL}" style="color:#0284c7;text-decoration:none;">${SITE_URL.replace("https://", "")}</a>
+                    <a href="${SITE_URL}" style="color:#1673b6;text-decoration:none;">${SITE_URL.replace("https://", "")}</a>
                   </p>
                 </td>
               </tr>

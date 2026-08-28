@@ -25,9 +25,10 @@ const columns = [
     title: "Esplora",
     links: [
       { href: "/chi-sono", label: "Chi Sono" },
-      { href: "/my-yoga", label: "Metodo" },
-      { href: "/ritiri", label: "Ritiri" },
-      { href: "/corsi", label: "Corsi" },
+      { href: "/my-yoga", label: "Percorsi Live" },
+      { href: "/metodo", label: "Metodo" },
+      { href: "/ritiri", label: "Ritiri & Viaggi" },
+      { href: "/corsi", label: "Percorsi Online" },
       { href: "/blog", label: "Blog" },
     ],
   },
@@ -48,7 +49,7 @@ export default function Footer() {
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
           <div>
             <Link href="/" className="flex items-center">
-              <Logo iconSize={52} textClassName="text-xl" />
+              <Logo iconSize={52} textClassName="flex flex-col text-xl" />
             </Link>
             <p className="mt-3 max-w-sm text-sm text-foreground/70">
               Yoga multidimensionale per il risveglio interiore, con Tina Mastandrea. Milano e non solo.

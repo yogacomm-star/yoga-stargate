@@ -8,8 +8,8 @@ import { prisma } from "@/lib/prisma";
 import { firstImage } from "@/lib/images";
 
 export const metadata: Metadata = {
-  title: "Ritiri Yoga in Italia e nel Mondo",
-  description: "I ritiri di Yoga Stargate: esperienze immersive in Italia e nel mondo con Tina Mastandrea.",
+  title: "Ritiri & Viaggi",
+  description: "Ritiri & Viaggi Yoga Stargate: esperienze immersive in Italia e nel mondo con Tina Mastandrea — mental reset, riconnessione al sé e formazione.",
   alternates: { canonical: "/ritiri" },
 };
 
@@ -44,9 +44,9 @@ export default async function RitiriPage({
   return (
     <>
       <Hero
-        eyebrow="Ritiri"
-        title="Ritiri e viaggi Yoga Stargate"
-        subtitle="Esperienze immersive per riattivare la tua frequenza: dalla via micaelica di Assisi ai luoghi sacri del mondo."
+        eyebrow="Ritiri & Viaggi"
+        title="Ritiri & Viaggi Yoga Stargate"
+        subtitle="Esperienze immersive per riattivare la tua frequenza: mental reset, riconnessione al sé e formazione, in Italia e nel mondo."
       />
 
       <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
@@ -82,7 +82,7 @@ export default async function RitiriPage({
           </div>
         )}
 
-        <div className="mt-16 rounded-3xl border border-border bg-card p-6 sm:p-10">
+        <div id="gruppi" className="mt-16 scroll-mt-24 rounded-2xl border border-border bg-card p-6 sm:p-10">
           <div className="mx-auto max-w-2xl text-center">
             <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
               <Users className="h-6 w-6" aria-hidden="true" />
@@ -99,6 +99,7 @@ export default async function RitiriPage({
               showGroupSize
               defaultMessage="Vorremmo organizzare una lezione/ritiro privato per il nostro gruppo. Ecco qualche dettaglio: luogo o zona preferita, periodo indicativo, tipo di esperienza che cerchiamo..."
               submitLabel="Richiedi un'esperienza privata"
+              source="Richiesta gruppo"
             />
           </div>
         </div>

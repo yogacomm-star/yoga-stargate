@@ -13,9 +13,10 @@ import Logo from "@/components/site/Logo";
 const links = [
   { href: "/", label: "Home" },
   { href: "/chi-sono", label: "Chi Sono" },
-  { href: "/my-yoga", label: "Metodo" },
-  { href: "/ritiri", label: "Ritiri" },
-  { href: "/corsi", label: "Corsi" },
+  { href: "/my-yoga", label: "Percorsi Live" },
+  { href: "/metodo", label: "Metodo" },
+  { href: "/ritiri", label: "Ritiri & Viaggi" },
+  { href: "/corsi", label: "Percorsi Online" },
   { href: "/blog", label: "Blog" },
   { href: "/contatti", label: "Contatti" },
 ];
@@ -64,7 +65,7 @@ export default function Navbar({ account }: { account: NavAccount }) {
     >
       <nav className="relative z-[60] mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
         <Link href="/" className="flex items-center">
-          <Logo iconSize={48} textClassName="text-lg hidden sm:inline" />
+          <Logo iconSize={48} textClassName="hidden sm:flex sm:flex-col text-lg" />
         </Link>
 
         <div className="flex items-center gap-1 sm:gap-2">

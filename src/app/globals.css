@@ -1,44 +1,54 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #0284c7;
+  /* Palette Yoga Stargate — pastello caldo: azzurro, giallo, bianco, viola */
+  --color-primary: #1673b6;
   --color-primary-foreground: #ffffff;
-  --color-secondary: #7dd3fc;
-  --color-secondary-foreground: #0c4a6e;
-  --color-accent: #0369a1;
-  --color-accent-foreground: #ffffff;
+  --color-secondary: #cfe8f7;
+  --color-secondary-foreground: #0d4a73;
+  --color-accent: #f5c518;
+  --color-accent-foreground: #2e230b;
 
-  --color-background: #f0f9ff;
-  --color-foreground: #0c4a6e;
+  --color-mystic: #8e7cc3;
+  --color-mystic-foreground: #ffffff;
+  --color-mystic-soft: #ece7f6;
+
+  --color-background: #fdfbf6;
+  --color-foreground: #1f333f;
 
   --color-card: #ffffff;
-  --color-card-foreground: #0c4a6e;
+  --color-card-foreground: #1f333f;
 
-  --color-muted: #e0f2fe;
-  --color-muted-foreground: #475569;
+  --color-muted: #eaf5fb;
+  --color-muted-foreground: #4d5c66;
 
-  --color-border: #bae6fd;
-  --color-ring: #0284c7;
+  --color-border: #d7e6ee;
+  --color-ring: #1673b6;
 
   --color-destructive: #dc2626;
   --color-destructive-foreground: #ffffff;
 
-  --color-warm-surface: #f1f5f9;
-  --color-warm-surface-foreground: #334155;
+  --color-warm-surface: #faf3e3;
+  --color-warm-surface-foreground: #5c4a22;
 
   --radius-card: 1rem;
   --radius-control: 0.5rem;
   --radius-pill: 999px;
 
-  --shadow-soft-sm: 0 1px 2px rgba(12, 74, 110, 0.06);
-  --shadow-soft-md: 0 4px 6px rgba(12, 74, 110, 0.1);
-  --shadow-soft-lg: 0 10px 25px rgba(12, 74, 110, 0.12);
-  --shadow-soft-xl: 0 20px 40px rgba(12, 74, 110, 0.16);
+  --shadow-soft-sm: 0 1px 2px rgba(31, 51, 63, 0.06);
+  --shadow-soft-md: 0 4px 6px rgba(31, 51, 63, 0.1);
+  --shadow-soft-lg: 0 10px 25px rgba(31, 51, 63, 0.12);
+  --shadow-soft-xl: 0 20px 40px rgba(31, 51, 63, 0.16);
 }
 
 @theme inline {
   --font-heading: var(--font-heading);
   --font-body: var(--font-body);
+}
+
+/* Scritte leggermente più grandi in tutto il sito (richiesta cliente) */
+html {
+  font-size: 17px;
 }
 
 body {
@@ -56,7 +66,7 @@ h4 {
 
 ::selection {
   background: var(--color-secondary);
-  color: var(--color-primary-foreground);
+  color: var(--color-secondary-foreground);
 }
 
 .badge-level {
@@ -74,8 +84,8 @@ h4 {
 
 .badge-open {
   background: var(--color-warm-surface);
-  color: var(--color-accent);
-  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+  color: var(--color-warm-surface-foreground);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
 }
 
 @keyframes breathe {
@@ -92,6 +102,15 @@ h4 {
 
 .animate-breathe {
   animation: breathe 2.4s ease-in-out infinite;
+}
+
+/* Nasconde la scrollbar dei carousel mantenendo lo scroll */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

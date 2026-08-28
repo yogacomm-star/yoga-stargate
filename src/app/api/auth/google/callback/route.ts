@@ -36,6 +36,9 @@ export async function GET(request: Request) {
     const profile = await fetchGoogleProfile(tokens.access_token);
 
     if (!profile.email) throw new Error("Email mancante nel profilo Google.");
+    // Rifiutiamo email non verificate da Google: altrimenti chiunque potrebbe collegare
+    // (o creare) un account con un indirizzo che non possiede davvero.
+    if (profile.email_verified === false) throw new Error("Email Google non verificata.");
     const email = profile.email.toLowerCase();
 
     let account = await prisma.account.findUnique({ where: { googleId: profile.sub } });

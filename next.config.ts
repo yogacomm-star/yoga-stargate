@@ -39,6 +39,12 @@ const nextConfig: NextConfig = {
   // next/image le blocca finché l'host non è esplicitamente autorizzato qui.
   images: {
     remotePatterns: [{ protocol: "https", hostname: "*.r2.dev" }],
+    // Ogni upload finisce su una chiave R2 con UUID nuovo (mai sovrascritta): l'immagine
+    // ottimizzata può quindi restare in cache a lungo (default Next: 4h) senza rischio di
+    // servire una versione vecchia. Il dominio pub-*.r2.dev di Cloudflare non è pensato per
+    // la produzione (nessuna CDN/cache propria, rate limit stringenti): allungare la cache
+    // qui riduce quanto spesso l'ottimizzatore deve ripescare l'originale da lì.
+    minimumCacheTTL: 31536000,
   },
   async headers() {
     return [

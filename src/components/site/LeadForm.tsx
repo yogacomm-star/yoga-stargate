@@ -2,17 +2,21 @@
 
 import { useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
+import type { LeadSource } from "@/lib/leadSources";
 
 export default function LeadForm({
   retreatId,
   defaultMessage = "",
   submitLabel = "Invia richiesta",
   showGroupSize = false,
+  source = "Contatti generali",
 }: {
   retreatId?: string;
   defaultMessage?: string;
   submitLabel?: string;
   showGroupSize?: boolean;
+  /** Provenienza del messaggio, per dividerlo per categoria nel pannello admin (sezione Messaggi). */
+  source?: LeadSource;
 }) {
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: defaultMessage, groupSize: "" });
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
@@ -27,6 +31,7 @@ export default function LeadForm({
         body: JSON.stringify({
           ...form,
           retreatId,
+          source,
           groupSize: form.groupSize ? Number(form.groupSize) : undefined,
         }),
       });
