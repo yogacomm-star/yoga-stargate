@@ -124,8 +124,8 @@ export default function Hero({
               {secondaryCta && (
                 <Link
                   href={secondaryCta.href}
-                  className={`cursor-pointer rounded-lg border-2 px-7 py-3.5 text-base font-semibold transition-transform hover:-translate-y-0.5 ${
-                    onPhoto ? "border-white text-white hover:bg-white/10" : "border-primary text-primary"
+                  className={`cursor-pointer rounded-lg px-7 py-3.5 text-base font-semibold shadow-soft-md transition-transform hover:-translate-y-0.5 ${
+                    onPhoto ? "bg-card text-primary hover:bg-card/90" : "bg-primary text-primary-foreground hover:bg-primary/90"
                   }`}
                 >
                   {secondaryCta.label}

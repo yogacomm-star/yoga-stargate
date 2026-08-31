@@ -7,10 +7,13 @@ export function LevelBadge({ requiredLevel, price }: { requiredLevel: number | n
   // Un corso a pagamento non è mai "aperto a tutti" (serve l'acquisto), indipendentemente
   // dal livello richiesto: evita di mostrare un badge "gratuito" su un contenuto a pagamento.
   if (price) {
+    const formatted = Number.isInteger(price)
+      ? `${price}€`
+      : price.toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "€";
     return (
       <span className="badge-level">
         <Lock className="h-3 w-3" aria-hidden="true" />
-        Corso a pagamento
+        {formatted}
       </span>
     );
   }
@@ -93,7 +96,7 @@ export function LevelLockedNotice({ requiredLevel, loggedIn }: { requiredLevel: 
             Accedi
           </a>
         )}
-        <a href="/contatti" className="cursor-pointer rounded-lg border-2 border-primary px-5 py-2 text-sm font-semibold text-primary">
+        <a href="/contatti" className="cursor-pointer rounded-lg border border-border bg-card px-5 py-2 text-sm font-semibold text-primary shadow-soft-sm">
           Contattaci
         </a>
       </div>

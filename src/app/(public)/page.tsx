@@ -89,7 +89,7 @@ export default async function HomePage() {
         align="left"
         backgroundImage="/images/hero-meditazione-arcobaleno.jpg"
         eyebrow="Il metodo di Yoga Multidimensionale"
-        title="Yoga Stargate: Attiva la tua Nuova Frequenza"
+        title="Attiva la tua Nuova Frequenza"
         subtitle="Il metodo di Tina Mastandrea, Master Yoga Teacher International, che unisce la tradizione yogica alle neuroscienze per il tuo risveglio interiore."
         primaryCta={{ label: "Inizia ora — 7 meditazioni gratis", href: "/corsi/sette-giorni-per-meditare-bene" }}
         secondaryCta={{ label: "Scopri il metodo", href: "/metodo" }}
@@ -124,7 +124,7 @@ export default async function HomePage() {
           Scegli da dove iniziare
         </h2>
 
-        <ScrollCarousel className="mt-8" itemClassName="min-w-[80%] sm:min-w-[46%] lg:min-w-[30%]" ariaLabel="Prossimi appuntamenti">
+        <ScrollCarousel className="mt-8" itemClassName="min-w-[68%] sm:min-w-[34%] lg:min-w-[22%]" ariaLabel="Prossimi appuntamenti">
           {/* Percorsi Live a Milano */}
           <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-soft-sm">
             <div className="relative h-40 w-full shrink-0">
@@ -334,7 +334,7 @@ export default async function HomePage() {
           </Link>
           <Link
             href="/registrati"
-            className="cursor-pointer rounded-lg border-2 border-primary px-7 py-3 text-base font-semibold text-primary transition-transform hover:-translate-y-0.5"
+            className="cursor-pointer rounded-lg border border-border bg-card px-7 py-3 text-base font-semibold text-primary shadow-soft-md transition-transform hover:-translate-y-0.5"
           >
             Crea il tuo account
           </Link>

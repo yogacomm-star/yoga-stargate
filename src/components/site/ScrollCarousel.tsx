@@ -52,7 +52,7 @@ export default function ScrollCarousel({ children, itemClassName, className = ""
         ref={trackRef}
         role="region"
         aria-label={ariaLabel}
-        className="no-scrollbar flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-2"
+        className="no-scrollbar flex snap-x snap-mandatory items-start gap-5 overflow-x-auto scroll-smooth pb-2"
       >
         {Array.isArray(children)
           ? children.map((child, i) => (

@@ -42,7 +42,7 @@ export default function ChiSonoPage() {
         eyebrow="Master Yoga Teacher International"
         title="Tina Mastandrea"
         subtitle="Master Yoga Teacher International e fondatrice di Yoga Stargate — uno yoga contemporaneo nato dall'unione tra tradizione yogica e neuroscienze."
-        backgroundImage="/images/tina-lezione-interno.jpeg"
+        backgroundImage="/images/meditazione-lago-turchese.jpg"
       />
 
       <section className="mx-auto max-w-5xl px-4 pb-8 sm:px-6">
