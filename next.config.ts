@@ -2,6 +2,12 @@ import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV !== "production";
 
+// Origine da cui l'anteprima email nel pannello admin carica il logo (vedi EMAIL_ASSET_BASE in
+// src/lib/site.ts). Se coincide con il sito è già coperta da 'self'; va aggiunta alla CSP solo
+// quando la si è puntata a un dominio diverso.
+const emailAssetOrigin = process.env.NEXT_PUBLIC_EMAIL_ASSET_BASE?.replace(/\/$/, "");
+const extraImgSrc = emailAssetOrigin ? ` ${emailAssetOrigin}` : "";
+
 // Le immagini di copertina e gli audio dei corsi sono ospitati su Cloudflare R2: le pagine
 // pubbliche (URL pubblico *.r2.dev) e gli URL firmati per l'audio privato dei corsi a
 // pagamento (*.r2.cloudflarestorage.com) devono essere autorizzati esplicitamente nel CSP,
@@ -11,9 +17,7 @@ const csp = [
   // 'unsafe-eval' serve solo in sviluppo (Fast Refresh/Turbopack); in produzione React non usa mai eval().
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  // yoga-stargate.netlify.app in più a 'self': l'anteprima email carica sempre il logo da lì
-  // (vedi EMAIL_ASSET_BASE) anche quando il pannello admin gira sul dominio personalizzato.
-  "img-src 'self' data: blob: https://*.r2.dev https://yoga-stargate.netlify.app",
+  `img-src 'self' data: blob: https://*.r2.dev${extraImgSrc}`,
   "media-src 'self' https://*.r2.dev https://*.r2.cloudflarestorage.com",
   "font-src 'self' data:",
   "connect-src 'self' https://*.r2.dev https://*.r2.cloudflarestorage.com",
@@ -57,3 +61,7 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+// Dà a `next dev` accesso ai binding Cloudflare (R2, ecc.) definiti in wrangler.jsonc, così
+// il comportamento in sviluppo è coerente con quello dopo il deploy su Workers.
+import("@opennextjs/cloudflare").then((m) => m.initOpenNextCloudflareForDev());

@@ -49,3 +49,10 @@ next-env.d.ts
 # netlify
 .netlify
 deno.lock
+
+# OpenNext / Cloudflare Workers
+.open-next
+.wrangler
+.dev.vars*
+!.dev.vars.example
+cloudflare-env.d.ts

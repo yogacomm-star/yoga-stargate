@@ -12,7 +12,15 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Resti del vecchio deploy su Netlify: la cartella non è più prodotta da nulla, si può
+    // cancellare a mano (non è tracciata da git).
     ".netlify/**",
+    // Output di build e codice generato: non è nostro, e senza escluderlo `npm run lint`
+    // annega i problemi veri sotto migliaia di segnalazioni sui bundle.
+    ".open-next/**",
+    ".wrangler/**",
+    "src/generated/**",
+    "cloudflare-env.d.ts",
   ]),
 ]);
 

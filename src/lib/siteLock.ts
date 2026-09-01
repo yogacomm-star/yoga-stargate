@@ -36,7 +36,7 @@ export async function siteLockEnabled(): Promise<boolean> {
   return locked && codeHash !== null;
 }
 
-export const SITE_LOCK_COOKIE = "ys_unlocked";
+export { SITE_LOCK_COOKIE } from "@/lib/siteLockCookie";
 
 function getKey(secret: string): Promise<CryptoKey> {
   return crypto.subtle.importKey("raw", encoder.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, [

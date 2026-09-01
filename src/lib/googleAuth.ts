@@ -3,10 +3,10 @@ export function googleAuthConfigured(): boolean {
 }
 
 // L'indirizzo di ritorno per Google deve corrispondere esattamente a dove l'utente sta
-// davvero navigando (es. il dominio temporaneo *.netlify.app finché non è collegato quello
-// definitivo). new URL(request.url).origin non basta: dietro il proxy di Netlify riflette
-// un URL di deploy interno che cambia ad ogni pubblicazione, non il dominio pubblico stabile
-// — bisogna leggere l'host dagli header standard che il proxy inoltra dalla richiesta reale.
+// davvero navigando (es. il dominio temporaneo *.workers.dev finché non è collegato quello
+// definitivo). new URL(request.url).origin non basta: dietro il proxy della piattaforma può
+// riflettere un URL interno di deploy invece del dominio pubblico stabile — bisogna leggere
+// l'host dagli header standard che il proxy inoltra dalla richiesta reale.
 export function publicOrigin(request: Request): string {
   const headers = request.headers;
   const host = headers.get("x-forwarded-host") || headers.get("host");

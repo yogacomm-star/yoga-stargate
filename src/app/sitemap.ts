@@ -15,6 +15,11 @@ const STATIC_PAGES = [
   { path: "/login", priority: 0.3, changeFrequency: "yearly" as const },
 ];
 
+// Va ricalcolata a ogni richiesta, non una volta sola al build: ritiri, corsi e articoli si
+// pubblicano dal pannello admin senza un nuovo deploy, e da statica la sitemap resterebbe ferma
+// ai contenuti esistenti al momento dell'ultimo build.
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [retreats, courses, posts] = await Promise.all([
     prisma.retreat.findMany({ where: { status: "PUBLISHED" }, select: { slug: true, updatedAt: true } }),

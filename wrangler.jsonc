@@ -1,0 +1,24 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"main": ".open-next/worker.js",
+	"name": "yoga-stargate",
+	"compatibility_date": "2026-08-29",
+	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	"services": [
+		{
+			// Self-reference service binding, richiesto da OpenNext per il caching interno
+			// (deve corrispondere al campo "name" qui sopra).
+			"binding": "WORKER_SELF_REFERENCE",
+			"service": "yoga-stargate"
+		}
+	],
+	"images": {
+		// Sostituisce l'ottimizzatore next/image basato su sharp (non disponibile su Workers)
+		// con il binding immagini nativo di Cloudflare.
+		"binding": "IMAGES"
+	}
+}
