@@ -1,7 +1,10 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"main": ".open-next/worker.js",
-	"name": "yoga-stargate",
+	// Deve corrispondere ESATTAMENTE al nome del progetto Worker su Cloudflare: il token del
+	// build è abilitato solo su quel Worker, e con un nome diverso `wrangler deploy` viene
+	// rifiutato in fase di distribuzione.
+	"name": "stargate",
 	"compatibility_date": "2026-08-29",
 	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
 	"assets": {
@@ -13,7 +16,7 @@
 			// Self-reference service binding, richiesto da OpenNext per il caching interno
 			// (deve corrispondere al campo "name" qui sopra).
 			"binding": "WORKER_SELF_REFERENCE",
-			"service": "yoga-stargate"
+			"service": "stargate"
 		}
 	],
 	"images": {
