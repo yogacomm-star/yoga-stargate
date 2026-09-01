@@ -1,10 +1,12 @@
 #!/usr/bin/env node
-// Le funzioni Netlify girano su Linux x64, ma chi lancia `npm install` in locale è quasi
+// Il bundle di produzione gira su Linux x64, ma chi lancia `npm install` in locale è quasi
 // sempre su un altro sistema operativo (Mac, in questo progetto): npm installa solo il
-// binario nativo di libsql per la piattaforma corrente, quindi a runtime su Netlify manca
-// "@libsql/linux-x64-gnu" e le richieste al database falliscono. Questo script lo scarica e
-// lo estrae comunque (npm pack non applica il controllo os/cpu che blocca npm install),
-// così resta disponibile nel bundle caricato su Netlify indipendentemente da dove si builda.
+// binario nativo di libsql per la piattaforma corrente, quindi nel bundle costruito da un Mac
+// manca "@libsql/linux-x64-gnu" e le richieste al database falliscono. Questo script lo
+// scarica e lo estrae comunque (npm pack non applica il controllo os/cpu che blocca
+// npm install), così è presente indipendentemente da dove si builda. Quando il build gira
+// già su Linux (come sulla macchina di Cloudflare) il binario c'è di suo e lo script esce
+// subito senza fare nulla.
 import { execSync } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, rmSync, cpSync } from "node:fs";
 import { join } from "node:path";
@@ -26,7 +28,7 @@ try {
   const tarball = join(tmp, `libsql-linux-x64-gnu-${version}.tgz`);
   execSync(`tar -xzf "${tarball}" -C "${tmp}"`, { stdio: "inherit" });
   cpSync(join(tmp, "package"), destDir, { recursive: true });
-  console.log(`[fetch-libsql-linux] ${target}@${version} pronto per il deploy su Netlify.`);
+  console.log(`[fetch-libsql-linux] ${target}@${version} pronto per il deploy.`);
 } finally {
   rmSync(tmp, { recursive: true, force: true });
 }
