@@ -7,6 +7,7 @@ import { getCurrentAccount } from "@/lib/auth";
 import { canAccess } from "@/lib/levels";
 import { LevelBadge, LevelLockedNotice, PurchaseLockedNotice } from "@/components/site/LevelLock";
 import MarkdownContent from "@/components/site/MarkdownContent";
+import ScheduleText from "@/components/site/ScheduleText";
 import CourseProgressToggle from "@/components/site/CourseProgressToggle";
 import FavoriteButton from "@/components/site/FavoriteButton";
 import TestimonialCarousel from "@/components/site/TestimonialCarousel";
@@ -170,7 +171,7 @@ export default async function CourseDetailPage({
                           {i + 1}. {lesson.title}
                         </p>
                       </div>
-                      {lesson.content && <p className="mt-3 text-sm text-foreground/70">{lesson.content}</p>}
+                      {lesson.content && <ScheduleText text={lesson.content} className="mt-3 text-sm text-foreground/70" />}
                       {lesson.audioUrl && (
                         <audio controls controlsList="nodownload" preload="none" className="mt-3 w-full">
                           <source src={lesson.audioUrl} type="audio/mpeg" />

@@ -85,7 +85,7 @@ export default async function HomePage() {
         // la taglia fuori dall'inquadratura sui riquadri stretti e alti come i cellulari.
         imagePosition="78% 20%"
         eyebrow="Yoga e Discipline Multidimensionali"
-        title="Yoga Stargate: Attiva la Nuova Frequenza"
+        title="Attiva la Nuova Frequenza"
         subtitle="Il metodo che unisce la tradizione yogica e le neuroscienze per il risveglio interiore e l'espansione di coscienza."
         primaryCta={{ label: "Inizia ora — 7 meditazioni gratis", href: "/corsi/sette-giorni-per-meditare-bene" }}
         secondaryCta={{ label: "Scopri di più", href: "#scegli" }}

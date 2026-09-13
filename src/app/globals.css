@@ -104,6 +104,23 @@ h4 {
   animation: breathe 2.4s ease-in-out infinite;
 }
 
+/* Anelli che si espandono verso l'esterno dal logo nella schermata di caricamento,
+   come un portale che si apre — stesso ritmo del respiro di .animate-breathe. */
+@keyframes portal-ring {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.animate-portal-ring {
+  animation: portal-ring 2.4s ease-out infinite;
+}
+
 /* Nasconde la scrollbar dei carousel mantenendo lo scroll */
 .no-scrollbar {
   -ms-overflow-style: none;

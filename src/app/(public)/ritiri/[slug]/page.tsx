@@ -7,6 +7,7 @@ import { getCurrentAccount } from "@/lib/auth";
 import { canAccess } from "@/lib/levels";
 import { LevelBadge, LevelLockedNotice } from "@/components/site/LevelLock";
 import MarkdownContent from "@/components/site/MarkdownContent";
+import ScheduleText from "@/components/site/ScheduleText";
 import LeadForm from "@/components/site/LeadForm";
 import FavoriteButton from "@/components/site/FavoriteButton";
 import TestimonialCarousel from "@/components/site/TestimonialCarousel";
@@ -153,7 +154,7 @@ export default async function RetreatDetailPage({ params }: { params: Promise<{ 
                           Giorno {day.day}
                         </p>
                         <p className="mt-1 font-heading text-base font-semibold text-foreground">{day.title}</p>
-                        <p className="mt-1 text-sm text-foreground/70">{day.description}</p>
+                        <ScheduleText text={day.description} className="mt-1 text-sm text-foreground/70" />
                       </li>
                     ))}
                   </ol>

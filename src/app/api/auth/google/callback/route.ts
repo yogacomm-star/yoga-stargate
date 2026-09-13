@@ -47,6 +47,15 @@ export async function GET(request: Request) {
     }
 
     if (account) {
+      // Un account ADMIN non deve mai poter entrare (né essere collegato a Google) da questo
+      // flusso pubblico, pensato per i membri: l'accesso admin passa solo da /admin/login,
+      // con password. Altrimenti basterebbe possedere l'account Google di quell'indirizzo
+      // email per ottenere accesso completo al pannello.
+      if (account.role === "ADMIN") {
+        const loginUrl = new URL("/admin/login", origin);
+        loginUrl.searchParams.set("error", "google_not_allowed_for_admin");
+        return NextResponse.redirect(loginUrl);
+      }
       if (!account.googleId) {
         account = await prisma.account.update({ where: { id: account.id }, data: { googleId: profile.sub } });
       }
