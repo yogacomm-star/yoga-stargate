@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentAccount } from "@/lib/auth";
 import { canAccess } from "@/lib/levels";
 import { LevelBadge, LevelLockedNotice, PurchaseLockedNotice } from "@/components/site/LevelLock";
-import MarkdownContent from "@/components/site/MarkdownContent";
+import { SectionedContent } from "@/components/site/MarkdownContent";
 import ScheduleText from "@/components/site/ScheduleText";
 import CourseProgressToggle from "@/components/site/CourseProgressToggle";
 import FavoriteButton from "@/components/site/FavoriteButton";
@@ -161,7 +161,7 @@ export default async function CourseDetailPage({
                 </p>
               </div>
             )}
-            <MarkdownContent content={course.description} />
+            <SectionedContent content={course.description} />
 
             <div className="mt-8 flex flex-wrap gap-3">
               <CourseProgressToggle courseId={course.id} initialCompleted={completed} loggedIn={!!account} />

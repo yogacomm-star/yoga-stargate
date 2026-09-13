@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentAccount } from "@/lib/auth";
 import { canAccess } from "@/lib/levels";
 import { LevelBadge, LevelLockedNotice } from "@/components/site/LevelLock";
-import MarkdownContent from "@/components/site/MarkdownContent";
+import { SectionedContent } from "@/components/site/MarkdownContent";
 import ScheduleText from "@/components/site/ScheduleText";
 import LeadForm from "@/components/site/LeadForm";
 import FavoriteButton from "@/components/site/FavoriteButton";
@@ -129,7 +129,7 @@ export default async function RetreatDetailPage({ params }: { params: Promise<{ 
         ) : (
           <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr]">
             <div>
-              <MarkdownContent content={retreat.description} />
+              <SectionedContent content={retreat.description} />
 
               {retreat.videoUrl && isAllowedEmbedUrl(retreat.videoUrl) && (
                 <div className="mt-10 aspect-video overflow-hidden rounded-3xl border border-border shadow-soft-sm">
