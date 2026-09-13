@@ -9,10 +9,12 @@ import { LevelBadge, LevelLockedNotice } from "@/components/site/LevelLock";
 import MarkdownContent from "@/components/site/MarkdownContent";
 import LeadForm from "@/components/site/LeadForm";
 import FavoriteButton from "@/components/site/FavoriteButton";
-import ReviewsSection from "@/components/site/ReviewsSection";
+import TestimonialCarousel from "@/components/site/TestimonialCarousel";
 import JsonLd from "@/components/site/JsonLd";
 import { SITE_URL } from "@/lib/site";
 import { firstImage } from "@/lib/images";
+import { isAllowedEmbedUrl } from "@/lib/embed";
+import DraftPreviewBanner from "@/components/site/DraftPreviewBanner";
 
 type Itinerary = { day: number; title: string; description: string }[];
 
@@ -43,9 +45,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function RetreatDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const retreat = await getRetreat(slug);
-  if (!retreat || retreat.status !== "PUBLISHED") notFound();
-
   const account = await getCurrentAccount();
+  // Le bozze restano invisibili a chiunque tranne l'admin: gli permette di aprire l'indirizzo
+  // pubblico vero e proprio per vedere come apparirà il ritiro prima ancora di pubblicarlo.
+  if (!retreat || (retreat.status !== "PUBLISHED" && account?.role !== "ADMIN")) notFound();
+
   const unlocked = canAccess(retreat.requiredLevel, account?.level);
   const itinerary = parseItinerary(retreat.itinerary);
 
@@ -82,9 +86,10 @@ export default async function RetreatDetailPage({ params }: { params: Promise<{ 
   return (
     <>
       <JsonLd data={eventJsonLd} />
+      {retreat.status === "DRAFT" && <DraftPreviewBanner />}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-secondary/40 via-primary/10 to-warm-surface" />
-        <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6">
+        <div className="mx-auto max-w-4xl px-4 py-24 text-center sm:px-6">
           <p className="text-xs font-semibold tracking-wide text-primary uppercase">{retreat.category}</p>
           <h1 className="mt-2 font-heading text-3xl font-semibold text-foreground sm:text-4xl">{retreat.title}</h1>
           <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-sm text-foreground/70">
@@ -125,12 +130,25 @@ export default async function RetreatDetailPage({ params }: { params: Promise<{ 
             <div>
               <MarkdownContent content={retreat.description} />
 
+              {retreat.videoUrl && isAllowedEmbedUrl(retreat.videoUrl) && (
+                <div className="mt-10 aspect-video overflow-hidden rounded-3xl border border-border shadow-soft-sm">
+                  <iframe
+                    src={retreat.videoUrl}
+                    title={retreat.title}
+                    className="h-full w-full"
+                    sandbox="allow-scripts allow-same-origin allow-presentation"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                  />
+                </div>
+              )}
+
               {itinerary.length > 0 && (
                 <div className="mt-10">
                   <h2 className="font-heading text-xl font-semibold text-foreground">Programma</h2>
                   <ol className="mt-4 space-y-4">
                     {itinerary.map((day) => (
-                      <li key={day.day} className="rounded-2xl border border-border bg-card p-5">
+                      <li key={day.day} className="rounded-3xl border border-border bg-card p-5">
                         <p className="text-xs font-semibold uppercase tracking-wide text-primary/70">
                           Giorno {day.day}
                         </p>
@@ -143,12 +161,13 @@ export default async function RetreatDetailPage({ params }: { params: Promise<{ 
               )}
 
               <div className="mt-10">
-                <ReviewsSection targetType="RETREAT" targetId={retreat.id} account={account} unlocked={unlocked} />
+                <h2 className="mb-6 font-heading text-xl font-semibold text-foreground">Testimonianze</h2>
+                <TestimonialCarousel />
               </div>
             </div>
 
             <div className="h-fit space-y-4">
-              <div className="rounded-2xl border border-border bg-card p-6 shadow-soft-sm">
+              <div className="rounded-3xl border border-border bg-card p-6 shadow-soft-sm">
                 <h2 className="font-heading text-lg font-semibold text-foreground">{retreat.ctaLabel}</h2>
                 <p className="mt-2 text-sm text-foreground/70">
                   Compila il modulo e ti risponderemo con tutti i dettagli su disponibilità e modalità di iscrizione.

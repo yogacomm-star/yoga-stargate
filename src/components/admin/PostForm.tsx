@@ -164,6 +164,7 @@ export default function PostForm({ initial, categories = [] }: { initial?: PostF
             field="excerpt"
             title={form.title}
             category={form.category}
+            currentText={form.excerpt}
             onGenerated={(text) => setForm((f) => ({ ...f, excerpt: text }))}
           />
         </div>
@@ -186,6 +187,7 @@ export default function PostForm({ initial, categories = [] }: { initial?: PostF
             title={form.title}
             category={form.category}
             notes={form.excerpt}
+            currentText={form.content}
             onGenerated={(text) => setForm((f) => ({ ...f, content: text }))}
           />
         </div>

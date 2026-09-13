@@ -8,8 +8,17 @@ import ImageUploadField from "@/components/admin/ImageUploadField";
 import AiDraftButton from "@/components/admin/AiDraftButton";
 import GenerateFullDraftButton from "@/components/admin/GenerateFullDraftButton";
 import AudioUploadField from "@/components/admin/AudioUploadField";
+import FileUploadField from "@/components/admin/FileUploadField";
 
-type Lesson = { title: string; videoUrl: string; content: string; audioUrl?: string; audioKey?: string };
+type Lesson = {
+  title: string;
+  videoUrl: string;
+  content: string;
+  audioUrl?: string;
+  audioKey?: string;
+  fileUrl?: string;
+  fileKey?: string;
+};
 
 export type CourseFormData = {
   id?: string;
@@ -212,6 +221,7 @@ export default function CourseForm({ initial, categories = [] }: { initial?: Cou
             field="excerpt"
             title={form.title}
             category={form.category}
+            currentText={form.excerpt}
             onGenerated={(text) => setForm((f) => ({ ...f, excerpt: text }))}
           />
         </div>
@@ -234,6 +244,7 @@ export default function CourseForm({ initial, categories = [] }: { initial?: Cou
             title={form.title}
             category={form.category}
             notes={form.excerpt}
+            currentText={form.description}
             onGenerated={(text) => setForm((f) => ({ ...f, description: text }))}
           />
         </div>
@@ -297,6 +308,14 @@ export default function CourseForm({ initial, categories = [] }: { initial?: Cou
                 isPrivate={!!form.price}
                 onChange={(result) => updateLesson(i, { audioUrl: result.audioUrl, audioKey: result.audioKey })}
               />
+              <div className="mt-2">
+                <FileUploadField
+                  fileUrl={lesson.fileUrl}
+                  fileKey={lesson.fileKey}
+                  isPrivate={!!form.price}
+                  onChange={(result) => updateLesson(i, { fileUrl: result.fileUrl, fileKey: result.fileKey })}
+                />
+              </div>
             </div>
           ))}
         </div>

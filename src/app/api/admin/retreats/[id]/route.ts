@@ -35,6 +35,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       endDate: d.endDate ? new Date(d.endDate) : null,
       price: d.price ?? null,
       images: JSON.stringify(d.images),
+      videoUrl: d.videoUrl || null,
       itinerary: JSON.stringify(d.itinerary),
       requiredLevel: d.requiredLevel ?? null,
       ctaLabel: d.ctaLabel,

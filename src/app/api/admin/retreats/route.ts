@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { notifyNewContent } from "@/lib/email";
 import { SITE_URL } from "@/lib/site";
+import { isAllowedEmbedUrl } from "@/lib/embed";
 
 const itineraryItem = z.object({ day: z.number(), title: z.string(), description: z.string() });
 
@@ -18,6 +19,13 @@ export const retreatSchema = z.object({
   endDate: z.string().optional().nullable(),
   price: z.number().nonnegative().nullable().optional(),
   images: z.array(z.string()).default([]),
+  videoUrl: z
+    .string()
+    .trim()
+    .max(500)
+    .nullable()
+    .optional()
+    .refine((v) => !v || isAllowedEmbedUrl(v), "Il video deve provenire da YouTube o Vimeo."),
   itinerary: z.array(itineraryItem).default([]),
   requiredLevel: z.number().int().min(1).max(3).nullable().optional(),
   ctaLabel: z.string().trim().min(1).max(80).default("Richiedi informazioni"),
@@ -51,6 +59,7 @@ export async function POST(request: Request) {
       endDate: d.endDate ? new Date(d.endDate) : null,
       price: d.price ?? null,
       images: JSON.stringify(d.images),
+      videoUrl: d.videoUrl || null,
       itinerary: JSON.stringify(d.itinerary),
       requiredLevel: d.requiredLevel ?? null,
       ctaLabel: d.ctaLabel,

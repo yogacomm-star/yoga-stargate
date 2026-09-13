@@ -26,6 +26,7 @@ export type RetreatFormData = {
   ctaUrl: string;
   status: "DRAFT" | "PUBLISHED";
   coverImage: string | null;
+  videoUrl: string;
   itinerary: ItineraryDay[];
 };
 
@@ -50,6 +51,7 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
       ctaUrl: "",
       status: "DRAFT",
       coverImage: null,
+      videoUrl: "",
       itinerary: [],
     }
   );
@@ -118,6 +120,7 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
       endDate: form.endDate || null,
       price: form.price ? Number(form.price) : null,
       images: form.coverImage ? [form.coverImage] : [],
+      videoUrl: form.videoUrl.trim() || null,
       itinerary: form.itinerary,
       requiredLevel: form.requiredLevel ? Number(form.requiredLevel) : null,
       ctaLabel: form.ctaLabel,
@@ -219,6 +222,7 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
             title={form.title}
             category={form.category}
             location={form.location}
+            currentText={form.excerpt}
             onGenerated={(text) => setForm((f) => ({ ...f, excerpt: text }))}
           />
         </div>
@@ -242,6 +246,7 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
             category={form.category}
             location={form.location}
             notes={form.excerpt}
+            currentText={form.description}
             onGenerated={(text) => setForm((f) => ({ ...f, description: text }))}
           />
         </div>
@@ -260,6 +265,20 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
         value={form.coverImage}
         onChange={(url) => setForm((f) => ({ ...f, coverImage: url }))}
       />
+
+      <div>
+        <label htmlFor="retreat-video" className={labelClass}>Video (facoltativo)</label>
+        <input
+          id="retreat-video"
+          placeholder="URL embed YouTube o Vimeo (facoltativo)"
+          value={form.videoUrl}
+          onChange={(e) => setForm((f) => ({ ...f, videoUrl: e.target.value }))}
+          className={inputClass}
+        />
+        <p className="mt-1 text-xs text-foreground/50">
+          Un video di presentazione del ritiro, mostrato nella pagina insieme alla foto di copertina.
+        </p>
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-4">
         <div>

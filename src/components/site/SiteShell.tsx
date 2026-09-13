@@ -3,7 +3,6 @@ import Navbar from "@/components/site/Navbar";
 import Footer from "@/components/site/Footer";
 import CookieBanner from "@/components/site/CookieBanner";
 import ChatWidget from "@/components/site/ChatWidget";
-import AdminTour from "@/components/admin/AdminTour";
 import { getCurrentAccount } from "@/lib/auth";
 
 export default async function SiteShell({ children }: { children: ReactNode }) {
@@ -19,7 +18,6 @@ export default async function SiteShell({ children }: { children: ReactNode }) {
       <Footer />
       <CookieBanner />
       <ChatWidget variant="public" />
-      {account?.role === "ADMIN" && <AdminTour />}
     </>
   );
 }

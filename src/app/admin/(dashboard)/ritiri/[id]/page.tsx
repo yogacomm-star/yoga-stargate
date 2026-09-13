@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import PreviewLink from "@/components/admin/PreviewLink";
 import { prisma } from "@/lib/prisma";
 import RetreatForm, { type RetreatFormData } from "@/components/admin/RetreatForm";
 
@@ -37,12 +38,16 @@ export default async function EditRitiroPage({ params }: { params: Promise<{ id:
     ctaUrl: retreat.ctaUrl ?? "",
     status: retreat.status,
     coverImage: images[0] ?? null,
+    videoUrl: retreat.videoUrl ?? "",
     itinerary,
   };
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-semibold text-foreground">Modifica ritiro</h1>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="font-heading text-2xl font-semibold text-foreground">Modifica ritiro</h1>
+        <PreviewLink href={`/ritiri/${retreat.slug}`} />
+      </div>
       <div className="mt-6 max-w-3xl space-y-6">
         <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
           <RetreatForm initial={initial} />

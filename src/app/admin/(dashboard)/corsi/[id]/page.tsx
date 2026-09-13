@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import PreviewLink from "@/components/admin/PreviewLink";
 import { prisma } from "@/lib/prisma";
 import CourseForm, { type CourseFormData } from "@/components/admin/CourseForm";
 
@@ -32,7 +33,10 @@ export default async function EditCorsoPage({ params }: { params: Promise<{ id: 
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-semibold text-foreground">Modifica corso</h1>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="font-heading text-2xl font-semibold text-foreground">Modifica corso</h1>
+        <PreviewLink href={`/corsi/${course.slug}`} />
+      </div>
       <div className="mt-6 max-w-3xl rounded-2xl border border-border bg-card p-6 sm:p-8">
         <CourseForm initial={initial} categories={categories} />
       </div>

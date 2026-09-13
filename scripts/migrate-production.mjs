@@ -43,6 +43,10 @@ async function applyIfColumnMissing(table, column, migrationDirName) {
 try {
   await applyIfColumnMissing("ContactLead", "source", "20260827131546_add_lead_source_and_stripe_session");
   await applyIfColumnMissing("Account", "isOwner", "20260828211745_add_site_lock_and_owner");
+  // Questa migration aggiunge sia la colonna Retreat.videoUrl sia la tabella GalleryItem in un
+  // unico file: basta controllare la colonna, l'intero file (incluso il CREATE TABLE) viene
+  // applicato insieme la prima volta.
+  await applyIfColumnMissing("Retreat", "videoUrl", "20260903144557_add_retreat_video_and_gallery");
 } finally {
   client.close();
 }

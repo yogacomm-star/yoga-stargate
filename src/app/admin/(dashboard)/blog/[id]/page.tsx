@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import PreviewLink from "@/components/admin/PreviewLink";
 import { prisma } from "@/lib/prisma";
 import PostForm, { type PostFormData } from "@/components/admin/PostForm";
 
@@ -26,7 +27,10 @@ export default async function EditArticoloPage({ params }: { params: Promise<{ i
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-semibold text-foreground">Modifica articolo</h1>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="font-heading text-2xl font-semibold text-foreground">Modifica articolo</h1>
+        <PreviewLink href={`/blog/${post.slug}`} />
+      </div>
       <div className="mt-6 max-w-3xl rounded-2xl border border-border bg-card p-6 sm:p-8">
         <PostForm initial={initial} categories={categories} />
       </div>

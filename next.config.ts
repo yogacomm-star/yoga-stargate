@@ -63,5 +63,9 @@ const nextConfig: NextConfig = {
 export default nextConfig;
 
 // Dà a `next dev` accesso ai binding Cloudflare (R2, ecc.) definiti in wrangler.jsonc, così
-// il comportamento in sviluppo è coerente con quello dopo il deploy su Workers.
-import("@opennextjs/cloudflare").then((m) => m.initOpenNextCloudflareForDev());
+// il comportamento in sviluppo è coerente con quello dopo un deploy su Workers. Solo in
+// sviluppo: un build di produzione su una piattaforma diversa da Cloudflare (es. Vercel) non
+// deve dipendere da questo pacchetto, che lì non ha nulla da inizializzare.
+if (isDev) {
+  import("@opennextjs/cloudflare").then((m) => m.initOpenNextCloudflareForDev());
+}

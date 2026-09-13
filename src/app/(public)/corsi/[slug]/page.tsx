@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { PlayCircle } from "lucide-react";
+import { PlayCircle, FileText } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getCurrentAccount } from "@/lib/auth";
 import { canAccess } from "@/lib/levels";
@@ -9,11 +9,20 @@ import { LevelBadge, LevelLockedNotice, PurchaseLockedNotice } from "@/component
 import MarkdownContent from "@/components/site/MarkdownContent";
 import CourseProgressToggle from "@/components/site/CourseProgressToggle";
 import FavoriteButton from "@/components/site/FavoriteButton";
-import ReviewsSection from "@/components/site/ReviewsSection";
+import TestimonialCarousel from "@/components/site/TestimonialCarousel";
 import { isAllowedEmbedUrl } from "@/lib/embed";
 import { getStripe } from "@/lib/stripe";
+import DraftPreviewBanner from "@/components/site/DraftPreviewBanner";
 
-type Lesson = { title: string; videoUrl: string; content: string; audioUrl?: string; audioKey?: string };
+type Lesson = {
+  title: string;
+  videoUrl: string;
+  content: string;
+  audioUrl?: string;
+  audioKey?: string;
+  fileUrl?: string;
+  fileKey?: string;
+};
 
 function parseLessons(raw: string): Lesson[] {
   try {
@@ -43,9 +52,11 @@ export default async function CourseDetailPage({
 }) {
   const { slug } = await params;
   const course = await getCourse(slug);
-  if (!course || course.status !== "PUBLISHED") notFound();
-
   const account = await getCurrentAccount();
+  // Le bozze restano invisibili a chiunque tranne l'admin: gli permette di aprire l'indirizzo
+  // pubblico vero e proprio per vedere come apparirà il corso prima ancora di pubblicarlo.
+  if (!course || (course.status !== "PUBLISHED" && account?.role !== "ADMIN")) notFound();
+
   const isPaid = !!course.price;
 
   let purchased = false;
@@ -103,9 +114,10 @@ export default async function CourseDetailPage({
 
   return (
     <>
+      {course.status === "DRAFT" && <DraftPreviewBanner />}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/15 via-secondary/30 to-warm-surface" />
-        <div className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6">
+        <div className="mx-auto max-w-3xl px-4 py-24 text-center sm:px-6">
           <p className="text-xs font-semibold tracking-wide text-primary uppercase">{course.category}</p>
           <h1 className="mt-2 font-heading text-3xl font-semibold text-foreground sm:text-4xl">{course.title}</h1>
           <p className="mt-4 text-foreground/70">{course.excerpt}</p>
@@ -149,7 +161,7 @@ export default async function CourseDetailPage({
                 <h2 className="font-heading text-xl font-semibold text-foreground">Lezioni</h2>
                 <div className="mt-4 space-y-4">
                   {lessons.map((lesson, i) => (
-                    <div key={lesson.title + i} className="rounded-2xl border border-border bg-card p-5">
+                    <div key={lesson.title + i} className="rounded-3xl border border-border bg-card p-5">
                       <div className="flex items-center gap-3">
                         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
                           <PlayCircle className="h-4 w-4" aria-hidden="true" />
@@ -181,6 +193,28 @@ export default async function CourseDetailPage({
                           />
                         </div>
                       )}
+                      {lesson.fileUrl && (
+                        <a
+                          href={lesson.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-lg border border-border px-3.5 py-2.5 text-sm font-medium text-foreground hover:border-primary hover:text-primary"
+                        >
+                          <FileText className="h-4 w-4" aria-hidden="true" />
+                          Scarica il materiale (PDF)
+                        </a>
+                      )}
+                      {lesson.fileKey && (
+                        <a
+                          href={`/api/courses/${course.id}/lessons/${i}/file`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-lg border border-border px-3.5 py-2.5 text-sm font-medium text-foreground hover:border-primary hover:text-primary"
+                        >
+                          <FileText className="h-4 w-4" aria-hidden="true" />
+                          Scarica il materiale (PDF)
+                        </a>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -188,7 +222,8 @@ export default async function CourseDetailPage({
             )}
 
             <div className="mt-10">
-              <ReviewsSection targetType="COURSE" targetId={course.id} account={account} unlocked={unlocked} />
+              <h2 className="mb-6 font-heading text-xl font-semibold text-foreground">Testimonianze</h2>
+              <TestimonialCarousel />
             </div>
           </>
         )}

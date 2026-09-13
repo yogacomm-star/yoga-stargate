@@ -13,10 +13,11 @@ import Logo from "@/components/site/Logo";
 const links = [
   { href: "/", label: "Home" },
   { href: "/chi-sono", label: "Chi Sono" },
-  { href: "/my-yoga", label: "Percorsi Live" },
   { href: "/metodo", label: "Metodo" },
-  { href: "/ritiri", label: "Ritiri & Viaggi" },
+  { href: "/ritiri", label: "Eventi & Ritiri" },
+  { href: "/my-yoga", label: "Percorsi Live" },
   { href: "/corsi", label: "Percorsi Online" },
+  { href: "/galleria", label: "Gallery" },
   { href: "/blog", label: "Blog" },
   { href: "/contatti", label: "Contatti" },
 ];
@@ -63,9 +64,9 @@ export default function Navbar({ account }: { account: NavAccount }) {
           : "bg-transparent border-b border-transparent"
       }`}
     >
-      <nav className="relative z-[60] mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
+      <nav className="relative z-[60] mx-auto flex max-w-6xl items-center justify-between px-4 py-1.5 sm:px-6">
         <Link href="/" className="flex items-center">
-          <Logo iconSize={48} textClassName="hidden sm:flex sm:flex-col text-lg" />
+          <Logo iconSize={68} textClassName="hidden sm:flex sm:flex-col text-lg" />
         </Link>
 
         <div className="flex items-center gap-1 sm:gap-2">
@@ -80,7 +81,7 @@ export default function Navbar({ account }: { account: NavAccount }) {
           {!account && (
             <Link
               href="/login"
-              className="cursor-pointer rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
+              className="cursor-pointer rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
             >
               Accedi
             </Link>
@@ -89,7 +90,7 @@ export default function Navbar({ account }: { account: NavAccount }) {
           {account?.role === "MEMBER" && (
             <Link
               href="/account"
-              className="hidden cursor-pointer items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5 sm:flex"
+              className="hidden cursor-pointer items-center gap-2 rounded-full border border-border bg-card px-3 py-2 text-sm font-medium text-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5 sm:flex"
             >
               <User className="h-4 w-4 text-primary" aria-hidden="true" />
               <span className="max-w-[7rem] truncate">{account.name}</span>
@@ -109,7 +110,7 @@ export default function Navbar({ account }: { account: NavAccount }) {
           {account?.role === "ADMIN" && (
             <Link
               href="/admin"
-              className="flex cursor-pointer items-center gap-2 rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-accent-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
+              className="flex cursor-pointer items-center gap-2 rounded-full bg-accent px-3 py-2 text-sm font-semibold text-accent-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
             >
               <ShieldCheck className="h-4 w-4" aria-hidden="true" />
               <span className="hidden sm:inline">Pannello Admin</span>

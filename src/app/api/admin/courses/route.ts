@@ -15,6 +15,8 @@ const lessonItem = z.object({
   content: z.string().default(""),
   audioUrl: z.string().trim().max(500).optional(),
   audioKey: z.string().trim().max(300).optional(),
+  fileUrl: z.string().trim().max(500).optional(),
+  fileKey: z.string().trim().max(300).optional(),
 });
 
 export const courseSchema = z.object({

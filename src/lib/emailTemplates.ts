@@ -14,10 +14,10 @@ export const EMAIL_TEMPLATES: Record<EmailTemplateKey, { label: string; subject:
       "Ciao,\n\nda oggi è disponibile un nuovo corso online: [nome del corso].\n\n[Racconta qui in breve il percorso e a chi è rivolto.]\n\nPuoi iniziare subito dalla sezione Corsi del sito.\n\nA presto,\nTina",
   },
   promemoria_lezione: {
-    label: "Promemoria lezione settimanale",
-    subject: "Ci vediamo mercoledì per la lezione",
+    label: "Promemoria Percorsi Live",
+    subject: "Ci vediamo mercoledì allo Spazio Olistico Pachamama",
     message:
-      "Ciao,\n\nun piccolo promemoria per la lezione di questa settimana: mercoledì alle [orario], in via Zanella 56 a Milano.\n\nSe non riesci a venire o vuoi prenotare una lezione di prova, scrivimi pure.\n\nA presto,\nTina",
+      "Ciao,\n\nun piccolo promemoria per [nome dell'appuntamento: Masterclass/Workshop/Percorso individuale] di mercoledì [data] alle [orario], allo Spazio Olistico Pachamama a Milano.\n\nI posti sono limitati: se non riesci a venire o vuoi informazioni su un altro Percorso Live, scrivimi pure.\n\nA presto,\nTina",
   },
   promozione: {
     label: "Promozione / sconto",

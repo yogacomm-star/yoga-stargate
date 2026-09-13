@@ -1,46 +1,37 @@
-const CLASSES = [
-  { summary: "Yoga Stargate — Lezione del mattino", start: "09:00", end: "10:15" },
-  { summary: "Yoga Stargate — Yoga per teenager", start: "17:00", end: "18:00" },
-  { summary: "Yoga Stargate — Livello adulti", start: "18:15", end: "19:30" },
-  { summary: "Yoga Stargate — Livello avanzato", start: "19:45", end: "21:00" },
+// Feed .ics dei prossimi appuntamenti dei Percorsi Live. A differenza delle vecchie lezioni
+// settimanali (un unico evento ricorrente ogni mercoledì), Masterclass e Workshop hanno
+// cadenze diverse (mensile/trimestrale) su date specifiche: qui sotto vanno quindi aggiornate
+// a mano man mano che si fissano le prossime date, invece di un'unica regola di ricorrenza.
+const EVENTS = [
+  {
+    uid: "masterclass-2026-10-21",
+    summary: "Yoga Stargate — Masterclass: Pratiche di Risveglio",
+    start: "20261021T170000",
+    end: "20261021T190000",
+  },
+  {
+    uid: "workshop-2026-11-04",
+    summary: "Yoga Stargate — Workshop Trimestrale",
+    start: "20261104T170000",
+    end: "20261104T200000",
+  },
 ];
 
-function nextWednesday(): Date {
-  const now = new Date();
-  const day = now.getDay(); // 0=Sun ... 3=Wed
-  const diff = (3 - day + 7) % 7 || 7;
-  const next = new Date(now);
-  next.setDate(now.getDate() + diff);
-  return next;
-}
-
-function formatDateTime(date: Date, time: string): string {
-  const [h, m] = time.split(":");
-  const y = date.getFullYear();
-  const mo = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}${mo}${d}T${h}${m}00`;
-}
-
 export async function GET() {
-  const base = nextWednesday();
   const stamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
 
-  const events = CLASSES.map((c, i) => {
-    const dtstart = formatDateTime(base, c.start);
-    const dtend = formatDateTime(base, c.end);
-    return [
+  const events = EVENTS.map((e) =>
+    [
       "BEGIN:VEVENT",
-      `UID:yoga-stargate-lezione-${i}@yogastargate.com`,
+      `UID:${e.uid}@yogastargate.com`,
       `DTSTAMP:${stamp}`,
-      `DTSTART;TZID=Europe/Rome:${dtstart}`,
-      `DTEND;TZID=Europe/Rome:${dtend}`,
-      "RRULE:FREQ=WEEKLY;BYDAY=WE",
-      `SUMMARY:${c.summary}`,
-      "LOCATION:Via Zanella 56\\, Milano",
+      `DTSTART;TZID=Europe/Rome:${e.start}`,
+      `DTEND;TZID=Europe/Rome:${e.end}`,
+      `SUMMARY:${e.summary}`,
+      "LOCATION:Spazio Olistico Pachamama\\, Milano",
       "END:VEVENT",
-    ].join("\r\n");
-  }).join("\r\n");
+    ].join("\r\n")
+  ).join("\r\n");
 
   const ics = [
     "BEGIN:VCALENDAR",
@@ -54,7 +45,7 @@ export async function GET() {
   return new Response(ics, {
     headers: {
       "Content-Type": "text/calendar; charset=utf-8",
-      "Content-Disposition": `attachment; filename="lezioni-yoga-stargate.ics"`,
+      "Content-Disposition": `attachment; filename="percorsi-live-yoga-stargate.ics"`,
     },
   });
 }

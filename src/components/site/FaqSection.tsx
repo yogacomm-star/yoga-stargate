@@ -7,12 +7,12 @@ const defaultFaqs: FaqItem[] = [
   {
     question: "Non ho mai praticato con Tina: da dove inizio?",
     answer:
-      "Il modo più semplice è prenotare una lezione di prova dei Percorsi Live a Milano (20€) oppure scaricare il dono gratuito \"7 Giorni per Meditare Bene\" e iniziare dalla pratica quotidiana guidata.",
+      "Il modo più semplice è iniziare da una Masterclass dei Percorsi Live a Milano (49€, un mercoledì al mese) oppure scaricare il dono gratuito \"7 Giorni per Meditare Bene\" e iniziare dalla pratica quotidiana guidata.",
   },
   {
     question: "Come funzionano i Percorsi Live?",
     answer:
-      "Non sono semplici lezioni settimanali: sono percorsi di 4 lezioni alla volta, ciascuno con un argomento specifico. Provi una lezione, e se risuona con te ti iscrivi al percorso di 4 incontri, rinnovabile con un nuovo tema.",
+      "Ogni mercoledì allo Spazio Olistico Pachamama a Milano, in tre formati: la Masterclass mensile per aprire, il Workshop trimestrale per approfondire, il Percorso individuale per un lavoro su misura. Posti sempre limitati.",
   },
   {
     question: "Cos'è il Metodo Yoga Stargate?",
@@ -58,7 +58,7 @@ export default function FaqSection({ faqs = defaultFaqs, title = "Domande freque
   };
 
   return (
-    <section className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+    <section className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
       <JsonLd data={faqJsonLd} />
       <div className="text-center">
         <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted text-primary">
@@ -70,7 +70,7 @@ export default function FaqSection({ faqs = defaultFaqs, title = "Domande freque
         {faqs.map((f) => (
           <details
             key={f.question}
-            className="group rounded-2xl border border-border bg-card px-6 py-4 shadow-soft-sm open:shadow-soft-md"
+            className="group rounded-3xl border border-border bg-card px-6 py-4 shadow-soft-sm open:shadow-soft-md"
           >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-heading text-base font-semibold text-foreground [&::-webkit-details-marker]:hidden">
               {f.question}

@@ -7,9 +7,24 @@ import { ArrowRight, Sparkles, BrainCircuit, HeartHandshake } from "lucide-react
 export const metadata: Metadata = {
   title: "Chi Sono",
   description:
-    "Tina Mastandrea, Master Yoga Teacher e fondatrice di Yoga Stargate: la storia e il metodo dietro allo yoga multidimensionale.",
+    "Tina Mastandrea: Master Yoga Teacher, creatrice del metodo Yoga Stargate, guida spirituale e formatrice internazionale dedicata al risveglio dell'anima.",
   alternates: { canonical: "/chi-sono" },
 };
+
+const offerings = [
+  {
+    title: "Formazione Yoga Stargate",
+    text: "Percorsi evolutivi e professionali attraverso i 4 processi del metodo, per chi sente la chiamata a una trasformazione profonda e radicata.",
+  },
+  {
+    title: "Ritiri e esperienze immersive",
+    text: "Spazi sacri di rigenerazione, guarigione e attivazione, in presenza con gruppi in evoluzione.",
+  },
+  {
+    title: "Trasmissioni di luce e meditazioni multidimensionali",
+    text: "Pratiche energetiche per elevare la frequenza, aprire la visione e riconnettersi alla missione d'Anima.",
+  },
+];
 
 const pillars = [
   {
@@ -39,9 +54,9 @@ export default function ChiSonoPage() {
   return (
     <>
       <Hero
-        eyebrow="Master Yoga Teacher International"
+        eyebrow="Master Yoga Teacher"
         title="Tina Mastandrea"
-        subtitle="Master Yoga Teacher International e fondatrice di Yoga Stargate — uno yoga contemporaneo nato dall'unione tra tradizione yogica e neuroscienze."
+        subtitle="Master Yoga Teacher, creatrice del metodo, guida spirituale e formatrice internazionale dedicata al risveglio dell'anima."
         backgroundImage="/images/meditazione-lago-turchese.jpg"
       />
 
@@ -56,42 +71,88 @@ export default function ChiSonoPage() {
               className="object-cover"
             />
           </div>
-          <div className="space-y-4 leading-relaxed text-foreground/80">
-            <p>
-              Da oltre un decennio accompagno persone di ogni età ed esperienza in un percorso di trasformazione
-              attraverso lo yoga. Il mio insegnamento nasce dall&apos;incontro tra la tradizione yogica, che ho
-              studiato e praticato per anni, e un approccio più contemporaneo che integra le neuroscienze
-              all&apos;esplorazione della coscienza.
-            </p>
-            <p>
-              Sono <strong>Master Yoga Teacher International</strong>, un riconoscimento che rappresenta il livello
-              più alto di formazione nell&apos;insegnamento dello yoga. Yoga Stargate è il nome che ho scelto per
-              raccontare il mio metodo: un portale, uno &ldquo;stargate&rdquo; appunto, verso una nuova frequenza di
-              consapevolezza. Non un semplice allenamento fisico, ma un cammino multidimensionale che tocca corpo,
-              mente ed energia.
-            </p>
-            <p>
-              Insegno ogni settimana a Milano, in Via Zanella 56, e guido ritiri e viaggi in Italia e nel mondo su
-              temi come mental reset, riconnessione al sé e formazione. Accompagno manager, professionisti, coach,
-              ricercatori spirituali e insegnanti olistici e di yoga: persone che cercano strumenti reali, concreti e
-              trasformativi per la propria evoluzione.
-            </p>
+          <div className="leading-relaxed text-foreground/80">
+            <p className="text-xs font-semibold tracking-wide text-primary uppercase">La mia storia</p>
+            <div className="mt-4 space-y-4">
+              <p>
+                Da oltre 25 anni accompagno persone in percorsi di trasformazione attraverso yoga, meditazione e
+                pratiche multidimensionali.
+              </p>
+              <p>
+                Fin da bambina sentivo un richiamo naturale al silenzio e alla luce: meditavo senza sapere che quel
+                gesto avrebbe tracciato il cammino della mia vita. Quel silenzio è diventato la mia bussola e mi ha
+                guidata attraverso anni di ricerca interiore, studio e servizio.
+              </p>
+              <p>
+                Dopo la mia prima certificazione ho iniziato a insegnare in Messico e in California, guidando gruppi
+                internazionali in esperienze profonde di risveglio e guarigione. Da allora accompagno anime da tutto
+                il mondo in ritiri e percorsi dedicati alla consapevolezza e alla rigenerazione.
+              </p>
+              <p>
+                Il mio cammino integra yoga antico, neuroscienze, pratiche contemplative e discipline energetiche.
+                Yoga Stargate è la sintesi di questo viaggio: un metodo che apre portali interiori, risveglia la
+                presenza e riconnette alla missione d&apos;Anima.
+              </p>
+              <p className="font-heading text-lg font-semibold text-foreground">
+                Per me non è un lavoro: è una missione.
+              </p>
+              <p>
+                Negli anni ho compreso che la mia guida non si rivolge solo alle persone, ma anche ai gruppi e alle
+                realtà olistiche che desiderano integrare una dimensione spirituale autentica e contemporanea. Creo
+                percorsi, programmi e spazi dedicati alla consapevolezza, unendo metodo, presenza e una visione
+                chiara del potenziale umano.
+              </p>
+              <p>
+                Collaboro con centri, retreat e progetti in evoluzione, portando direzione, profondità e stabilità in
+                ogni esperienza, affinché la trasformazione sia reale, radicata e luminosa.
+              </p>
+            </div>
             <Link
               href="/metodo"
-              className="inline-flex cursor-pointer items-center gap-1 pt-2 text-base font-semibold text-primary"
+              className="inline-flex cursor-pointer items-center gap-1 pt-4 text-base font-semibold text-primary"
             >
               Scopri il Metodo & Percorso di formazione
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
         </div>
+
+        <div className="mt-14 border-t border-border pt-10">
+          <h2 className="font-heading text-xl font-semibold text-foreground sm:text-2xl">
+            Come posso accompagnarti
+          </h2>
+          <ul className="mt-6 grid gap-6 sm:grid-cols-3">
+            {offerings.map((o) => (
+              <li key={o.title}>
+                <p className="font-heading text-base font-semibold text-foreground">{o.title}</p>
+                <p className="mt-1.5 text-sm text-foreground/70">{o.text}</p>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-8 leading-relaxed text-foreground/80">
+            Collaboro anche con centri, retreat e progetti olistici che vogliono integrare una dimensione spirituale
+            autentica e contemporanea.
+          </p>
+          <div className="mt-8 rounded-3xl border border-border bg-card p-6 text-center shadow-soft-sm sm:p-8">
+            <p className="font-heading text-lg font-semibold text-foreground">
+              Se senti che questo è il tuo momento — sono qui.
+            </p>
+            <Link
+              href="/contatti"
+              className="mt-4 inline-flex cursor-pointer items-center gap-1 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
+            >
+              Scrivimi
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </div>
+        </div>
       </section>
 
-      <section className="mx-auto max-w-4xl px-4 py-12 text-center sm:px-6">
+      <section className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6">
         <div className="grid gap-6 sm:grid-cols-3">
           {pillars.map((p) => (
-            <div key={p.title} className="rounded-2xl border border-border bg-card p-6 text-left shadow-soft-sm">
-              <span className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <div key={p.title} className="rounded-3xl border border-border bg-card p-6 text-left shadow-soft-sm">
+              <span className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                 <p.icon className="h-5 w-5" aria-hidden="true" />
               </span>
               <h3 className="font-heading text-base font-semibold text-foreground">{p.title}</h3>
@@ -101,7 +162,7 @@ export default function ChiSonoPage() {
         </div>
       </section>
 
-      <section className="bg-card py-16">
+      <section className="bg-card py-20">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
           <p className="text-xs font-semibold tracking-wide text-primary uppercase">Certificazioni</p>
           <h2 className="mt-2 font-heading text-2xl font-semibold text-foreground sm:text-3xl">

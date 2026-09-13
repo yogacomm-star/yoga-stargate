@@ -6,13 +6,17 @@ import { uploadToR2, uploadToPrivateR2, r2Configured } from "@/lib/r2";
 import { canUploadBytes } from "@/lib/storage";
 import { prisma } from "@/lib/prisma";
 
-const ALLOWED_TYPES: Record<string, { ext: string; folder: string; maxSize: number; audio?: boolean }> = {
+// "allowPrivate": può essere caricato nel bucket privato (vedi ALLOWED_TYPES sotto), riservato
+// ai formati usati per contenuto delle lezioni che deve restare bloccato finché non si
+// acquista il corso (audio e materiali PDF). Le immagini restano sempre pubbliche.
+const ALLOWED_TYPES: Record<string, { ext: string; folder: string; maxSize: number; allowPrivate?: boolean }> = {
   "image/jpeg": { ext: "jpg", folder: "images", maxSize: 5 * 1024 * 1024 },
   "image/png": { ext: "png", folder: "images", maxSize: 5 * 1024 * 1024 },
   "image/webp": { ext: "webp", folder: "images", maxSize: 5 * 1024 * 1024 },
-  "audio/mpeg": { ext: "mp3", folder: "audio", maxSize: 150 * 1024 * 1024, audio: true },
-  "audio/x-m4a": { ext: "m4a", folder: "audio", maxSize: 150 * 1024 * 1024, audio: true },
-  "audio/mp4": { ext: "m4a", folder: "audio", maxSize: 150 * 1024 * 1024, audio: true },
+  "audio/mpeg": { ext: "mp3", folder: "audio", maxSize: 150 * 1024 * 1024, allowPrivate: true },
+  "audio/x-m4a": { ext: "m4a", folder: "audio", maxSize: 150 * 1024 * 1024, allowPrivate: true },
+  "audio/mp4": { ext: "m4a", folder: "audio", maxSize: 150 * 1024 * 1024, allowPrivate: true },
+  "application/pdf": { ext: "pdf", folder: "documents", maxSize: 20 * 1024 * 1024, allowPrivate: true },
 };
 
 // Firme binarie (magic bytes) dei formati ammessi: evita che un file venga accettato
@@ -38,6 +42,9 @@ function matchesSignature(bytes: Uint8Array, mimeType: string): boolean {
     // Contenitore MP4/M4A: bytes 4-7 sono sempre "ftyp".
     return bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70;
   }
+  if (mimeType === "application/pdf") {
+    return bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46; // "%PDF"
+  }
   return false;
 }
 
@@ -61,10 +68,10 @@ export async function POST(request: Request) {
 
   const spec = ALLOWED_TYPES[file.type];
   if (!spec) {
-    return NextResponse.json({ error: "Formato non supportato. Usa JPG, PNG, WEBP, MP3 o M4A." }, { status: 400 });
+    return NextResponse.json({ error: "Formato non supportato. Usa JPG, PNG, WEBP, MP3, M4A o PDF." }, { status: 400 });
   }
-  if (visibility === "private" && !spec.audio) {
-    return NextResponse.json({ error: "Solo i file audio possono essere privati." }, { status: 400 });
+  if (visibility === "private" && !spec.allowPrivate) {
+    return NextResponse.json({ error: "Solo audio e PDF possono essere privati." }, { status: 400 });
   }
   if (file.size > spec.maxSize) {
     return NextResponse.json({ error: `Il file supera i ${Math.round(spec.maxSize / (1024 * 1024))}MB.` }, { status: 400 });
@@ -97,5 +104,7 @@ export async function POST(request: Request) {
 
   const url = await uploadToR2(key, bytes, file.type);
   await prisma.mediaAsset.create({ data: { key, url, sizeBytes: file.size, mimeType: file.type } });
-  return NextResponse.json({ url });
+  // "key" torna anche per i caricamenti pubblici (oltre a "url") per chi, come la Gallery,
+  // deve poter eliminare l'oggetto da R2 in seguito: gli altri form lo ignorano semplicemente.
+  return NextResponse.json({ url, key });
 }

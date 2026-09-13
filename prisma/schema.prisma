@@ -32,6 +32,11 @@ enum ReviewStatus {
   APPROVED
 }
 
+enum GalleryItemType {
+  IMAGE
+  VIDEO
+}
+
 model Account {
   id               String   @id @default(cuid())
   email            String   @unique
@@ -76,6 +81,9 @@ model Retreat {
   endDate       DateTime?
   price         Float?
   images        String        @default("[]") // JSON array di path immagini
+  // URL embed YouTube o Vimeo (facoltativo): stessa validazione/scopo del video per lezione
+  // dei corsi, vedi isAllowedEmbedUrl in src/lib/embed.ts.
+  videoUrl      String?
   itinerary     String        @default("[]") // JSON array di { day, title, description }
   requiredLevel Int? // null = aperto a tutti
   ctaLabel      String        @default("Richiedi informazioni")
@@ -216,4 +224,20 @@ model AppSettings {
   // dal titolare del sito: vedi src/lib/siteLock.ts.
   siteLocked          Boolean @default(false)
   siteLockCodeHash    String? // hash SHA-256 esadecimale del codice corrente; null quando non c'è un codice attivo
+}
+
+// Foto e video della Gallery pubblica, gestita direttamente da Tina dal pannello admin.
+// Niente stato bozza/pubblicato: a differenza di ritiri/corsi/articoli è pensata per
+// aggiungere/togliere contenuti al volo, senza un flusso editoriale — ogni riga è già
+// pubblica. I video NON sono file caricati (appesantirebbero il sito e lo storage): sono
+// embed YouTube/Vimeo, esattamente come i video delle lezioni dei corsi.
+model GalleryItem {
+  id        String          @id @default(cuid())
+  type      GalleryItemType
+  imageUrl  String? // valorizzato solo per type=IMAGE (URL pubblico su Cloudflare R2)
+  imageKey  String? // chiave R2 corrispondente, per poterla eliminare dallo storage
+  videoUrl  String? // valorizzato solo per type=VIDEO (embed YouTube/Vimeo)
+  caption   String?
+  order     Int             @default(0)
+  createdAt DateTime        @default(now())
 }

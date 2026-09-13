@@ -12,6 +12,11 @@ type HeroProps = {
   primaryCta?: { label: string; href: string };
   secondaryCta?: { label: string; href: string };
   backgroundImage?: string;
+  // Sposta l'inquadratura (CSS object-position) sul soggetto della foto quando il riquadro
+  // diventa molto più stretto e alto che largo, come sui cellulari: con "center" (default)
+  // l'inquadratura resta al centro della foto originale, che su schermi stretti può tagliare
+  // fuori il soggetto se non è già centrato nella foto di partenza.
+  imagePosition?: string;
   /** "left" = testo allineato a sinistra sopra la foto (stile hero home) */
   align?: "center" | "left";
   children?: ReactNode;
@@ -24,6 +29,7 @@ export default function Hero({
   primaryCta,
   secondaryCta,
   backgroundImage,
+  imagePosition = "center",
   align = "center",
   children,
 }: HeroProps) {
@@ -34,7 +40,15 @@ export default function Hero({
     <section className="relative overflow-hidden">
       {onPhoto ? (
         <div aria-hidden="true" className="absolute inset-0 -z-10">
-          <Image src={backgroundImage} alt="" fill priority sizes="100vw" className="object-cover" />
+          <Image
+            src={backgroundImage}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+            style={{ objectPosition: imagePosition }}
+          />
           {left ? (
             <div className="absolute inset-0 bg-gradient-to-r from-[#0f2d40]/85 via-[#0f2d40]/55 to-[#0f2d40]/15" />
           ) : (
@@ -116,7 +130,7 @@ export default function Hero({
               {primaryCta && (
                 <Link
                   href={primaryCta.href}
-                  className="cursor-pointer rounded-lg bg-accent px-7 py-3.5 text-base font-semibold text-accent-foreground shadow-soft-md transition-transform hover:-translate-y-0.5"
+                  className="cursor-pointer rounded-full bg-accent px-7 py-3.5 text-base font-semibold text-accent-foreground shadow-soft-md transition-transform hover:-translate-y-0.5"
                 >
                   {primaryCta.label}
                 </Link>
@@ -124,7 +138,7 @@ export default function Hero({
               {secondaryCta && (
                 <Link
                   href={secondaryCta.href}
-                  className={`cursor-pointer rounded-lg px-7 py-3.5 text-base font-semibold shadow-soft-md transition-transform hover:-translate-y-0.5 ${
+                  className={`cursor-pointer rounded-full px-7 py-3.5 text-base font-semibold shadow-soft-md transition-transform hover:-translate-y-0.5 ${
                     onPhoto ? "bg-card text-primary hover:bg-card/90" : "bg-primary text-primary-foreground hover:bg-primary/90"
                   }`}
                 >

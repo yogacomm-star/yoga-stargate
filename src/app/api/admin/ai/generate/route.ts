@@ -4,14 +4,12 @@ import { requireAdmin } from "@/lib/auth";
 import { groqJson, groqConfigured } from "@/lib/groq";
 import { rateLimit, clientIp } from "@/lib/rateLimit";
 import { slugify } from "@/lib/slug";
+import { BRAND_VOICE, AUDIENCE_BY_KIND } from "@/lib/aiCopy";
 
 const schema = z.object({
   kind: z.enum(["retreat", "course", "post"]),
   topic: z.string().trim().min(2).max(300),
 });
-
-const BRAND_VOICE =
-  "Sei una copywriter esperta di yoga e benessere che scrive per Yoga Stargate, la scuola di yoga multidimensionale di Tina Mastandrea a Milano. Il tono è caldo, evocativo ma concreto: mai esagerato, mai new-age generico o pieno di cliché. Scrivi sempre e solo in italiano.";
 
 type RetreatDraft = {
   title: string;
@@ -53,7 +51,7 @@ export async function POST(request: Request) {
         [
           {
             role: "system",
-            content: `${BRAND_VOICE} Devi progettare un ritiro di yoga a partire da un argomento fornito dall'amministratrice. Rispondi SOLO con un oggetto JSON con questa forma esatta: {"title": string, "category": "Trasformativo"|"Esperienziale"|"Consapevolezza"|"Viaggio", "location": string, "excerpt": string (max 35 parole), "description": string (3-4 paragrafi separati da \\n\\n, circa 150 parole), "itinerary": [{"day": number, "title": string, "description": string (1-2 frasi)}]} con 2-4 giorni di programma coerenti con la durata implicita nell'argomento.`,
+            content: `${BRAND_VOICE} ${AUDIENCE_BY_KIND.retreat} Devi progettare un ritiro di yoga a partire da un argomento fornito dall'amministratrice. Rispondi SOLO con un oggetto JSON con questa forma esatta: {"title": string, "category": "Trasformativo"|"Esperienziale"|"Consapevolezza"|"Viaggio", "location": string, "excerpt": string (max 35 parole), "description": string (3-4 paragrafi separati da \\n\\n, circa 150 parole), "itinerary": [{"day": number, "title": string, "description": string (1-2 frasi)}]} con 2-4 giorni di programma coerenti con la durata implicita nell'argomento.`,
           },
           { role: "user", content: `Argomento/titolo di partenza: "${topic}"` },
         ],
@@ -75,7 +73,7 @@ export async function POST(request: Request) {
         [
           {
             role: "system",
-            content: `${BRAND_VOICE} Devi progettare un corso online (video/testo) a partire da un argomento fornito dall'amministratrice. Rispondi SOLO con un oggetto JSON con questa forma esatta: {"title": string, "category": string breve, "excerpt": string (max 35 parole), "description": string (3-4 paragrafi separati da \\n\\n, circa 150 parole), "lessons": [{"title": string, "content": string (2-3 frasi che riassumono la lezione)}]} con 3-6 lezioni in ordine logico.`,
+            content: `${BRAND_VOICE} ${AUDIENCE_BY_KIND.course} Devi progettare un corso online (video/testo) a partire da un argomento fornito dall'amministratrice. Rispondi SOLO con un oggetto JSON con questa forma esatta: {"title": string, "category": string breve, "excerpt": string (max 35 parole), "description": string (3-4 paragrafi separati da \\n\\n, circa 150 parole), "lessons": [{"title": string, "content": string (2-3 frasi che riassumono la lezione)}]} con 3-6 lezioni in ordine logico.`,
           },
           { role: "user", content: `Argomento/titolo di partenza: "${topic}"` },
         ],
@@ -95,7 +93,7 @@ export async function POST(request: Request) {
       [
         {
           role: "system",
-          content: `${BRAND_VOICE} Devi scrivere un articolo di blog a partire da un argomento fornito dall'amministratrice. Rispondi SOLO con un oggetto JSON con questa forma esatta: {"title": string, "category": string breve, "excerpt": string (max 35 parole), "content": string in formato markdown (4-6 paragrafi, circa 300 parole, con un'apertura che cattura l'attenzione)}.`,
+          content: `${BRAND_VOICE} ${AUDIENCE_BY_KIND.post} Devi scrivere un articolo di blog a partire da un argomento fornito dall'amministratrice. Rispondi SOLO con un oggetto JSON con questa forma esatta: {"title": string, "category": string breve, "excerpt": string (max 35 parole), "content": string in formato markdown (4-6 paragrafi, circa 300 parole, con un'apertura che cattura l'attenzione)}.`,
         },
         { role: "user", content: `Argomento/titolo di partenza: "${topic}"` },
       ],

@@ -29,13 +29,6 @@ const businessJsonLd = {
   founder: { "@type": "Person", name: "Tina Mastandrea" },
 };
 
-const schedule = [
-  { day: "Mercoledì", time: "9:00 – 10:15", label: "Lezione del mattino" },
-  { day: "Mercoledì", time: "17:00 – 18:00", label: "Yoga per teenager" },
-  { day: "Mercoledì", time: "18:15 – 19:30", label: "Livello adulti" },
-  { day: "Mercoledì", time: "19:45 – 21:00", label: "Livello avanzato" },
-];
-
 function formatDate(iso: string | null) {
   if (!iso) return null;
   return new Date(iso).toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric" });
@@ -88,14 +81,17 @@ export default async function HomePage() {
       <Hero
         align="left"
         backgroundImage="/images/hero-meditazione-arcobaleno.jpg"
-        eyebrow="Il metodo di Yoga Multidimensionale"
-        title="Attiva la tua Nuova Frequenza"
-        subtitle="Il metodo di Tina Mastandrea, Master Yoga Teacher International, che unisce la tradizione yogica alle neuroscienze per il tuo risveglio interiore."
+        // La foto ritrae Tina spostata verso destra: object-position di default (centrato)
+        // la taglia fuori dall'inquadratura sui riquadri stretti e alti come i cellulari.
+        imagePosition="78% 20%"
+        eyebrow="Yoga e Discipline Multidimensionali"
+        title="Yoga Stargate: Attiva la Nuova Frequenza"
+        subtitle="Il metodo che unisce la tradizione yogica e le neuroscienze per il risveglio interiore e l'espansione di coscienza."
         primaryCta={{ label: "Inizia ora — 7 meditazioni gratis", href: "/corsi/sette-giorni-per-meditare-bene" }}
-        secondaryCta={{ label: "Scopri il metodo", href: "/metodo" }}
+        secondaryCta={{ label: "Scopri di più", href: "#scegli" }}
       />
 
-      <section className="relative overflow-hidden bg-primary py-16 text-center text-white">
+      <section className="relative overflow-hidden bg-primary py-20 text-center text-white">
         <div className="relative mx-auto max-w-2xl px-4 sm:px-6">
           <span className="mb-4 inline-flex items-center rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-semibold tracking-wide text-white uppercase backdrop-blur-sm">
             Regalo per te, gratis
@@ -108,7 +104,7 @@ export default async function HomePage() {
           <div className="mt-8 flex justify-center">
             <Link
               href="/corsi/sette-giorni-per-meditare-bene"
-              className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-accent px-7 py-3 text-base font-semibold text-accent-foreground shadow-soft-md transition-transform hover:-translate-y-0.5"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-accent px-7 py-3 text-base font-semibold text-accent-foreground shadow-soft-md transition-transform hover:-translate-y-0.5"
             >
               <Gift className="h-4 w-4" aria-hidden="true" />
               Voglio il mio dono
@@ -118,40 +114,33 @@ export default async function HomePage() {
       </section>
 
       {/* Box scorrevoli con inviti agli eventi */}
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+      <section id="scegli" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-20 sm:px-6">
         <p className="text-xs font-semibold tracking-wide text-primary uppercase">I prossimi appuntamenti</p>
         <h2 className="mt-2 font-heading text-3xl font-semibold text-foreground sm:text-4xl">
-          Scegli da dove iniziare
+          Scegli quello che ti risuona
         </h2>
 
-        <ScrollCarousel className="mt-8" itemClassName="min-w-[68%] sm:min-w-[34%] lg:min-w-[22%]" ariaLabel="Prossimi appuntamenti">
+        <ScrollCarousel className="mt-8" itemClassName="w-[85vw] min-w-0 sm:w-[340px] first:w-[92vw] sm:first:w-[440px]" ariaLabel="Prossimi appuntamenti">
           {/* Percorsi Live a Milano */}
-          <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-soft-sm">
-            <div className="relative h-40 w-full shrink-0">
+          <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-soft-sm">
+            <div className="relative h-44 w-full shrink-0">
               <Image src="/images/lezione-parco-milano.jpeg" alt="" fill sizes="(min-width: 1024px) 40vw, 88vw" className="object-cover" />
               <span className="absolute top-4 left-4 inline-flex items-center gap-2 rounded-full bg-card/90 px-3 py-1 text-xs font-semibold text-primary uppercase tracking-wide backdrop-blur-sm">
-                <MapPin className="h-3.5 w-3.5" aria-hidden="true" /> Milano · Via Zanella 56
+                <MapPin className="h-3.5 w-3.5" aria-hidden="true" /> Milano · Ogni mercoledì
               </span>
             </div>
             <div className="flex flex-1 flex-col p-5">
-              <h3 className="font-heading text-lg font-semibold text-foreground">Percorsi Live — Prova una lezione</h3>
+              <h3 className="font-heading text-xl font-semibold text-foreground">Percorsi Live a Milano</h3>
               <p className="mt-2 text-sm text-foreground/70">
-                Percorsi di 4 lezioni con un tema specifico, in piccoli gruppi. La lezione di prova costa 20€.
+                Masterclass mensile, workshop trimestrale e percorso individuale allo Spazio Olistico Pachamama.
+                Posti sempre limitati.
               </p>
-              <ul className="mt-4 space-y-1.5">
-                {schedule.map((s) => (
-                  <li key={s.label} className="flex items-baseline justify-between gap-3 text-sm">
-                    <span className="font-semibold text-foreground">{s.label}</span>
-                    <span className="shrink-0 text-foreground/60">{s.day} · {s.time}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-auto pt-4">
+              <div className="mt-auto pt-3">
                 <Link
                   href="/my-yoga"
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
                 >
-                  Prenota la lezione di prova
+                  Scopri i Percorsi Live
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </div>
@@ -159,15 +148,15 @@ export default async function HomePage() {
           </div>
 
           {/* Prossimo ritiro */}
-          <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-soft-sm">
-            <div className="relative h-40 w-full shrink-0">
+          <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-soft-sm">
+            <div className="relative h-44 w-full shrink-0">
               <Image src={retreatImage} alt="" fill sizes="(min-width: 1024px) 40vw, 88vw" className="object-cover" />
               <span className="absolute top-4 left-4 inline-flex items-center gap-2 rounded-full bg-card/90 px-3 py-1 text-xs font-semibold text-primary uppercase tracking-wide backdrop-blur-sm">
                 <Compass className="h-3.5 w-3.5" aria-hidden="true" /> Prossimo ritiro
               </span>
             </div>
             <div className="flex flex-1 flex-col p-5">
-              <h3 className="font-heading text-lg font-semibold text-foreground">
+              <h3 className="font-heading text-xl font-semibold text-foreground">
                 Se cerchi silenzio e natura, questo è il tuo momento
               </h3>
               {nextRetreat ? (
@@ -177,13 +166,14 @@ export default async function HomePage() {
                 </p>
               ) : (
                 <p className="mt-2 text-sm text-foreground/70">
-                  Mental reset, riconnessione al sé, formazione: scopri le prossime destinazioni dei ritiri Yoga Stargate.
+                  Mental reset, riconnessione al sé, formazione: scopri le prossime destinazioni dei ritiri Yoga Stargate,
+                  in Italia e nel mondo.
                 </p>
               )}
-              <div className="mt-auto pt-4">
+              <div className="mt-auto pt-3">
                 <Link
                   href={nextRetreat ? `/ritiri/${nextRetreat.slug}` : "/ritiri"}
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
                 >
                   Partecipa al prossimo ritiro
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -193,15 +183,15 @@ export default async function HomePage() {
           </div>
 
           {/* Percorso online in evidenza */}
-          <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-soft-sm">
-            <div className="relative h-40 w-full shrink-0">
+          <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-soft-sm">
+            <div className="relative h-44 w-full shrink-0">
               <Image src={topCourseImage} alt="" fill sizes="(min-width: 1024px) 40vw, 88vw" className="object-cover" />
               <span className="absolute top-4 left-4 inline-flex items-center gap-2 rounded-full bg-card/90 px-3 py-1 text-xs font-semibold text-primary uppercase tracking-wide backdrop-blur-sm">
                 <Sparkles className="h-3.5 w-3.5" aria-hidden="true" /> Il più scelto
               </span>
             </div>
             <div className="flex flex-1 flex-col p-5">
-              <h3 className="font-heading text-lg font-semibold text-foreground">
+              <h3 className="font-heading text-xl font-semibold text-foreground">
                 {topCourse ? topCourse.title : "Percorsi Online Yoga Stargate"}
               </h3>
               <p className="mt-2 text-sm text-foreground/70">
@@ -209,10 +199,10 @@ export default async function HomePage() {
                   ? topCourse.excerpt
                   : "Pratiche guidate, rituali di trasformazione ed ebook da vivere dove vuoi, quando vuoi."}
               </p>
-              <div className="mt-auto pt-4">
+              <div className="mt-auto pt-3">
                 <Link
                   href={topCourse ? `/corsi/${topCourse.slug}` : "/corsi"}
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
                 >
                   Inizia il percorso online
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -222,25 +212,25 @@ export default async function HomePage() {
           </div>
 
           {/* Gruppi e ritiri privati */}
-          <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-soft-sm">
-            <div className="relative h-40 w-full shrink-0">
+          <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-soft-sm">
+            <div className="relative h-44 w-full shrink-0">
               <Image src="/images/gruppo-viaggio-india.jpeg" alt="" fill sizes="(min-width: 1024px) 40vw, 88vw" className="object-cover" />
               <span className="absolute top-4 left-4 inline-flex items-center gap-2 rounded-full bg-card/90 px-3 py-1 text-xs font-semibold text-primary uppercase tracking-wide backdrop-blur-sm">
                 <Users className="h-3.5 w-3.5" aria-hidden="true" /> Gruppi &amp; aziende
               </span>
             </div>
             <div className="flex flex-1 flex-col p-5">
-              <h3 className="font-heading text-lg font-semibold text-foreground">
+              <h3 className="font-heading text-xl font-semibold text-foreground">
                 Hai un gruppo? Organizza un ritiro con Tina
               </h3>
               <p className="mt-2 text-sm text-foreground/70">
-                Lezioni ed esperienze private su misura, guidate da Tina Mastandrea — Master Yoga Teacher International —
-                nel luogo e nel periodo che preferite.
+                Lezioni ed esperienze private su misura, guidate da Tina Mastandrea, nel luogo e nel periodo che
+                preferite.
               </p>
-              <div className="mt-auto pt-4">
+              <div className="mt-auto pt-3">
                 <Link
                   href="/ritiri#gruppi"
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
                 >
                   Scrivici per il tuo gruppo
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -252,9 +242,9 @@ export default async function HomePage() {
       </section>
 
       {/* Chi guida il percorso */}
-      <section className="bg-card py-20">
+      <section className="bg-card py-24">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.1fr] lg:items-center">
-          <div className="relative h-96 w-full overflow-hidden rounded-2xl bg-muted">
+          <div className="relative h-96 w-full overflow-hidden rounded-3xl bg-muted">
             <Image
               src="/images/tina-crow-pose-spiaggia.png"
               alt="Tina Mastandrea in pratica yoga su una spiaggia"
@@ -299,10 +289,10 @@ export default async function HomePage() {
       </section>
 
       {blogCards.length > 0 && (
-        <section className="bg-muted/40 py-20">
+        <section className="bg-muted/40 py-24">
           <div className="mx-auto max-w-6xl px-4 text-center sm:px-6">
             <p className="text-xs font-semibold tracking-wide text-primary uppercase">Dal blog</p>
-            <h2 className="mt-2 font-heading text-3xl font-semibold text-foreground">Riflessioni e pratiche</h2>
+            <h2 className="mt-2 font-heading text-3xl font-semibold text-foreground">Approfondimenti e pratiche</h2>
             <div className="mt-10 grid gap-6 text-left sm:grid-cols-2 lg:grid-cols-3">
               {blogCards.map((post) => (
                 <BlogCard key={post.slug} post={post} />
@@ -317,24 +307,24 @@ export default async function HomePage() {
 
       <FaqSection />
 
-      <section className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6">
+      <section className="mx-auto max-w-4xl px-4 py-24 text-center sm:px-6">
         <h2 className="font-heading text-3xl font-semibold text-foreground sm:text-4xl">
           Pronta o pronto ad attivare la tua nuova frequenza?
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-foreground/70">
-          Prova una lezione dei Percorsi Live a Milano, inizia un percorso online o parti con noi per il prossimo
-          ritiro.
+          Scegli una masterclass o un workshop dei Percorsi Live a Milano, inizia un percorso online o parti con
+          noi per il prossimo ritiro.
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             href="/ritiri"
-            className="cursor-pointer rounded-lg bg-primary px-7 py-3 text-base font-semibold text-primary-foreground shadow-soft-md transition-transform hover:-translate-y-0.5"
+            className="cursor-pointer rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground shadow-soft-md transition-transform hover:-translate-y-0.5"
           >
             Scopri Ritiri &amp; Viaggi
           </Link>
           <Link
             href="/registrati"
-            className="cursor-pointer rounded-lg border border-border bg-card px-7 py-3 text-base font-semibold text-primary shadow-soft-md transition-transform hover:-translate-y-0.5"
+            className="cursor-pointer rounded-full border border-border bg-card px-7 py-3 text-base font-semibold text-primary shadow-soft-md transition-transform hover:-translate-y-0.5"
           >
             Crea il tuo account
           </Link>

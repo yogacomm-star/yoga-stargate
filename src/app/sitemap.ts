@@ -9,6 +9,7 @@ const STATIC_PAGES = [
   { path: "/metodo", priority: 0.8, changeFrequency: "monthly" as const },
   { path: "/ritiri", priority: 0.9, changeFrequency: "weekly" as const },
   { path: "/corsi", priority: 0.9, changeFrequency: "weekly" as const },
+  { path: "/galleria", priority: 0.5, changeFrequency: "monthly" as const },
   { path: "/blog", priority: 0.8, changeFrequency: "weekly" as const },
   { path: "/contatti", priority: 0.5, changeFrequency: "yearly" as const },
   { path: "/registrati", priority: 0.4, changeFrequency: "yearly" as const },

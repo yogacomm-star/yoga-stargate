@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireAdmin } from "@/lib/auth";
 import { groqChat, groqConfigured } from "@/lib/groq";
 import { rateLimit, clientIp } from "@/lib/rateLimit";
+import { BRAND_VOICE, AUDIENCE_BY_KIND } from "@/lib/aiCopy";
 
 const schema = z.object({
   kind: z.enum(["retreat", "course", "post"]),
@@ -11,6 +12,10 @@ const schema = z.object({
   category: z.string().trim().max(100).optional(),
   location: z.string().trim().max(150).optional(),
   notes: z.string().trim().max(500).optional(),
+  // Il contenuto già presente nel campo, se l'amministratrice ha già scritto qualcosa: quando
+  // c'è, il compito dell'AI cambia da "scrivi da zero" a "migliora questo mantenendo le sue
+  // idee", invece di sostituire sempre tutto con un testo nuovo.
+  existingText: z.string().trim().max(6000).optional(),
 });
 
 const KIND_LABEL: Record<string, string> = {
@@ -52,24 +57,33 @@ export async function POST(request: Request) {
   const parsed = schema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Dati non validi." }, { status: 400 });
 
-  const { kind, field, title, category, location, notes } = parsed.data;
+  const { kind, field, title, category, location, notes, existingText } = parsed.data;
   const { instructions, maxTokens } = FIELD_INSTRUCTIONS[field];
+  const hasExisting = !!existingText && existingText.length > 0;
 
   const details = [
     `Titolo: "${title}"`,
     category ? `Categoria: ${category}` : null,
     location ? `Luogo: ${location}` : null,
     notes ? `Altri dettagli forniti dall'amministratrice: ${notes}` : null,
+    hasExisting ? `Testo già scritto da migliorare:\n"""\n${existingText}\n"""` : null,
   ]
     .filter(Boolean)
     .join(". ");
+
+  // Due compiti diversi, non variazioni dello stesso: se c'è già un testo, il compito è
+  // migliorarlo mantenendo idee, informazioni e voce di chi lo ha scritto — non sostituirlo
+  // con uno nuovo, che è quello che succedeva prima a ogni click, anche su un campo già pieno.
+  const taskInstructions = hasExisting
+    ? `L'amministratrice ha già scritto un testo per questo campo: il tuo compito è MIGLIORARLO, non riscriverlo da zero. Mantieni le sue idee, i dettagli concreti che ha inserito e per quanto possibile il suo modo di esprimersi; intervieni solo su chiarezza, ritmo ed efficacia, e completa ciò che manca. ${instructions}`
+    : instructions;
 
   try {
     const text = await groqChat(
       [
         {
           role: "system",
-          content: `Sei una copywriter esperta di yoga e benessere che scrive per Yoga Stargate, la scuola di yoga multidimensionale di Tina Mastandrea a Milano. Il tono è caldo, evocativo ma concreto: mai esagerato, mai new-age generico o pieno di cliché. Scrivi sempre e solo in italiano. Stai scrivendo per ${KIND_LABEL[kind]}. ${instructions} Rispondi SOLO con il testo richiesto, senza titoli, virgolette o note aggiuntive.`,
+          content: `${BRAND_VOICE} Stai scrivendo per ${KIND_LABEL[kind]}. ${AUDIENCE_BY_KIND[kind]} ${taskInstructions} Rispondi SOLO con il testo richiesto, senza titoli, virgolette o note aggiuntive.`,
         },
         { role: "user", content: details },
       ],

@@ -1,130 +1,137 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Hero from "@/components/site/Hero";
-import ScrollCarousel from "@/components/site/ScrollCarousel";
-import TrialLessonButton from "@/components/site/TrialLessonButton";
-import { CheckCircle2, RefreshCcw, Target, Users } from "lucide-react";
+import LeadForm from "@/components/site/LeadForm";
+import JsonLd from "@/components/site/JsonLd";
+import { SITE_URL } from "@/lib/site";
+import { Flame, Sparkles, UserRound, CheckCircle2 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Percorsi Live a Milano",
+  title: "Percorsi Live a Milano — Masterclass, Workshop e Percorso Individuale",
   description:
-    "I Percorsi Live di Yoga Stargate a Milano: cicli di 4 lezioni con un tema specifico, rinnovabili. Prova la prima lezione a 20€.",
+    "I Percorsi Live di Yoga Stargate ogni mercoledì allo Spazio Olistico Pachamama a Milano: masterclass mensile (49€), workshop trimestrale (70€) e percorso individuale (90€) con Tina Mastandrea. Posti limitati.",
   alternates: { canonical: "/my-yoga" },
 };
 
-const classes = [
+const offerings = [
   {
-    title: "Lezione del mattino",
-    time: "Mercoledì, 9:00 – 10:15",
-    description: "Un inizio di giornata dolce e presente, per portare chiarezza e focus nel resto della giornata.",
-    level: "Tutti i livelli",
+    icon: Sparkles,
+    title: "Masterclass Mensile",
+    cadence: "Un mercoledì al mese — 2 ore di pratica intensiva",
+    price: "49€",
+    description:
+      "Incontri tematici che integrano pratiche energetiche, elementi di neuroscienze, respirazione consapevole, meditazione guidata e i processi del metodo Yoga Stargate. Esperienze profonde ma accessibili, pensate per chi desidera un lavoro mirato, efficace e trasformativo.",
+    next: "Prossima Masterclass: “Pratiche di Risveglio” — 21 ottobre, 17:00–19:00",
+    audience: "Ideale per: professionisti, manager, persone in trasformazione, praticanti che desiderano un lavoro mirato.",
   },
   {
-    title: "Yoga per teenager",
-    time: "Mercoledì, 17:00 – 18:00",
-    description: "Uno spazio pensato per ragazze e ragazzi, tra movimento, respiro e primi strumenti di consapevolezza.",
-    level: "13-17 anni",
+    icon: Flame,
+    title: "Workshop Trimestrale",
+    cadence: "Ogni 3 mesi — 3 ore di pratica intensiva",
+    price: "70€",
+    description:
+      "Un percorso più ampio, dedicato a chi desidera entrare nel cuore del metodo Yoga Stargate Multidimensionale: un'esperienza che integra corpo, energia e visione, ideale per chi vuole fare un passo significativo nel proprio cammino. Si conclude con una presentazione dei ritiri e dei viaggi spirituali, per chi desidera proseguire nel percorso trasformativo.",
+    next: "Prossimo workshop: 4 novembre, 17:00–20:00",
+    audience: "Perfetto per: operatori olistici, terapeuti, insegnanti yoga, professionisti in ricerca di strumenti avanzati.",
+    program: [
+      "Kriyā Detox — Rilascio e Purificazione",
+      "Pratiche Quantistiche di Guarigione Interiore",
+      "Meditazioni Luminose — Attivazione della Presenza",
+      "Meditazioni Multidimensionali — Espansione e Visione",
+    ],
   },
   {
-    title: "Livello adulti",
-    time: "Mercoledì, 18:15 – 19:30",
-    description: "Il percorso di riferimento del metodo Yoga Stargate: pratica completa, tra corpo, respiro e meditazione.",
-    level: "Base / Intermedio",
-  },
-  {
-    title: "Livello avanzato",
-    time: "Mercoledì, 19:45 – 21:00",
-    description: "Per chi ha già consolidato le basi e vuole approfondire tecniche più avanzate.",
-    level: "Avanzato",
-  },
-];
-
-const steps = [
-  {
-    icon: Target,
-    title: "1. Prova una lezione",
-    text: "Scegli l'orario che preferisci e prova una lezione: costa 20€ e ti fa vivere il metodo dal vivo, senza impegno.",
-  },
-  {
-    icon: Users,
-    title: "2. Entra nel percorso",
-    text: "Se risuona con te, ti iscrivi al percorso di 4 lezioni: un ciclo con un argomento specifico, in un piccolo gruppo seguito da Tina.",
-  },
-  {
-    icon: RefreshCcw,
-    title: "3. Rinnova con un nuovo tema",
-    text: "Alla fine del ciclo puoi rinnovare: ogni percorso di 4 lezioni approfondisce un tema nuovo, e la pratica cresce con te.",
+    icon: UserRound,
+    title: "Percorso Individuale",
+    cadence: "Accompagnamento personale — su appuntamento il mercoledì",
+    price: "90€ a incontro",
+    description:
+      "Un cammino dedicato a chi desidera un lavoro mirato, profondo e su misura. Integra pratiche energetiche, meditazione, respirazione e i processi del metodo Yoga Stargate, adattati alle esigenze specifiche della persona. Durata: 4 o 8 incontri, oppure percorso continuativo.",
+    audience: "Ideale per: professionisti e manager, persone in trasformazione, operatori olistici e terapeuti, insegnanti yoga che desiderano approfondire.",
   },
 ];
 
-const includes = [
-  "Cicli di 4 lezioni con un argomento specifico, non semplici lezioni settimanali",
-  "Piccoli gruppi per un'attenzione reale a ogni persona",
-  "Materiale e tappetini disponibili in sala",
-  "Percorso graduale, pensato anche per chi ha una vita professionale piena",
-];
+const eventJsonLd = offerings
+  .filter((o) => "next" in o)
+  .map((o) => ({
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: `${o.title} — Yoga Stargate`,
+    description: o.description,
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    eventStatus: "https://schema.org/EventScheduled",
+    location: {
+      "@type": "Place",
+      name: "Spazio Olistico Pachamama",
+      address: { "@type": "PostalAddress", addressLocality: "Milano", addressCountry: "IT" },
+    },
+    organizer: { "@type": "Organization", name: "Yoga Stargate", url: SITE_URL },
+    offers: { "@type": "Offer", price: o.price.replace(/[^\d]/g, ""), priceCurrency: "EUR", availability: "https://schema.org/LimitedAvailability" },
+  }));
 
-export default async function MyYogaPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ prenotazione?: string }>;
-}) {
-  const { prenotazione } = await searchParams;
-
+export default function MyYogaPage() {
   return (
     <>
+      {eventJsonLd.map((data, i) => (
+        <JsonLd key={i} data={data} />
+      ))}
       <Hero
         eyebrow="Percorsi Live"
         title="Percorsi Live a Milano"
-        subtitle="Cicli di 4 lezioni con un argomento specifico, guidati da Tina Mastandrea. Provi una lezione, poi entri nel percorso — e puoi rinnovarlo con un tema nuovo."
-        primaryCta={{ label: "Prova una lezione — 20€", href: "#prenota" }}
+        subtitle="Ogni mercoledì allo Spazio Olistico Pachamama: un luogo dedicato alla pratica, alla presenza e alla trasformazione. Esperienze che aprono, percorsi che guidano, incontri che trasformano."
         backgroundImage="/images/lezione-parco-milano.jpeg"
       />
 
-      {prenotazione === "riuscita" && (
-        <div className="mx-auto mt-8 max-w-3xl px-4 sm:px-6">
-          <p className="rounded-2xl border border-primary/30 bg-muted px-6 py-4 text-center font-semibold text-primary">
-            Prenotazione ricevuta! Ti scriveremo a breve per confermare la data della tua lezione di prova. A presto sul tappetino ✨
-          </p>
-        </div>
-      )}
-      {prenotazione === "annullata" && (
-        <div className="mx-auto mt-8 max-w-3xl px-4 sm:px-6">
-          <p className="rounded-2xl border border-border bg-card px-6 py-4 text-center text-foreground/70">
-            Il pagamento è stato annullato. Se hai avuto un problema o preferisci accordarti direttamente, scrivici dai contatti.
-          </p>
-        </div>
-      )}
-
-      <section className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
-        <div className="grid gap-6 sm:grid-cols-3">
-          {steps.map((s) => (
-            <div key={s.title} className="rounded-2xl border border-border bg-card p-6 shadow-soft-sm">
-              <span className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <s.icon className="h-5 w-5" aria-hidden="true" />
+      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <div className="grid gap-6 lg:grid-cols-3">
+          {offerings.map((o) => (
+            <div key={o.title} className="flex flex-col rounded-3xl border border-border bg-card p-6 shadow-soft-sm sm:p-7">
+              <span className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <o.icon className="h-5 w-5" aria-hidden="true" />
               </span>
-              <h3 className="font-heading text-lg font-semibold text-foreground">{s.title}</h3>
-              <p className="mt-2 text-[0.95rem] text-foreground/70">{s.text}</p>
+              <h2 className="font-heading text-xl font-semibold text-foreground">{o.title}</h2>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-primary/70">{o.cadence}</p>
+              <p className="mt-3 flex-1 text-[0.95rem] text-foreground/70">{o.description}</p>
+
+              {"program" in o && o.program && (
+                <ol className="mt-4 space-y-1.5 text-sm text-foreground/80">
+                  {o.program.map((step, i) => (
+                    <li key={step} className="flex gap-2">
+                      <span className="font-semibold text-primary">{i + 1}.</span> {step}
+                    </li>
+                  ))}
+                </ol>
+              )}
+
+              <p className="mt-4 text-sm font-medium text-foreground/80">{o.audience}</p>
+              {"next" in o && o.next && (
+                <p className="mt-3 rounded-xl bg-muted px-3.5 py-2.5 text-sm font-semibold text-foreground">{o.next}</p>
+              )}
+
+              <div className="mt-5 flex items-center justify-between border-t border-border pt-4">
+                <span className="font-heading text-2xl font-semibold text-foreground">{o.price}</span>
+                <span className="text-xs font-medium text-foreground/50">Posti limitati</span>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
+      <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6">
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="relative h-64 overflow-hidden rounded-2xl shadow-soft-md sm:h-96">
+          <div className="relative h-64 overflow-hidden rounded-3xl shadow-soft-md sm:h-80">
             <Image
               src="/images/cerchio-meditazione-parco.png"
-              alt="Cerchio di meditazione in un parco a Milano"
+              alt="Cerchio di meditazione a Milano"
               fill
               sizes="(min-width: 640px) 50vw, 100vw"
               className="object-cover"
             />
           </div>
-          <div className="relative h-64 overflow-hidden rounded-2xl shadow-soft-md sm:h-96">
+          <div className="relative h-64 overflow-hidden rounded-3xl shadow-soft-md sm:h-80">
             <Image
               src="/images/lezione-parco-milano.jpeg"
-              alt="Lezione di yoga all'aperto a Milano"
+              alt="Pratica yoga dal vivo a Milano"
               fill
               sizes="(min-width: 640px) 50vw, 100vw"
               className="object-cover"
@@ -133,47 +140,29 @@ export default async function MyYogaPage({
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <h2 className="font-heading text-2xl font-semibold text-foreground sm:text-3xl">Gli orari a Milano</h2>
-        <ScrollCarousel className="mt-8" itemClassName="min-w-[80%] sm:min-w-[46%] lg:min-w-[30%]" ariaLabel="Orari dei percorsi live">
-          {classes.map((c) => (
-            <div key={c.title} className="flex h-full flex-col rounded-2xl border border-border bg-card p-6 shadow-soft-sm">
-              <p className="text-xs font-semibold uppercase tracking-wide text-primary/70">{c.time}</p>
-              <h3 className="mt-1 font-heading text-lg font-semibold text-foreground">{c.title}</h3>
-              <p className="mt-2 flex-1 text-[0.95rem] text-foreground/70">{c.description}</p>
-              <span className="badge-level mt-4 self-start">{c.level}</span>
-            </div>
-          ))}
-        </ScrollCarousel>
-
-        <div
-          id="prenota"
-          className="mt-14 scroll-mt-24 rounded-2xl border border-border bg-card p-8 shadow-soft-sm sm:p-10"
-        >
-          <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center">
-            <div>
-              <h2 className="font-heading text-2xl font-semibold text-foreground sm:text-3xl">
-                Prenota la tua lezione di prova
-              </h2>
-              <p className="mt-3 text-foreground/70">
-                La lezione di prova costa <strong>20€</strong>: scegli l&apos;orario in fase di pagamento e ti
-                ricontatteremo per confermare la data. Il pagamento è sicuro, con carta o PayPal.
-              </p>
-              <ul className="mt-5 grid gap-3">
-                {includes.map((i) => (
-                  <li key={i} className="flex items-start gap-2 text-[0.95rem] text-foreground/80">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-                    {i}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="flex flex-col items-start gap-4 lg:items-center">
-              <TrialLessonButton />
-              <p className="text-sm text-foreground/60">
-                Preferisci parlarne prima? <a href="/contatti" className="font-semibold text-primary">Scrivici dai contatti</a>.
-              </p>
-            </div>
+      <section id="prenota" className="mx-auto max-w-4xl scroll-mt-24 px-4 pb-24 sm:px-6">
+        <div className="rounded-3xl border border-border bg-card p-8 shadow-soft-sm sm:p-10">
+          <div className="text-center">
+            <h2 className="font-heading text-2xl font-semibold text-foreground sm:text-3xl">Come iniziare</h2>
+            <p className="mx-auto mt-3 max-w-xl text-foreground/70">
+              Scegli la modalità che risuona con te: una masterclass per aprire, un workshop per approfondire, un
+              percorso individuale per trasformare. Scrivici per prenotare il tuo posto — sono sempre limitati.
+            </p>
+          </div>
+          <ul className="mx-auto mt-6 flex max-w-xl flex-col gap-2 sm:flex-row sm:justify-center sm:gap-6">
+            {["Spazio Olistico Pachamama, Milano", "Ogni mercoledì", "Posti limitati"].map((i) => (
+              <li key={i} className="flex items-center gap-2 text-sm text-foreground/70">
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                {i}
+              </li>
+            ))}
+          </ul>
+          <div className="mx-auto mt-8 max-w-xl">
+            <LeadForm
+              defaultMessage="Vorrei prenotare il mio posto ai Percorsi Live di Yoga Stargate: fatemi sapere le prossime disponibilità per masterclass, workshop o percorso individuale."
+              submitLabel="Prenota il tuo posto"
+              source="Richiesta Percorsi Live"
+            />
           </div>
         </div>
       </section>
