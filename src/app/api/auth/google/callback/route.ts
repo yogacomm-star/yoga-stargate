@@ -52,9 +52,7 @@ export async function GET(request: Request) {
       // con password. Altrimenti basterebbe possedere l'account Google di quell'indirizzo
       // email per ottenere accesso completo al pannello.
       if (account.role === "ADMIN") {
-        const loginUrl = new URL("/admin/login", origin);
-        loginUrl.searchParams.set("error", "google_not_allowed_for_admin");
-        return NextResponse.redirect(loginUrl);
+        return NextResponse.redirect(new URL("/", origin));
       }
       if (!account.googleId) {
         account = await prisma.account.update({ where: { id: account.id }, data: { googleId: profile.sub } });
