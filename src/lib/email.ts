@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
 import { escapeHtml, brandedEmail } from "@/lib/emailTemplate";
+import { SITE_URL } from "@/lib/site";
 
 export { escapeHtml, brandedEmail, messageToHtml } from "@/lib/emailTemplate";
 
@@ -34,6 +35,54 @@ export async function sendEmail({
     return { ok: true };
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : "unknown_error" };
+  }
+}
+
+/**
+ * Email automatica di benvenuto alla creazione di un nuovo account (registrazione classica
+ * o primo accesso con Google). "Best effort": non deve mai far fallire la registrazione.
+ */
+export async function sendWelcomeEmail({ email, name }: { email: string; name: string }) {
+  if (!emailConfigured()) return;
+  try {
+    const html = brandedEmail({
+      title: `Benvenuta/o su Yoga Stargate, ${escapeHtml(name)}!`,
+      bodyHtml: `<p style="margin:0 0 12px;">Il tuo account è pronto. Da qui puoi seguire i tuoi corsi, salvare i preferiti e restare aggiornata/o su ritiri e novità.</p>`,
+      ctaLabel: "Vai al mio account",
+      ctaUrl: `${SITE_URL}/account`,
+    });
+    await sendEmail({ to: email, subject: "Benvenuta/o su Yoga Stargate", html });
+  } catch {
+    // best-effort: un problema nell'invio non deve mai bloccare la creazione dell'account.
+  }
+}
+
+/**
+ * Email automatica di conferma quando un pagamento corso va a buon fine. "Best effort":
+ * non deve mai far fallire la registrazione dell'acquisto né il webhook di Stripe.
+ */
+export async function sendPurchaseConfirmationEmail({
+  email,
+  courseTitle,
+  courseSlug,
+  amount,
+}: {
+  email: string;
+  courseTitle: string;
+  courseSlug: string;
+  amount: number;
+}) {
+  if (!emailConfigured()) return;
+  try {
+    const html = brandedEmail({
+      title: "Pagamento riuscito, corso sbloccato!",
+      bodyHtml: `<p style="margin:0 0 12px;">Hai acquistato <strong>${escapeHtml(courseTitle)}</strong> per ${amount.toLocaleString("it-IT", { style: "currency", currency: "EUR" })}.</p><p style="margin:0;">Lo trovi da subito nella pagina del corso e in ogni momento in "Il mio account".</p>`,
+      ctaLabel: "Apri il corso",
+      ctaUrl: `${SITE_URL}/corsi/${courseSlug}`,
+    });
+    await sendEmail({ to: email, subject: `Acquisto confermato: ${courseTitle}`, html });
+  } catch {
+    // best-effort: un problema nell'invio non deve mai far fallire la registrazione dell'acquisto.
   }
 }
 

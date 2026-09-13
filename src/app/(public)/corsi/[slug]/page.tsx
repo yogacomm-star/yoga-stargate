@@ -13,6 +13,7 @@ import FavoriteButton from "@/components/site/FavoriteButton";
 import TestimonialCarousel from "@/components/site/TestimonialCarousel";
 import { isAllowedEmbedUrl } from "@/lib/embed";
 import { getStripe } from "@/lib/stripe";
+import { sendPurchaseConfirmationEmail } from "@/lib/email";
 import DraftPreviewBanner from "@/components/site/DraftPreviewBanner";
 
 type Lesson = {
@@ -80,17 +81,18 @@ export default async function CourseDetailPage({
           checkoutSession.metadata?.courseId === course.id &&
           checkoutSession.metadata?.accountId === account.id
         ) {
+          const amount = (checkoutSession.amount_total ?? 0) / 100;
           await prisma.coursePurchase.upsert({
             where: { stripeCheckoutSession: checkoutSession.id },
-            create: {
-              accountId: account.id,
-              courseId: course.id,
-              amount: (checkoutSession.amount_total ?? 0) / 100,
-              stripeCheckoutSession: checkoutSession.id,
-            },
+            create: { accountId: account.id, courseId: course.id, amount, stripeCheckoutSession: checkoutSession.id },
             update: {},
           });
           purchased = true;
+          // `purchased` era false poco sopra (per questo siamo entrati in questo ramo): questa
+          // è la primissima registrazione dell'acquisto, quindi è il momento giusto per l'email
+          // di conferma. Se arriva anche il webhook di Stripe per la stessa sessione, il suo
+          // controllo "alreadyRecorded" la troverà già presente e non manderà una seconda email.
+          await sendPurchaseConfirmationEmail({ email: account.email, courseTitle: course.title, courseSlug: course.slug, amount });
         }
       } catch {
         // sessione non valida/scaduta: resta bloccato, il webhook farà comunque il suo corso se il pagamento è andato a buon fine.

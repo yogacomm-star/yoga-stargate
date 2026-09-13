@@ -5,6 +5,7 @@ import { getSession } from "@/lib/session";
 
 const schema = z.object({
   phone: z.string().trim().min(6, "Inserisci un numero di telefono valido.").max(30),
+  marketingConsent: z.boolean().optional(),
 });
 
 export async function PATCH(request: Request) {
@@ -17,7 +18,13 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Dati non validi." }, { status: 400 });
   }
 
-  await prisma.account.update({ where: { id: session.accountId }, data: { phone: parsed.data.phone } });
+  await prisma.account.update({
+    where: { id: session.accountId },
+    data: {
+      phone: parsed.data.phone,
+      ...(parsed.data.marketingConsent !== undefined ? { marketingConsent: parsed.data.marketingConsent } : {}),
+    },
+  });
 
   return NextResponse.json({ ok: true });
 }

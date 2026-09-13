@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth";
 import { setSessionCookie } from "@/lib/session";
 import { rateLimit, clientIp } from "@/lib/rateLimit";
+import { sendWelcomeEmail } from "@/lib/email";
 
 const schema = z.object({
   name: z.string().trim().min(2).max(100),
@@ -44,6 +45,7 @@ export async function POST(request: Request) {
   });
 
   await setSessionCookie({ accountId: account.id, role: account.role });
+  await sendWelcomeEmail({ email: account.email, name: account.name });
 
   return NextResponse.json({ ok: true, role: account.role });
 }

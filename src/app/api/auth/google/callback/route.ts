@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { setSessionCookie, getSession } from "@/lib/session";
 import { exchangeGoogleCode, fetchGoogleProfile, publicOrigin } from "@/lib/googleAuth";
+import { sendWelcomeEmail } from "@/lib/email";
 
 const STATE_COOKIE = "ys_google_state";
 
@@ -68,6 +69,7 @@ export async function GET(request: Request) {
           level: 1,
         },
       });
+      await sendWelcomeEmail({ email: account.email, name: account.name });
     }
 
     await setSessionCookie({ accountId: account.id, role: account.role });
