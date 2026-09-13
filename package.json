@@ -28,6 +28,7 @@
     "react-dom": "19.2.8",
     "react-easy-crop": "^6.2.3",
     "react-markdown": "^10.1.0",
+    "remark-breaks": "^4.0.0",
     "resend": "^6.21.0",
     "stripe": "^18.5.0",
     "zod": "^4.4.3"
