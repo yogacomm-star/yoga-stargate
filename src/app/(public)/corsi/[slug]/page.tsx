@@ -49,7 +49,7 @@ export default async function CourseDetailPage({
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ session_id?: string }>;
+  searchParams: Promise<{ session_id?: string; acquisto?: string }>;
 }) {
   const { slug } = await params;
   const course = await getCourse(slug);
@@ -61,6 +61,7 @@ export default async function CourseDetailPage({
   const isPaid = !!course.price;
 
   let purchased = false;
+  let justPurchased = false;
   if (isPaid && account) {
     const existing = await prisma.coursePurchase.findUnique({
       where: { accountId_courseId: { accountId: account.id, courseId: course.id } },
@@ -69,7 +70,8 @@ export default async function CourseDetailPage({
 
     // Ritorno da Stripe Checkout: il webhook potrebbe non essere ancora arrivato, quindi
     // verifichiamo subito la sessione per sbloccare senza far aspettare l'utente.
-    const { session_id: sessionId } = await searchParams;
+    const { session_id: sessionId, acquisto } = await searchParams;
+    justPurchased = acquisto === "riuscito";
     if (!purchased && sessionId) {
       try {
         const checkoutSession = await getStripe().checkout.sessions.retrieve(sessionId);
@@ -123,7 +125,7 @@ export default async function CourseDetailPage({
           <h1 className="mt-2 font-heading text-3xl font-semibold text-foreground sm:text-4xl">{course.title}</h1>
           <p className="mt-4 text-foreground/70">{course.excerpt}</p>
           <div className="mt-4 flex justify-center">
-            <LevelBadge requiredLevel={course.requiredLevel} price={course.price} />
+            <LevelBadge requiredLevel={course.requiredLevel} price={course.price} purchased={purchased} />
           </div>
         </div>
       </section>
@@ -145,6 +147,18 @@ export default async function CourseDetailPage({
           )
         ) : (
           <>
+            {justPurchased && (
+              <div className="mb-8 rounded-2xl border border-primary/30 bg-primary/5 px-5 py-4 text-sm text-foreground/80">
+                <p className="font-semibold text-primary">Pagamento riuscito — corso sbloccato!</p>
+                <p className="mt-1">
+                  Da ora lo trovi sempre pronto in{" "}
+                  <a href="/account" className="cursor-pointer font-semibold text-primary underline underline-offset-2">
+                    Il mio account
+                  </a>
+                  , insieme a tutti gli altri corsi che acquisti.
+                </p>
+              </div>
+            )}
             <MarkdownContent content={course.description} />
 
             <div className="mt-8 flex flex-wrap gap-3">

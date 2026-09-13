@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CheckCircle2, Circle, Sparkles } from "lucide-react";
+import { CheckCircle2, Circle, Sparkles, ShoppingBag } from "lucide-react";
 import { getCurrentAccount } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { LEVELS, levelLabel } from "@/lib/levels";
@@ -11,7 +11,7 @@ export default async function AccountPage() {
   const account = await getCurrentAccount();
   if (!account) return null;
 
-  const [progresses, leads] = await Promise.all([
+  const [progresses, leads, purchases] = await Promise.all([
     prisma.courseProgress.findMany({ where: { accountId: account.id } }),
     prisma.contactLead.findMany({
       where: { email: account.email },
@@ -19,11 +19,14 @@ export default async function AccountPage() {
       orderBy: { createdAt: "desc" },
       take: 5,
     }),
+    prisma.coursePurchase.findMany({ where: { accountId: account.id }, orderBy: { createdAt: "desc" } }),
   ]);
 
   const courseIds = progresses.map((p) => p.courseId);
-  const courses = courseIds.length
-    ? await prisma.course.findMany({ where: { id: { in: courseIds } } })
+  const purchasedCourseIds = purchases.map((p) => p.courseId);
+  const allCourseIds = Array.from(new Set([...courseIds, ...purchasedCourseIds]));
+  const courses = allCourseIds.length
+    ? await prisma.course.findMany({ where: { id: { in: allCourseIds } } })
     : [];
   const courseById = new Map(courses.map((c) => [c.id, c]));
 
@@ -92,6 +95,39 @@ export default async function AccountPage() {
                       In corso
                     </span>
                   )}
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      <section className="mt-10">
+        <h2 className="font-heading text-lg font-semibold text-foreground">Corsi acquistati</h2>
+        {purchases.length === 0 ? (
+          <p className="mt-3 text-sm text-foreground/60">
+            Non hai ancora acquistato nessun corso a pagamento.{" "}
+            <Link href="/corsi" className="cursor-pointer font-semibold text-primary">
+              Esplora i percorsi online
+            </Link>
+            .
+          </p>
+        ) : (
+          <div className="mt-4 space-y-3">
+            {purchases.map((p) => {
+              const course = courseById.get(p.courseId);
+              if (!course) return null;
+              return (
+                <Link
+                  key={p.id}
+                  href={`/corsi/${course.slug}`}
+                  className="flex cursor-pointer items-center justify-between rounded-xl border border-border bg-card p-4 hover:border-primary"
+                >
+                  <span className="text-sm font-medium text-foreground">{course.title}</span>
+                  <span className="flex items-center gap-1 text-xs font-semibold text-primary">
+                    <ShoppingBag className="h-4 w-4" aria-hidden="true" />
+                    Sbloccato
+                  </span>
                 </Link>
               );
             })}

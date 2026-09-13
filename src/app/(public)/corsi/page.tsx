@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Hero from "@/components/site/Hero";
 import CourseCard, { type CourseCardData } from "@/components/site/CourseCard";
 import { prisma } from "@/lib/prisma";
+import { getCurrentAccount } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Percorsi Online",
@@ -20,12 +21,28 @@ function countLessons(raw: string): number {
 }
 
 export default async function CorsiPage() {
-  const courses = await prisma.course.findMany({
-    // "Risorsa gratuita" (es. il dono "7 Giorni per Meditare Bene") è un contenuto a sé,
-    // promosso dalla home: non compare nella libreria generale dei corsi.
-    where: { status: "PUBLISHED", NOT: { category: "Risorsa gratuita" } },
-    orderBy: { createdAt: "desc" },
-  });
+  const [courses, account] = await Promise.all([
+    prisma.course.findMany({
+      // "Risorsa gratuita" (es. il dono "7 Giorni per Meditare Bene") è un contenuto a sé,
+      // promosso dalla home: non compare nella libreria generale dei corsi.
+      where: { status: "PUBLISHED", NOT: { category: "Risorsa gratuita" } },
+      orderBy: { createdAt: "desc" },
+    }),
+    getCurrentAccount(),
+  ]);
+
+  // Chi ha già pagato un corso non deve vederselo riproporre con il prezzo nella scheda,
+  // altrimenti sembra di doverlo ricomprare: controlliamo quali acquisti risultano già suoi.
+  const purchasedIds = account
+    ? new Set(
+        (
+          await prisma.coursePurchase.findMany({
+            where: { accountId: account.id, courseId: { in: courses.map((c) => c.id) } },
+            select: { courseId: true },
+          })
+        ).map((p) => p.courseId)
+      )
+    : new Set<string>();
 
   const cards: CourseCardData[] = courses.map((c) => ({
     slug: c.slug,
@@ -34,6 +51,7 @@ export default async function CorsiPage() {
     excerpt: c.excerpt,
     requiredLevel: c.requiredLevel,
     price: c.price,
+    purchased: purchasedIds.has(c.id),
     lessonCount: countLessons(c.lessons),
     image: c.coverImage,
   }));

@@ -1,9 +1,27 @@
 import type { ReactNode } from "react";
-import { Lock, Sparkle } from "lucide-react";
+import { Lock, Sparkle, CheckCircle2 } from "lucide-react";
 import { canAccess, levelLabel } from "@/lib/levels";
 import BuyCourseButton from "@/components/site/BuyCourseButton";
 
-export function LevelBadge({ requiredLevel, price }: { requiredLevel: number | null; price?: number | null }) {
+export function LevelBadge({
+  requiredLevel,
+  price,
+  purchased,
+}: {
+  requiredLevel: number | null;
+  price?: number | null;
+  purchased?: boolean;
+}) {
+  // Chi ha già acquistato il corso non deve vedere di nuovo il prezzo, altrimenti sembra
+  // che debba ripagarlo: il badge conferma subito che è già sbloccato.
+  if (price && purchased) {
+    return (
+      <span className="badge-level badge-open">
+        <CheckCircle2 className="h-3 w-3" aria-hidden="true" />
+        Già acquistato
+      </span>
+    );
+  }
   // Un corso a pagamento non è mai "aperto a tutti" (serve l'acquisto), indipendentemente
   // dal livello richiesto: evita di mostrare un badge "gratuito" su un contenuto a pagamento.
   if (price) {
