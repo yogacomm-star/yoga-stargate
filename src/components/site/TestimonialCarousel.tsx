@@ -51,7 +51,7 @@ export default function TestimonialCarousel() {
 
   return (
     <div
-      className="relative mx-auto max-w-2xl rounded-2xl border border-border bg-card p-8 text-center shadow-soft-md sm:p-10"
+      className="relative mx-auto max-w-2xl rounded-3xl border border-border bg-card p-8 text-center shadow-soft-md sm:p-10"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}

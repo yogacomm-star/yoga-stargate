@@ -58,7 +58,7 @@ export function PurchaseLockedNotice({
   loggedIn: boolean;
 }) {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-muted/60 px-6 py-10 text-center">
+    <div className="flex flex-col items-center gap-3 rounded-3xl border border-dashed border-border bg-muted/60 px-6 py-10 text-center">
       <Lock className="h-8 w-8 text-primary" aria-hidden="true" />
       <p className="font-heading text-lg font-semibold text-foreground">Contenuto a pagamento — {price.toFixed(2)}€</p>
       {loggedIn ? (
@@ -69,7 +69,7 @@ export function PurchaseLockedNotice({
       ) : (
         <>
           <p className="max-w-sm text-sm text-foreground/70">Accedi o registrati per acquistare questo corso.</p>
-          <a href="/login" className="mt-1 cursor-pointer rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground">
+          <a href="/login" className="mt-1 cursor-pointer rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground">
             Accedi
           </a>
         </>
@@ -80,7 +80,7 @@ export function PurchaseLockedNotice({
 
 export function LevelLockedNotice({ requiredLevel, loggedIn }: { requiredLevel: number; loggedIn: boolean }) {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-muted/60 px-6 py-10 text-center">
+    <div className="flex flex-col items-center gap-3 rounded-3xl border border-dashed border-border bg-muted/60 px-6 py-10 text-center">
       <Lock className="h-8 w-8 text-primary" aria-hidden="true" />
       <p className="font-heading text-lg font-semibold text-foreground">
         Contenuto riservato al livello {levelLabel(requiredLevel)}
@@ -92,11 +92,11 @@ export function LevelLockedNotice({ requiredLevel, loggedIn }: { requiredLevel: 
       </p>
       <div className="mt-1 flex gap-3">
         {!loggedIn && (
-          <a href="/login" className="cursor-pointer rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground">
+          <a href="/login" className="cursor-pointer rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground">
             Accedi
           </a>
         )}
-        <a href="/contatti" className="cursor-pointer rounded-lg border border-border bg-card px-5 py-2 text-sm font-semibold text-primary shadow-soft-sm">
+        <a href="/contatti" className="cursor-pointer rounded-full border border-border bg-card px-5 py-2 text-sm font-semibold text-primary shadow-soft-sm">
           Contattaci
         </a>
       </div>

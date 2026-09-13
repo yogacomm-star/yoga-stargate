@@ -52,14 +52,14 @@ export default function CookieBanner() {
               <button
                 type="button"
                 onClick={() => choose("rejected")}
-                className="cursor-pointer rounded-lg border border-border px-4 py-2 text-sm font-semibold text-foreground/70 hover:border-primary"
+                className="cursor-pointer rounded-full border border-border px-4 py-2 text-sm font-semibold text-foreground/70 hover:border-primary"
               >
                 Rifiuta
               </button>
               <button
                 type="button"
                 onClick={() => choose("accepted")}
-                className="cursor-pointer rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+                className="cursor-pointer rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
               >
                 Accetta
               </button>

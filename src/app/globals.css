@@ -46,9 +46,9 @@
   --font-body: var(--font-body);
 }
 
-/* Scritte leggermente più grandi in tutto il sito (richiesta cliente) */
+/* Scritte più grandi in tutto il sito (richiesta cliente, alzata una seconda volta) */
 html {
-  font-size: 17px;
+  font-size: 18.5px;
 }
 
 body {

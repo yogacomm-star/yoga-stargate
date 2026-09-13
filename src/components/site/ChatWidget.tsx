@@ -76,7 +76,7 @@ export default function ChatWidget({ variant }: { variant: "public" | "admin" })
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ duration: 0.2 }}
-            className={`fixed bottom-24 ${positionClass} z-[90] flex h-[28rem] w-[min(22rem,calc(100vw-3rem))] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-soft-xl`}
+            className={`fixed bottom-24 ${positionClass} z-[90] flex h-[28rem] w-[min(22rem,calc(100vw-3rem))] flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-soft-xl`}
           >
             <div className="flex items-center gap-2 border-b border-border bg-primary px-4 py-3 text-primary-foreground">
               <Sparkles className="h-4 w-4" aria-hidden="true" />
@@ -86,13 +86,13 @@ export default function ChatWidget({ variant }: { variant: "public" | "admin" })
             </div>
 
             <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto p-4">
-              <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-3.5 py-2.5 text-sm text-foreground">
+              <div className="max-w-[85%] rounded-3xl rounded-tl-sm bg-muted px-3.5 py-2.5 text-sm text-foreground">
                 {greeting}
               </div>
               {messages.map((m, i) => (
                 <div
                   key={i}
-                  className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm ${
+                  className={`max-w-[85%] rounded-3xl px-3.5 py-2.5 text-sm ${
                     m.role === "user"
                       ? "ml-auto rounded-tr-sm bg-primary text-primary-foreground"
                       : "rounded-tl-sm bg-muted text-foreground"
@@ -102,7 +102,7 @@ export default function ChatWidget({ variant }: { variant: "public" | "admin" })
                 </div>
               ))}
               {loading && (
-                <div className="flex max-w-[85%] items-center gap-2 rounded-2xl rounded-tl-sm bg-muted px-3.5 py-2.5 text-sm text-foreground/60">
+                <div className="flex max-w-[85%] items-center gap-2 rounded-3xl rounded-tl-sm bg-muted px-3.5 py-2.5 text-sm text-foreground/60">
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
                   Sto scrivendo...
                 </div>
@@ -122,7 +122,7 @@ export default function ChatWidget({ variant }: { variant: "public" | "admin" })
                 type="submit"
                 disabled={loading || !input.trim()}
                 aria-label="Invia messaggio"
-                className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg bg-primary text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Send className="h-4 w-4" />
               </button>

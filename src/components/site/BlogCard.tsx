@@ -25,7 +25,7 @@ export default function BlogCard({ post }: { post: BlogCardData }) {
     <motion.article
       whileHover={{ y: -6 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className="group overflow-hidden rounded-2xl border border-border bg-card shadow-soft-sm"
+      className="group overflow-hidden rounded-3xl border border-border bg-card shadow-soft-sm"
     >
       <Link href={`/blog/${post.slug}`} className="block">
         <div className="relative h-48 overflow-hidden bg-gradient-to-br from-warm-surface via-secondary/30 to-primary/15">

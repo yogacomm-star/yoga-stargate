@@ -114,9 +114,9 @@ export default function MetodoPage() {
       <section className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
         <div className="grid gap-6 sm:grid-cols-2">
           {processes.map((p) => (
-            <div key={p.number} className="relative overflow-hidden rounded-2xl border border-border bg-card p-7 shadow-soft-sm">
+            <div key={p.number} className="relative overflow-hidden rounded-3xl border border-border bg-card p-7 shadow-soft-sm">
               <span className="font-heading text-5xl font-semibold text-primary/10">{p.number}</span>
-              <span className="absolute top-7 right-7 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <span className="absolute top-7 right-7 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                 <p.icon className="h-5 w-5" aria-hidden="true" />
               </span>
               <h2 className="mt-2 font-heading text-xl font-semibold text-foreground">{p.title}</h2>
@@ -130,7 +130,7 @@ export default function MetodoPage() {
 
       <section className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="relative h-64 overflow-hidden rounded-2xl shadow-soft-md sm:h-96">
+          <div className="relative h-64 overflow-hidden rounded-3xl shadow-soft-md sm:h-96">
             <Image
               src="/images/tina-posa-galavasana-mare.jpg"
               alt="Tina Mastandrea in una posizione yoga avanzata sul mare"
@@ -139,7 +139,7 @@ export default function MetodoPage() {
               className="object-cover"
             />
           </div>
-          <div className="relative h-64 overflow-hidden rounded-2xl shadow-soft-md sm:h-96">
+          <div className="relative h-64 overflow-hidden rounded-3xl shadow-soft-md sm:h-96">
             <Image
               src="/images/meditazione-neuroscienza.jpg"
               alt="Meditazione e neuroscienze nel Metodo Yoga Stargate"
@@ -151,7 +151,7 @@ export default function MetodoPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <div className="grid gap-10 lg:grid-cols-2">
           <div>
             <h2 className="font-heading text-2xl font-semibold text-foreground sm:text-3xl">A chi è rivolto</h2>
@@ -174,7 +174,7 @@ export default function MetodoPage() {
                 </li>
               ))}
             </ul>
-            <div className="mt-6 inline-flex items-start gap-2 rounded-xl border border-border bg-muted px-4 py-3 text-xs text-foreground/60">
+            <div className="mt-6 inline-flex items-start gap-2 rounded-2xl border border-border bg-muted px-4 py-3 text-xs text-foreground/60">
               <Award className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
               Ogni modulo rilascia una Certificazione Specifica Yoga Stargate. Il percorso richiede un impegno
               sincero ed è controindicato in presenza di condizioni psicofisiche importanti, epilessia o
@@ -185,7 +185,7 @@ export default function MetodoPage() {
 
         <div
           id="richiedi"
-          className="mt-14 scroll-mt-24 rounded-2xl border border-border bg-card p-8 shadow-soft-sm sm:p-10"
+          className="mt-14 scroll-mt-24 rounded-3xl border border-border bg-card p-8 shadow-soft-sm sm:p-10"
         >
           <div className="grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:items-start">
             <div>

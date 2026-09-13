@@ -8,8 +8,8 @@ import { prisma } from "@/lib/prisma";
 import { firstImage } from "@/lib/images";
 
 export const metadata: Metadata = {
-  title: "Ritiri & Viaggi",
-  description: "Ritiri & Viaggi Yoga Stargate: esperienze immersive in Italia e nel mondo con Tina Mastandrea — mental reset, riconnessione al sé e formazione.",
+  title: "Eventi & Ritiri",
+  description: "Eventi & Ritiri Yoga Stargate: esperienze immersive in Italia e nel mondo con Tina Mastandrea — mental reset, riconnessione al sé e formazione.",
   alternates: { canonical: "/ritiri" },
 };
 
@@ -44,8 +44,8 @@ export default async function RitiriPage({
   return (
     <>
       <Hero
-        eyebrow="Ritiri & Viaggi"
-        title="Ritiri & Viaggi Yoga Stargate"
+        eyebrow="Eventi & Ritiri"
+        title="Eventi & Ritiri Yoga Stargate"
         subtitle="Esperienze immersive per riattivare la tua frequenza: mental reset, riconnessione al sé e formazione, in Italia e nel mondo."
       />
 
@@ -82,7 +82,7 @@ export default async function RitiriPage({
           </div>
         )}
 
-        <div id="gruppi" className="mt-16 scroll-mt-24 rounded-2xl border border-border bg-card p-6 sm:p-10">
+        <div id="gruppi" className="mt-16 scroll-mt-24 rounded-3xl border border-border bg-card p-6 sm:p-10">
           <div className="mx-auto max-w-2xl text-center">
             <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
               <Users className="h-6 w-6" aria-hidden="true" />

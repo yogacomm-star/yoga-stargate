@@ -111,7 +111,7 @@ export default function Footer() {
             <div className="mt-4">
               <Link
                 href="/registrati"
-                className="inline-flex cursor-pointer items-center rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5"
+                className="inline-flex cursor-pointer items-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5"
               >
                 Crea un account
               </Link>

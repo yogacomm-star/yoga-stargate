@@ -48,7 +48,7 @@ export default function LeadForm({
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl border border-border bg-warm-surface/60 p-6 text-center"
+        className="rounded-3xl border border-border bg-warm-surface/60 p-6 text-center"
       >
         <p className="font-heading text-lg font-semibold text-foreground">Richiesta inviata!</p>
         <p className="mt-2 text-sm text-foreground/70">Ti risponderemo il prima possibile via email.</p>

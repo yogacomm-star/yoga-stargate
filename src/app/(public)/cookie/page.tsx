@@ -24,7 +24,7 @@ const cookies = [
 
 export default function CookiePage() {
   return (
-    <article className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+    <article className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
       <p className="text-xs font-semibold tracking-wide text-primary uppercase">Informativa</p>
       <h1 className="mt-2 font-heading text-3xl font-semibold text-foreground">Cookie Policy</h1>
       <p className="mt-2 text-sm text-foreground/60">Ultimo aggiornamento: agosto 2026</p>
@@ -36,7 +36,7 @@ export default function CookiePage() {
           tracciamento di terze parti.
         </p>
 
-        <div className="overflow-x-auto rounded-2xl border border-border">
+        <div className="overflow-x-auto rounded-3xl border border-border">
           <table className="w-full text-left text-sm">
             <thead className="border-b border-border bg-muted/50 text-xs uppercase text-foreground/50">
               <tr>

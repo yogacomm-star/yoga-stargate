@@ -18,12 +18,12 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const { error } = await searchParams;
 
   return (
-    <section className="mx-auto max-w-md px-4 py-20 sm:px-6">
+    <section className="mx-auto max-w-md px-4 py-24 sm:px-6">
       <h1 className="text-center font-heading text-3xl font-semibold text-foreground">Bentornata/o</h1>
       <p className="mt-2 text-center text-sm text-foreground/70">
         Accedi per continuare il tuo percorso, tracciare i progressi e sbloccare i contenuti del tuo livello.
       </p>
-      <div className="mt-8 rounded-2xl border border-border bg-card p-6 shadow-soft-sm sm:p-8">
+      <div className="mt-8 rounded-3xl border border-border bg-card p-6 shadow-soft-sm sm:p-8">
         {error && GOOGLE_ERRORS[error] && (
           <p className="mb-4 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
             {GOOGLE_ERRORS[error]}

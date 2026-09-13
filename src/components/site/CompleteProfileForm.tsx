@@ -34,7 +34,7 @@ export default function CompleteProfileForm() {
   }
 
   return (
-    <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5">
+    <div className="rounded-3xl border border-primary/30 bg-primary/5 p-5">
       <div className="flex items-center gap-2 text-primary">
         <Phone className="h-4 w-4" aria-hidden="true" />
         <p className="font-heading text-sm font-semibold">Completa il tuo profilo</p>

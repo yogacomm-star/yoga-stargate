@@ -17,7 +17,7 @@ export default function ContattiPage() {
       <section className="mx-auto max-w-5xl px-4 pb-20 sm:px-6">
         <div className="grid gap-10 lg:grid-cols-[1fr_1.3fr]">
           <div className="space-y-5">
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-soft-sm">
+            <div className="rounded-3xl border border-border bg-card p-6 shadow-soft-sm">
               <div className="flex items-start gap-3">
                 <MapPin className="mt-0.5 h-5 w-5 text-primary" aria-hidden="true" />
                 <div>
@@ -26,7 +26,7 @@ export default function ContattiPage() {
                 </div>
               </div>
             </div>
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-soft-sm">
+            <div className="rounded-3xl border border-border bg-card p-6 shadow-soft-sm">
               <div className="flex items-start gap-3">
                 <Phone className="mt-0.5 h-5 w-5 text-primary" aria-hidden="true" />
                 <div>
@@ -37,7 +37,7 @@ export default function ContattiPage() {
                 </div>
               </div>
             </div>
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-soft-sm">
+            <div className="rounded-3xl border border-border bg-card p-6 shadow-soft-sm">
               <div className="flex items-start gap-3">
                 <Mail className="mt-0.5 h-5 w-5 text-primary" aria-hidden="true" />
                 <div>
@@ -48,7 +48,7 @@ export default function ContattiPage() {
                 </div>
               </div>
             </div>
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-soft-sm">
+            <div className="rounded-3xl border border-border bg-card p-6 shadow-soft-sm">
               <div className="flex items-start gap-3">
                 <Clock className="mt-0.5 h-5 w-5 text-primary" aria-hidden="true" />
                 <div>
@@ -59,7 +59,7 @@ export default function ContattiPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-soft-sm sm:p-8">
+          <div className="rounded-3xl border border-border bg-card p-6 shadow-soft-sm sm:p-8">
             <h2 className="font-heading text-lg font-semibold text-foreground">Inviaci un messaggio</h2>
             <div className="mt-5">
               <LeadForm submitLabel="Invia messaggio" />

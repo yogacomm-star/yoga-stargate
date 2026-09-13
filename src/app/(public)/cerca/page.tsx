@@ -21,7 +21,7 @@ export default async function CercaPage({ searchParams }: { searchParams: Promis
 
   if (!query) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6">
+      <div className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
         <h1 className="font-heading text-3xl font-semibold text-foreground">Cerca nel sito</h1>
         <p className="mt-3 text-sm text-foreground/60">Trova corsi, ritiri e articoli del blog.</p>
         <div className="mt-8">
@@ -85,7 +85,7 @@ export default async function CercaPage({ searchParams }: { searchParams: Promis
   }));
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+    <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
       <h1 className="font-heading text-2xl font-semibold text-foreground">Risultati per &ldquo;{query}&rdquo;</h1>
       <p className="mt-1 text-sm text-foreground/60">{totalResults} risultati trovati</p>
       <div className="mt-6 max-w-lg">

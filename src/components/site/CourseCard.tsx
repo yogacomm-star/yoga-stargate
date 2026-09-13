@@ -22,10 +22,10 @@ export default function CourseCard({ course }: { course: CourseCardData }) {
     <motion.article
       whileHover={{ y: -6 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className="group overflow-hidden rounded-2xl border border-border bg-card shadow-soft-sm"
+      className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-soft-sm"
     >
-      <Link href={`/corsi/${course.slug}`} className="block">
-        <div className="relative h-52 overflow-hidden bg-gradient-to-br from-primary/20 via-secondary/40 to-warm-surface">
+      <Link href={`/corsi/${course.slug}`} className="flex h-full flex-col">
+        <div className="relative h-52 shrink-0 overflow-hidden bg-gradient-to-br from-primary/20 via-secondary/40 to-warm-surface">
           {course.image ? (
             <Image
               src={course.image}
@@ -38,18 +38,23 @@ export default function CourseCard({ course }: { course: CourseCardData }) {
             <PlayCircle className="absolute inset-0 m-auto h-10 w-10 text-primary/70" aria-hidden="true" />
           )}
         </div>
-        <div className="p-5">
+        {/* flex-col + line-clamp: qualunque lunghezza scrivano titolo ed estratto nel pannello
+            admin, la scheda resta della stessa altezza delle vicine nella griglia — il testo
+            in eccesso si tronca con "…" invece di allungare la scheda o spingere via il resto. */}
+        <div className="flex flex-1 flex-col p-5">
           <div className="mb-2 flex items-center justify-between gap-2">
             <LevelBadge requiredLevel={course.requiredLevel} price={course.price} />
             <span className="text-xs font-medium text-foreground/60">
               {course.lessonCount} {course.lessonCount === 1 ? "lezione" : "lezioni"}
             </span>
           </div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-primary/70">{course.category}</p>
-          <h3 className="mt-1 font-heading text-lg font-semibold text-foreground group-hover:text-primary">
+          <p className="line-clamp-1 text-xs font-semibold uppercase tracking-wide text-primary/70">
+            {course.category}
+          </p>
+          <h3 className="mt-1 line-clamp-2 font-heading text-lg font-semibold text-foreground group-hover:text-primary">
             {course.title}
           </h3>
-          <p className="mt-2 line-clamp-2 text-sm text-foreground/70">{course.excerpt}</p>
+          <p className="mt-2 line-clamp-3 text-sm text-foreground/70">{course.excerpt}</p>
         </div>
       </Link>
     </motion.article>

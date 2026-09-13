@@ -30,7 +30,7 @@ export default async function ReviewsSection({
       ) : (
         <div className="mt-4 space-y-4">
           {reviews.map((r) => (
-            <div key={r.id} className="rounded-2xl border border-border bg-card p-5">
+            <div key={r.id} className="rounded-3xl border border-border bg-card p-5">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-semibold text-foreground">{r.account.name}</p>
                 <div className="flex items-center gap-0.5 text-primary">
