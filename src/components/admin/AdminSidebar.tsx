@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Compass, GraduationCap, Newspaper, Images, Users, MessageSquare, Mail, Euro, Settings, ExternalLink, Menu, X } from "lucide-react";
+import { LayoutDashboard, Compass, GraduationCap, Newspaper, Images, Users, MessageSquare, Mail, Euro, Tag, Settings, ExternalLink, Menu, X } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth";
 import Logo from "@/components/site/Logo";
 
@@ -16,6 +16,7 @@ const items = [
   { href: "/admin/utenti", label: "Utenti", icon: Users },
   { href: "/admin/messaggi", label: "Messaggi", icon: MessageSquare },
   { href: "/admin/vendite", label: "Vendite", icon: Euro },
+  { href: "/admin/sconti", label: "Sconti", icon: Tag },
   { href: "/admin/email", label: "Email", icon: Mail },
   { href: "/admin/impostazioni", label: "Impostazioni", icon: Settings },
 ];
