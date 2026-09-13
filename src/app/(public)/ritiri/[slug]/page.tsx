@@ -120,76 +120,81 @@ export default async function RetreatDetailPage({ params }: { params: Promise<{ 
         </div>
       )}
 
-      <section className="mx-auto max-w-4xl px-4 pt-10 pb-20 sm:px-6">
+      <section className="mx-auto max-w-3xl px-4 pt-10 pb-20 sm:px-6">
         {!unlocked ? (
           <>
             <p className="mb-8 text-center text-foreground/70">{retreat.excerpt}</p>
             <LevelLockedNotice requiredLevel={retreat.requiredLevel as number} loggedIn={!!account} />
           </>
         ) : (
-          <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr]">
-            <div>
+          <>
+            {/* Il modulo di richiesta sta in cima, a piena larghezza: prima stava in una
+                colonna laterale alta quanto tutto il contenuto, che lasciava un vuoto enorme
+                appena il modulo (più corto) finiva e il testo continuava da solo. */}
+            <div className="rounded-3xl border border-border bg-card p-6 shadow-soft-sm sm:p-8">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <h2 className="font-heading text-lg font-semibold text-foreground">{retreat.ctaLabel}</h2>
+                  <p className="mt-2 max-w-md text-sm text-foreground/70">
+                    Compila il modulo e ti risponderemo con tutti i dettagli su disponibilità e modalità di iscrizione.
+                  </p>
+                </div>
+                <FavoriteButton
+                  targetType="RETREAT"
+                  targetId={retreat.id}
+                  initialFavorited={!!favorite}
+                  loggedIn={!!account}
+                />
+              </div>
+              <div className="mt-5 max-w-lg">
+                <LeadForm
+                  retreatId={retreat.id}
+                  defaultMessage={`Vorrei ricevere informazioni sul ritiro "${retreat.title}".`}
+                  submitLabel={retreat.ctaLabel}
+                  source="Richiesta ritiro"
+                />
+              </div>
+            </div>
+
+            <div className="mt-10">
               <SectionedContent content={retreat.description} />
+            </div>
 
-              {retreat.videoUrl && isAllowedEmbedUrl(retreat.videoUrl) && (
-                <div className="mt-10 aspect-video overflow-hidden rounded-3xl border border-border shadow-soft-sm">
-                  <iframe
-                    src={retreat.videoUrl}
-                    title={retreat.title}
-                    className="h-full w-full"
-                    sandbox="allow-scripts allow-same-origin allow-presentation"
-                    referrerPolicy="strict-origin-when-cross-origin"
-                    allowFullScreen
-                  />
-                </div>
-              )}
+            {retreat.videoUrl && isAllowedEmbedUrl(retreat.videoUrl) && (
+              <div className="mt-10 aspect-video overflow-hidden rounded-3xl border border-border shadow-soft-sm">
+                <iframe
+                  src={retreat.videoUrl}
+                  title={retreat.title}
+                  className="h-full w-full"
+                  sandbox="allow-scripts allow-same-origin allow-presentation"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
+              </div>
+            )}
 
-              {itinerary.length > 0 && (
-                <div className="mt-10">
-                  <h2 className="font-heading text-xl font-semibold text-foreground">Programma</h2>
-                  <ol className="mt-4 space-y-4">
-                    {itinerary.map((day) => (
-                      <li key={day.day} className="rounded-3xl border border-border bg-card p-5">
-                        <p className="text-xs font-semibold uppercase tracking-wide text-primary/70">
-                          Giorno {day.day}
-                        </p>
-                        <p className="mt-1 font-heading text-base font-semibold text-foreground">{day.title}</p>
-                        <ScheduleText text={day.description} className="mt-1 text-sm text-foreground/70" />
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              )}
-
+            {itinerary.length > 0 && (
               <div className="mt-10">
-                <h2 className="mb-6 font-heading text-xl font-semibold text-foreground">Testimonianze</h2>
-                <TestimonialCarousel />
+                <h2 className="font-heading text-xl font-semibold text-foreground">Programma</h2>
+                <ol className="mt-4 space-y-4">
+                  {itinerary.map((day) => (
+                    <li key={day.day} className="rounded-3xl border border-border bg-card p-5">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-primary/70">
+                        Giorno {day.day}
+                      </p>
+                      <p className="mt-1 font-heading text-base font-semibold text-foreground">{day.title}</p>
+                      <ScheduleText text={day.description} className="mt-1 text-sm text-foreground/70" />
+                    </li>
+                  ))}
+                </ol>
               </div>
-            </div>
+            )}
 
-            <div className="h-fit space-y-4">
-              <div className="rounded-3xl border border-border bg-card p-6 shadow-soft-sm">
-                <h2 className="font-heading text-lg font-semibold text-foreground">{retreat.ctaLabel}</h2>
-                <p className="mt-2 text-sm text-foreground/70">
-                  Compila il modulo e ti risponderemo con tutti i dettagli su disponibilità e modalità di iscrizione.
-                </p>
-                <div className="mt-5">
-                  <LeadForm
-                    retreatId={retreat.id}
-                    defaultMessage={`Vorrei ricevere informazioni sul ritiro "${retreat.title}".`}
-                    submitLabel={retreat.ctaLabel}
-                    source="Richiesta ritiro"
-                  />
-                </div>
-              </div>
-              <FavoriteButton
-                targetType="RETREAT"
-                targetId={retreat.id}
-                initialFavorited={!!favorite}
-                loggedIn={!!account}
-              />
+            <div className="mt-10">
+              <h2 className="mb-6 font-heading text-xl font-semibold text-foreground">Testimonianze</h2>
+              <TestimonialCarousel />
             </div>
-          </div>
+          </>
         )}
       </section>
     </>
