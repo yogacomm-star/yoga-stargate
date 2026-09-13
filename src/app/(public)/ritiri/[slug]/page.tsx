@@ -128,35 +128,20 @@ export default async function RetreatDetailPage({ params }: { params: Promise<{ 
           </>
         ) : (
           <>
-            {/* Il modulo di richiesta sta in cima, a piena larghezza: prima stava in una
-                colonna laterale alta quanto tutto il contenuto, che lasciava un vuoto enorme
-                appena il modulo (più corto) finiva e il testo continuava da solo. */}
-            <div className="rounded-3xl border border-border bg-card p-6 shadow-soft-sm sm:p-8">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <h2 className="font-heading text-lg font-semibold text-foreground">{retreat.ctaLabel}</h2>
-                  <p className="mt-2 max-w-md text-sm text-foreground/70">
-                    Compila il modulo e ti risponderemo con tutti i dettagli su disponibilità e modalità di iscrizione.
-                  </p>
-                </div>
-                <FavoriteButton
-                  targetType="RETREAT"
-                  targetId={retreat.id}
-                  initialFavorited={!!favorite}
-                  loggedIn={!!account}
-                />
-              </div>
-              <div className="mt-5 max-w-lg">
-                <LeadForm
-                  retreatId={retreat.id}
-                  defaultMessage={`Vorrei ricevere informazioni sul ritiro "${retreat.title}".`}
-                  submitLabel={retreat.ctaLabel}
-                  source="Richiesta ritiro"
-                />
-              </div>
+            {/* Il contenuto usa sempre tutta la larghezza (niente più colonna laterale
+                alta quanto il resto della pagina, che lasciava un vuoto enorme non appena
+                il modulo, più corto, finiva prima del testo). Il modulo di richiesta sta
+                in fondo, dopo tutte le informazioni sul ritiro. */}
+            <div className="flex justify-end">
+              <FavoriteButton
+                targetType="RETREAT"
+                targetId={retreat.id}
+                initialFavorited={!!favorite}
+                loggedIn={!!account}
+              />
             </div>
 
-            <div className="mt-10">
+            <div className="mt-6">
               <SectionedContent content={retreat.description} />
             </div>
 
@@ -193,6 +178,21 @@ export default async function RetreatDetailPage({ params }: { params: Promise<{ 
             <div className="mt-10">
               <h2 className="mb-6 font-heading text-xl font-semibold text-foreground">Testimonianze</h2>
               <TestimonialCarousel />
+            </div>
+
+            <div className="mt-10 rounded-3xl border border-border bg-card p-6 shadow-soft-sm sm:p-8">
+              <h2 className="font-heading text-lg font-semibold text-foreground">{retreat.ctaLabel}</h2>
+              <p className="mt-2 max-w-md text-sm text-foreground/70">
+                Compila il modulo e ti risponderemo con tutti i dettagli su disponibilità e modalità di iscrizione.
+              </p>
+              <div className="mt-5 max-w-lg">
+                <LeadForm
+                  retreatId={retreat.id}
+                  defaultMessage={`Vorrei ricevere informazioni sul ritiro "${retreat.title}".`}
+                  submitLabel={retreat.ctaLabel}
+                  source="Richiesta ritiro"
+                />
+              </div>
             </div>
           </>
         )}
