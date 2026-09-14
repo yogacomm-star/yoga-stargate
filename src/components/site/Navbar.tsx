@@ -14,7 +14,7 @@ const links = [
   { href: "/", label: "Home" },
   { href: "/chi-sono", label: "Chi Sono" },
   { href: "/metodo", label: "Metodo" },
-  { href: "/ritiri", label: "Eventi & Ritiri" },
+  { href: "/ritiri", label: "Ritiri & Viaggi" },
   { href: "/my-yoga", label: "Percorsi Live" },
   { href: "/corsi", label: "Percorsi Online" },
   { href: "/galleria", label: "Gallery" },
