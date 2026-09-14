@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import Logo from "@/components/site/Logo";
-import SiteAccessForm from "@/components/site/SiteAccessForm";
+import { MessageCircle, Mail } from "lucide-react";
+import StargateLoader from "@/components/site/StargateLoader";
 import { siteLockEnabled } from "@/lib/siteLock";
 
 export const metadata: Metadata = {
-  title: "Accesso",
+  title: "Il portale si sta aprendo",
   robots: { index: false, follow: false },
 };
 
@@ -13,36 +13,34 @@ export const metadata: Metadata = {
 // attiva/disattiva dal pannello admin senza un nuovo deploy.
 export const dynamic = "force-dynamic";
 
-function safeRedirect(value: string | undefined): string {
-  if (value && value.startsWith("/") && !value.startsWith("//")) return value;
-  return "/";
-}
-
-export default async function SiteAccessPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ redirect?: string }>;
-}) {
-  // Se il blocco è già stato tolto dal pannello admin, questa pagina non serve più.
+export default async function SiteLockedPage() {
+  // Se il blocco è già stato tolto dal pannello admin, questa pagina non serve più: chi la
+  // raggiunge direttamente (non tramite il rewrite di proxy.ts) va mandato alla home vera.
   if (!(await siteLockEnabled())) redirect("/");
 
-  const { redirect: redirectParam } = await searchParams;
-  const redirectTo = safeRedirect(redirectParam);
-
   return (
-    <div className="flex min-h-full flex-1 items-center justify-center px-4 py-20 sm:px-6">
-      <div className="w-full max-w-sm">
-        <div className="flex justify-center">
-          <Logo iconSize={56} textClassName="flex flex-col items-center text-xl" />
-        </div>
-        <div className="mt-8 rounded-2xl border border-border bg-card p-6 shadow-soft-sm sm:p-8">
-          <h1 className="text-center font-heading text-lg font-semibold text-foreground">Sito in lavorazione</h1>
-          <p className="mt-2 text-center text-sm text-foreground/70">
-            Il sito è temporaneamente riservato. Inserisci il codice di accesso per continuare.
-          </p>
-          <div className="mt-6">
-            <SiteAccessForm redirectTo={redirectTo} />
-          </div>
+    <div className="relative flex min-h-full flex-1 items-center justify-center overflow-hidden px-4 py-20 sm:px-6">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-mystic/15 via-primary/10 to-warm-surface" />
+
+      <div className="flex w-full max-w-md flex-col items-center text-center">
+        <StargateLoader size={220} />
+
+        <h1 className="mt-8 font-heading text-2xl font-semibold text-foreground sm:text-3xl">
+          Il portale si sta aprendo
+        </h1>
+        <p className="mt-3 text-foreground/70">
+          Yoga Stargate sta preparando una nuova esperienza. Torna a trovarci molto presto.
+        </p>
+
+        <div className="mt-8 flex flex-col gap-3 border-t border-border pt-6 text-sm text-foreground/60 sm:flex-row sm:gap-6">
+          <a href="https://wa.me/393336980044" className="flex cursor-pointer items-center justify-center gap-2 hover:text-primary">
+            <MessageCircle className="h-4 w-4" aria-hidden="true" />
+            +39 333 698 0044
+          </a>
+          <a href="mailto:info@yogastargate.com" className="flex cursor-pointer items-center justify-center gap-2 hover:text-primary">
+            <Mail className="h-4 w-4" aria-hidden="true" />
+            info@yogastargate.com
+          </a>
         </div>
       </div>
     </div>
