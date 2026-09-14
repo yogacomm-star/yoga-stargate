@@ -11,7 +11,7 @@ const EVENTS = [
   },
   {
     uid: "workshop-2026-11-04",
-    summary: "Yoga Stargate — Workshop Trimestrale",
+    summary: "Yoga Stargate — Workshop",
     start: "20261104T170000",
     end: "20261104T200000",
   },

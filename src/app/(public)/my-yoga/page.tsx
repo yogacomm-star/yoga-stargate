@@ -9,15 +9,15 @@ import { Flame, Sparkles, UserRound, CheckCircle2 } from "lucide-react";
 export const metadata: Metadata = {
   title: "Percorsi Live a Milano — Masterclass, Workshop e Percorso Individuale",
   description:
-    "I Percorsi Live di Yoga Stargate ogni mercoledì allo Spazio Olistico Pachamama a Milano: masterclass mensile (49€), workshop trimestrale (70€) e percorso individuale (90€) con Tina Mastandrea. Posti limitati.",
+    "I Percorsi Live di Yoga Stargate allo Spazio Olistico Pachamama a Milano: masterclass (49€), workshop (70€) e percorso individuale (90€) con Tina Mastandrea. Posti limitati.",
   alternates: { canonical: "/my-yoga" },
 };
 
 const offerings = [
   {
     icon: Sparkles,
-    title: "Masterclass Mensile",
-    cadence: "Un mercoledì al mese — 2 ore di pratica intensiva",
+    title: "Masterclass",
+    cadence: "2 ore di pratica intensiva",
     price: "49€",
     description:
       "Incontri tematici che integrano pratiche energetiche, elementi di neuroscienze, respirazione consapevole, meditazione guidata e i processi del metodo Yoga Stargate. Esperienze profonde ma accessibili, pensate per chi desidera un lavoro mirato, efficace e trasformativo.",
@@ -26,8 +26,8 @@ const offerings = [
   },
   {
     icon: Flame,
-    title: "Workshop Trimestrale",
-    cadence: "Ogni 3 mesi — 3 ore di pratica intensiva",
+    title: "Workshop",
+    cadence: "3 ore di pratica intensiva",
     price: "70€",
     description:
       "Un percorso più ampio, dedicato a chi desidera entrare nel cuore del metodo Yoga Stargate Multidimensionale: un'esperienza che integra corpo, energia e visione, ideale per chi vuole fare un passo significativo nel proprio cammino. Si conclude con una presentazione dei ritiri e dei viaggi spirituali, per chi desidera proseguire nel percorso trasformativo.",
@@ -43,7 +43,7 @@ const offerings = [
   {
     icon: UserRound,
     title: "Percorso Individuale",
-    cadence: "Accompagnamento personale — su appuntamento il mercoledì",
+    cadence: "Accompagnamento personale — su appuntamento",
     price: "90€ a incontro",
     description:
       "Un cammino dedicato a chi desidera un lavoro mirato, profondo e su misura. Integra pratiche energetiche, meditazione, respirazione e i processi del metodo Yoga Stargate, adattati alle esigenze specifiche della persona. Durata: 4 o 8 incontri, oppure percorso continuativo.",
@@ -78,7 +78,7 @@ export default function MyYogaPage() {
       <Hero
         eyebrow="Percorsi Live"
         title="Percorsi Live a Milano"
-        subtitle="Ogni mercoledì allo Spazio Olistico Pachamama: un luogo dedicato alla pratica, alla presenza e alla trasformazione. Esperienze che aprono, percorsi che guidano, incontri che trasformano."
+        subtitle="Allo Spazio Olistico Pachamama: un luogo dedicato alla pratica, alla presenza e alla trasformazione. Esperienze che aprono, percorsi che guidano, incontri che trasformano."
         backgroundImage="/images/lezione-parco-milano.jpeg"
       />
 
@@ -150,7 +150,7 @@ export default function MyYogaPage() {
             </p>
           </div>
           <ul className="mx-auto mt-6 flex max-w-xl flex-col gap-2 sm:flex-row sm:justify-center sm:gap-6">
-            {["Spazio Olistico Pachamama, Milano", "Ogni mercoledì", "Posti limitati"].map((i) => (
+            {["Spazio Olistico Pachamama, Milano", "Posti limitati"].map((i) => (
               <li key={i} className="flex items-center gap-2 text-sm text-foreground/70">
                 <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
                 {i}

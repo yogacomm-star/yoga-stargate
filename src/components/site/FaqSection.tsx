@@ -7,12 +7,12 @@ const defaultFaqs: FaqItem[] = [
   {
     question: "Non ho mai praticato con Tina: da dove inizio?",
     answer:
-      "Il modo più semplice è iniziare da una Masterclass dei Percorsi Live a Milano (49€, un mercoledì al mese) oppure scaricare il dono gratuito \"7 Giorni per Meditare Bene\" e iniziare dalla pratica quotidiana guidata.",
+      "Il modo più semplice è iniziare da una Masterclass dei Percorsi Live a Milano (49€) oppure scaricare il dono gratuito \"7 Giorni per Meditare Bene\" e iniziare dalla pratica quotidiana guidata.",
   },
   {
     question: "Come funzionano i Percorsi Live?",
     answer:
-      "Ogni mercoledì allo Spazio Olistico Pachamama a Milano, in tre formati: la Masterclass mensile per aprire, il Workshop trimestrale per approfondire, il Percorso individuale per un lavoro su misura. Posti sempre limitati.",
+      "Allo Spazio Olistico Pachamama a Milano, in tre formati: la Masterclass per aprire, il Workshop per approfondire, il Percorso individuale per un lavoro su misura. Posti sempre limitati.",
   },
   {
     question: "Cos'è il Metodo Yoga Stargate?",

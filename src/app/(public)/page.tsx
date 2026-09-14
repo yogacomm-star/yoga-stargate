@@ -126,13 +126,13 @@ export default async function HomePage() {
             <div className="relative h-44 w-full shrink-0">
               <Image src="/images/lezione-parco-milano.jpeg" alt="" fill sizes="(min-width: 1024px) 40vw, 88vw" className="object-cover" />
               <span className="absolute top-4 left-4 inline-flex items-center gap-2 rounded-full bg-card/90 px-3 py-1 text-xs font-semibold text-primary uppercase tracking-wide backdrop-blur-sm">
-                <MapPin className="h-3.5 w-3.5" aria-hidden="true" /> Milano · Ogni mercoledì
+                <MapPin className="h-3.5 w-3.5" aria-hidden="true" /> Milano
               </span>
             </div>
             <div className="flex flex-1 flex-col p-5">
               <h3 className="font-heading text-xl font-semibold text-foreground">Percorsi Live a Milano</h3>
               <p className="mt-2 text-sm text-foreground/70">
-                Masterclass mensile, workshop trimestrale e percorso individuale allo Spazio Olistico Pachamama.
+                Masterclass, workshop e percorso individuale allo Spazio Olistico Pachamama.
                 Posti sempre limitati.
               </p>
               <div className="mt-auto pt-3">

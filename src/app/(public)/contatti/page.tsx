@@ -53,7 +53,7 @@ export default function ContattiPage() {
                 <Clock className="mt-0.5 h-5 w-5 text-primary" aria-hidden="true" />
                 <div>
                   <p className="font-medium text-foreground">Lezioni in sede</p>
-                  <p className="text-sm text-foreground/70">Ogni mercoledì, dalle 9:00 alle 21:00</p>
+                  <p className="text-sm text-foreground/70">Su appuntamento — consulta le prossime date nei Percorsi Live</p>
                 </div>
               </div>
             </div>
