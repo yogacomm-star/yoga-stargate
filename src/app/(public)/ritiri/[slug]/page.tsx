@@ -168,7 +168,7 @@ export default async function RetreatDetailPage({ params }: { params: Promise<{ 
                         Giorno {day.day}
                       </p>
                       <p className="mt-1 font-heading text-base font-semibold text-foreground">{day.title}</p>
-                      <ScheduleText text={day.description} className="mt-1 text-sm text-foreground/70" />
+                      <ScheduleText text={day.description} className="mt-1 text-base text-foreground/70" />
                     </li>
                   ))}
                 </ol>

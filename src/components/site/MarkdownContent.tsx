@@ -18,7 +18,7 @@ const markdownComponents = {
 
 export default function MarkdownContent({ content }: { content: string }) {
   return (
-    <div className="space-y-4 text-[15px] leading-relaxed text-foreground/80">
+    <div className="space-y-4 text-base leading-relaxed text-foreground/80">
       <ReactMarkdown
         // Chi scrive i contenuti dal pannello admin va a capo come farebbe in un editor di
         // testo normale (un Invio = una riga nuova), non con la doppia riga vuota richiesta
@@ -55,7 +55,7 @@ export function SectionedContent({ content }: { content: string }) {
 
         if (!section.heading) {
           return (
-            <div key={i} className="space-y-4 text-[15px] leading-relaxed text-foreground/80">
+            <div key={i} className="space-y-4 text-base leading-relaxed text-foreground/80">
               {body}
             </div>
           );
@@ -64,7 +64,7 @@ export function SectionedContent({ content }: { content: string }) {
         return (
           <div key={i} className="rounded-3xl border border-border bg-card p-6">
             <h2 className="font-heading text-lg font-semibold text-foreground">{section.heading}</h2>
-            <div className="mt-3 space-y-3 text-[15px] leading-relaxed text-foreground/80">{body}</div>
+            <div className="mt-3 space-y-3 text-base leading-relaxed text-foreground/80">{body}</div>
           </div>
         );
       })}

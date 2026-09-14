@@ -187,7 +187,7 @@ export default async function CourseDetailPage({
                           {i + 1}. {lesson.title}
                         </p>
                       </div>
-                      {lesson.content && <ScheduleText text={lesson.content} className="mt-3 text-sm text-foreground/70" />}
+                      {lesson.content && <ScheduleText text={lesson.content} className="mt-3 text-base text-foreground/70" />}
                       {lesson.audioUrl && (
                         <audio controls controlsList="nodownload" preload="none" className="mt-3 w-full">
                           <source src={lesson.audioUrl} type="audio/mpeg" />
