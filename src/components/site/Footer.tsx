@@ -56,7 +56,7 @@ export default function Footer() {
             </p>
             <div className="mt-4 flex items-center gap-3 text-sm text-foreground/70">
               <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
-              Via Zanella 56, Milano
+              Rimembranze di Lambrate 16, Milano
             </div>
             <div className="mt-2 flex items-center gap-3 text-sm text-foreground/70">
               <Phone className="h-4 w-4 text-primary" aria-hidden="true" />

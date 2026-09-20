@@ -18,7 +18,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="font-heading text-lg font-semibold text-foreground">Titolare del trattamento</h2>
           <p className="mt-2">
-            Il titolare del trattamento dei dati è Tina Mastandrea, con sede in Via Zanella 56, Milano. Per
+            Il titolare del trattamento dei dati è Tina Mastandrea, con sede in Rimembranze di Lambrate 16, Milano. Per
             qualsiasi richiesta relativa ai tuoi dati personali puoi scrivere a{" "}
             <a href="mailto:info@yogastargate.com" className="font-medium text-primary underline underline-offset-2">
               info@yogastargate.com

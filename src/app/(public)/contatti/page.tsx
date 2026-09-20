@@ -22,7 +22,7 @@ export default function ContattiPage() {
                 <MapPin className="mt-0.5 h-5 w-5 text-primary" aria-hidden="true" />
                 <div>
                   <p className="font-medium text-foreground">Dove siamo</p>
-                  <p className="text-sm text-foreground/70">Via Zanella 56, Milano</p>
+                  <p className="text-sm text-foreground/70">Rimembranze di Lambrate 16, Milano</p>
                 </div>
               </div>
             </div>

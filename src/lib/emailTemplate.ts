@@ -78,7 +78,7 @@ export function brandedEmail({
               <tr>
                 <td style="padding:26px 32px;background:#f5fafe;text-align:center;border-top:1px solid #e5f1fa;">
                   <p style="margin:0;font-size:12px;line-height:1.6;color:#64748b;">
-                    Yoga Stargate — Via Zanella 56, Milano<br/>
+                    Yoga Stargate — Rimembranze di Lambrate 16, Milano<br/>
                     <a href="${SITE_URL}" style="color:#1673b6;text-decoration:none;">${SITE_URL.replace("https://", "")}</a>
                   </p>
                 </td>

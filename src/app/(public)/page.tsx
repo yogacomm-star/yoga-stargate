@@ -21,7 +21,7 @@ const businessJsonLd = {
   telephone: "+39 333 698 0044",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Via Zanella 56",
+    streetAddress: "Rimembranze di Lambrate 16",
     addressLocality: "Milano",
     addressCountry: "IT",
   },
