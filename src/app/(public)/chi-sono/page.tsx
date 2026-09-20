@@ -62,10 +62,10 @@ export default function ChiSonoPage() {
 
       <section className="mx-auto max-w-5xl px-4 pb-8 sm:px-6">
         <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div className="relative h-[26rem] overflow-hidden rounded-3xl shadow-soft-lg lg:h-[34rem]">
+          <div className="relative mx-auto aspect-[2/3] w-full max-w-md overflow-hidden rounded-3xl shadow-soft-lg lg:mx-0">
             <Image
-              src="/images/tina-crow-pose-spiaggia.png"
-              alt="Tina Mastandrea in pratica yoga su una spiaggia"
+              src="/images/tina-chi-sono.jpg"
+              alt="Tina Mastandrea in pratica yoga sugli scogli, davanti al mare"
               fill
               sizes="(min-width: 1024px) 40vw, 100vw"
               className="object-cover"

@@ -244,7 +244,9 @@ export default async function HomePage() {
       {/* Chi guida il percorso */}
       <section className="bg-card py-24">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.1fr] lg:items-center">
-          <div className="relative h-96 w-full overflow-hidden rounded-3xl bg-muted">
+          {/* Riquadro verticale con lo stesso rapporto della foto (2:3): con object-cover non
+              viene tagliato nulla, nemmeno il viso. Un riquadro basso e largo la ritagliava. */}
+          <div className="relative mx-auto aspect-[2/3] w-full max-w-md overflow-hidden rounded-3xl bg-muted lg:mx-0">
             <Image
               src="/images/tina-crow-pose-spiaggia.png"
               alt="Tina Mastandrea in pratica yoga su una spiaggia"
