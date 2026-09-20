@@ -42,20 +42,25 @@ export type BatchEmail = { to: string; subject: string; html: string; replyTo?: 
 
 /**
  * Invio di più email diverse con una sola chiamata all'API (fino a 100): molto più veloce e
- * rispettoso dei limiti di frequenza di Resend rispetto a un invio per volta. È "tutto o
- * niente": se la richiesta viene rifiutata, nessuna email del gruppo parte.
+ * rispettoso dei limiti di frequenza di Resend rispetto a un invio per volta. In modalità
+ * "permissive" un indirizzo non valido non blocca gli altri: viene solo segnalato in
+ * `failedIndexes` (posizione nell'elenco passato), e le altre email partono regolarmente.
  */
-export async function sendEmailBatch(emails: BatchEmail[]): Promise<{ ok: boolean; error?: string }> {
+export async function sendEmailBatch(
+  emails: BatchEmail[]
+): Promise<{ ok: boolean; error?: string; failedIndexes?: number[]; failedReasons?: string[] }> {
   const client = getClient();
   if (!client) return { ok: false, error: "not_configured" };
   if (emails.length === 0) return { ok: true };
 
   try {
-    const { error } = await client.batch.send(
-      emails.map((e) => ({ from: FROM, to: e.to, subject: e.subject, html: e.html, replyTo: e.replyTo }))
+    const { data, error } = await client.batch.send(
+      emails.map((e) => ({ from: FROM, to: e.to, subject: e.subject, html: e.html, replyTo: e.replyTo })),
+      { batchValidation: "permissive" }
     );
     if (error) return { ok: false, error: error.message };
-    return { ok: true };
+    const errors = data?.errors ?? [];
+    return { ok: true, failedIndexes: errors.map((e) => e.index), failedReasons: errors.map((e) => e.message) };
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : "unknown_error" };
   }

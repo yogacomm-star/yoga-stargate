@@ -34,8 +34,12 @@ export async function countPendingInvites(): Promise<number> {
   return prisma.account.count({ where: pendingInvitesWhere });
 }
 
-/** Invia l'invito a un gruppo di contatti importati. Restituisce quanti sono partiti e quanti restano. */
-export async function sendInviteBatch(): Promise<{ sent: number; remaining: number; error?: string }> {
+/**
+ * Invia l'invito a un gruppo di contatti importati. Restituisce quanti sono partiti, quanti
+ * restano e gli eventuali indirizzi rifiutati da Resend (non validi): questi ultimi non vengono
+ * riprovati all'infinito e non bloccano gli altri, ma vengono segnalati a chi sta inviando.
+ */
+export async function sendInviteBatch(): Promise<{ sent: number; remaining: number; failed?: string[]; error?: string }> {
   if (!emailConfigured()) return { sent: 0, remaining: await countPendingInvites(), error: "Invio email non configurato." };
 
   const accounts = await prisma.account.findMany({
@@ -73,10 +77,12 @@ export async function sendInviteBatch(): Promise<{ sent: number; remaining: numb
   const result = await sendEmailBatch(emails);
   if (!result.ok) {
     await prisma.passwordResetToken.deleteMany({ where: { token: { in: tokens.map((t) => t.token) } } });
-    return { sent: 0, remaining: await countPendingInvites(), error: "Invio non riuscito: riprova tra poco." };
+    return { sent: 0, remaining: await countPendingInvites(), error: `Invio non riuscito (${result.error ?? "errore sconosciuto"}).` };
   }
 
-  return { sent: accounts.length, remaining: await countPendingInvites() };
+  const failedIdx = new Set(result.failedIndexes ?? []);
+  const failed = accounts.filter((_, i) => failedIdx.has(i)).map((a) => a.email);
+  return { sent: accounts.length - failed.length, remaining: await countPendingInvites(), ...(failed.length ? { failed } : {}) };
 }
 
 /** Invia a un indirizzo (di solito quello dell'admin) un esempio dell'email, con un link finto. */

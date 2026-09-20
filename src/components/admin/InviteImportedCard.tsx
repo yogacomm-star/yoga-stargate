@@ -17,6 +17,7 @@ export default function InviteImportedCard({
   const [sentTotal, setSentTotal] = useState(0);
   const [busy, setBusy] = useState<"test" | "send" | null>(null);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [failed, setFailed] = useState<string[]>([]);
 
   async function sendTest() {
     setBusy("test");
@@ -50,7 +51,9 @@ export default function InviteImportedCard({
 
     setBusy("send");
     setMessage(null);
+    setFailed([]);
     let total = 0;
+    const allFailed: string[] = [];
     try {
       // Un giro per gruppo, finché il server dice che non resta nessuno (con un tetto di sicurezza).
       for (let i = 0; i < 40; i++) {
@@ -66,9 +69,13 @@ export default function InviteImportedCard({
           return;
         }
         total += data.sent;
+        if (Array.isArray(data.failed)) allFailed.push(...data.failed);
         setSentTotal(total);
+        setFailed([...allFailed]);
         setPending(data.remaining);
-        if (data.remaining === 0 || data.sent === 0) break;
+        if (data.remaining === 0) break;
+        // Una breve pausa tra un gruppo e l'altro: resta sotto i limiti di frequenza del servizio email.
+        await new Promise((r) => setTimeout(r, 1200));
       }
       setMessage({ ok: true, text: `Fatto: inviati ${total} inviti.` });
     } catch {
@@ -127,6 +134,14 @@ export default function InviteImportedCard({
 
       {message && (
         <p className={`mt-3 text-sm font-medium ${message.ok ? "text-primary" : "text-destructive"}`}>{message.text}</p>
+      )}
+      {failed.length > 0 && (
+        <div className="mt-3 rounded-lg border border-border bg-muted p-3 text-sm text-foreground/80">
+          <p className="font-semibold">
+            {failed.length} {failed.length === 1 ? "indirizzo rifiutato" : "indirizzi rifiutati"} (non validi), saltati:
+          </p>
+          <p className="mt-1 break-all text-xs">{failed.join(", ")}</p>
+        </div>
       )}
     </section>
   );
