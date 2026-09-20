@@ -28,7 +28,7 @@ export async function GET() {
       `DTSTART;TZID=Europe/Rome:${e.start}`,
       `DTEND;TZID=Europe/Rome:${e.end}`,
       `SUMMARY:${e.summary}`,
-      "LOCATION:Spazio Olistico Pachamama\\, Milano",
+      "LOCATION:Spazio Yoga Lambrate\\, Rimembranze di Lambrate 16\\, Milano",
       "END:VEVENT",
     ].join("\r\n")
   ).join("\r\n");

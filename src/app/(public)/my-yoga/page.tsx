@@ -9,7 +9,7 @@ import { Flame, Sparkles, UserRound, CheckCircle2 } from "lucide-react";
 export const metadata: Metadata = {
   title: "Percorsi Live a Milano — Masterclass, Workshop e Percorso Individuale",
   description:
-    "I Percorsi Live di Yoga Stargate allo Spazio Olistico Pachamama a Milano: masterclass (49€), workshop (70€) e percorso individuale (90€) con Tina Mastandrea. Posti limitati.",
+    "I Percorsi Live di Yoga Stargate allo Spazio Yoga Lambrate a Milano: masterclass (49€), workshop (70€) e percorso individuale (90€) con Tina Mastandrea. Posti limitati.",
   alternates: { canonical: "/my-yoga" },
 };
 
@@ -62,8 +62,8 @@ const eventJsonLd = offerings
     eventStatus: "https://schema.org/EventScheduled",
     location: {
       "@type": "Place",
-      name: "Spazio Olistico Pachamama",
-      address: { "@type": "PostalAddress", addressLocality: "Milano", addressCountry: "IT" },
+      name: "Spazio Yoga Lambrate",
+      address: { "@type": "PostalAddress", streetAddress: "Rimembranze di Lambrate 16", addressLocality: "Milano", addressCountry: "IT" },
     },
     organizer: { "@type": "Organization", name: "Yoga Stargate", url: SITE_URL },
     offers: { "@type": "Offer", price: o.price.replace(/[^\d]/g, ""), priceCurrency: "EUR", availability: "https://schema.org/LimitedAvailability" },
@@ -78,7 +78,7 @@ export default function MyYogaPage() {
       <Hero
         eyebrow="Percorsi Live"
         title="Percorsi Live a Milano"
-        subtitle="Allo Spazio Olistico Pachamama: un luogo dedicato alla pratica, alla presenza e alla trasformazione. Esperienze che aprono, percorsi che guidano, incontri che trasformano."
+        subtitle="Allo Spazio Yoga Lambrate: un luogo dedicato alla pratica, alla presenza e alla trasformazione. Esperienze che aprono, percorsi che guidano, incontri che trasformano."
         backgroundImage="/images/lezione-parco-milano.jpeg"
       />
 
@@ -150,7 +150,7 @@ export default function MyYogaPage() {
             </p>
           </div>
           <ul className="mx-auto mt-6 flex max-w-xl flex-col gap-2 sm:flex-row sm:justify-center sm:gap-6">
-            {["Spazio Olistico Pachamama, Milano", "Posti limitati"].map((i) => (
+            {["Spazio Yoga Lambrate, Rimembranze di Lambrate 16, Milano", "Posti limitati"].map((i) => (
               <li key={i} className="flex items-center gap-2 text-sm text-foreground/70">
                 <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
                 {i}

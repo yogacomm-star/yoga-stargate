@@ -15,9 +15,9 @@ export const EMAIL_TEMPLATES: Record<EmailTemplateKey, { label: string; subject:
   },
   promemoria_lezione: {
     label: "Promemoria Percorsi Live",
-    subject: "Ci vediamo allo Spazio Olistico Pachamama",
+    subject: "Ci vediamo allo Spazio Yoga Lambrate",
     message:
-      "Ciao,\n\nun piccolo promemoria per [nome dell'appuntamento: Masterclass/Workshop/Percorso individuale] di [giorno] [data] alle [orario], allo Spazio Olistico Pachamama a Milano.\n\nI posti sono limitati: se non riesci a venire o vuoi informazioni su un altro Percorso Live, scrivimi pure.\n\nA presto,\nTina",
+      "Ciao,\n\nun piccolo promemoria per [nome dell'appuntamento: Masterclass/Workshop/Percorso individuale] di [giorno] [data] alle [orario], allo Spazio Yoga Lambrate a Milano.\n\nI posti sono limitati: se non riesci a venire o vuoi informazioni su un altro Percorso Live, scrivimi pure.\n\nA presto,\nTina",
   },
   promozione: {
     label: "Promozione / sconto",

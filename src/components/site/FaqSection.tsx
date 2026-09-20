@@ -12,7 +12,7 @@ const defaultFaqs: FaqItem[] = [
   {
     question: "Come funzionano i Percorsi Live?",
     answer:
-      "Allo Spazio Olistico Pachamama a Milano, in tre formati: la Masterclass per aprire, il Workshop per approfondire, il Percorso individuale per un lavoro su misura. Posti sempre limitati.",
+      "Allo Spazio Yoga Lambrate a Milano, in tre formati: la Masterclass per aprire, il Workshop per approfondire, il Percorso individuale per un lavoro su misura. Posti sempre limitati.",
   },
   {
     question: "Cos'è il Metodo Yoga Stargate?",

@@ -132,7 +132,7 @@ export default async function HomePage() {
             <div className="flex flex-1 flex-col p-5">
               <h3 className="font-heading text-xl font-semibold text-foreground">Percorsi Live a Milano</h3>
               <p className="mt-2 text-sm text-foreground/70">
-                Masterclass, workshop e percorso individuale allo Spazio Olistico Pachamama.
+                Masterclass, workshop e percorso individuale allo Spazio Yoga Lambrate.
                 Posti sempre limitati.
               </p>
               <div className="mt-auto pt-3">
