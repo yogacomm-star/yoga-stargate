@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { escapeHtml, brandedEmail } from "@/lib/emailTemplate";
 import { SITE_URL } from "@/lib/site";
 
-export { escapeHtml, brandedEmail, messageToHtml } from "@/lib/emailTemplate";
+export { escapeHtml, brandedEmail, messageToHtml, invitationEmail } from "@/lib/emailTemplate";
 
 const FROM = process.env.EMAIL_FROM || "Yoga Stargate <onboarding@resend.dev>";
 
@@ -31,6 +31,29 @@ export async function sendEmail({
 
   try {
     const { error } = await client.emails.send({ from: FROM, to, subject, html });
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : "unknown_error" };
+  }
+}
+
+export type BatchEmail = { to: string; subject: string; html: string; replyTo?: string };
+
+/**
+ * Invio di più email diverse con una sola chiamata all'API (fino a 100): molto più veloce e
+ * rispettoso dei limiti di frequenza di Resend rispetto a un invio per volta. È "tutto o
+ * niente": se la richiesta viene rifiutata, nessuna email del gruppo parte.
+ */
+export async function sendEmailBatch(emails: BatchEmail[]): Promise<{ ok: boolean; error?: string }> {
+  const client = getClient();
+  if (!client) return { ok: false, error: "not_configured" };
+  if (emails.length === 0) return { ok: true };
+
+  try {
+    const { error } = await client.batch.send(
+      emails.map((e) => ({ from: FROM, to: e.to, subject: e.subject, html: e.html, replyTo: e.replyTo }))
+    );
     if (error) return { ok: false, error: error.message };
     return { ok: true };
   } catch (err) {

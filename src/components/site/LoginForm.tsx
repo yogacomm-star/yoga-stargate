@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function LoginForm({ adminHint = false }: { adminHint?: boolean }) {
@@ -74,8 +75,14 @@ export default function LoginForm({ adminHint = false }: { adminHint?: boolean }
       >
         {loading ? "Accesso in corso..." : "Accedi"}
       </button>
-      {adminHint && (
+      {adminHint ? (
         <p className="text-center text-xs text-foreground/50">Accesso riservato all&apos;amministrazione di Yoga Stargate.</p>
+      ) : (
+        <p className="text-center text-sm">
+          <Link href="/password-dimenticata" className="cursor-pointer font-medium text-primary">
+            Password dimenticata?
+          </Link>
+        </p>
       )}
     </form>
   );
