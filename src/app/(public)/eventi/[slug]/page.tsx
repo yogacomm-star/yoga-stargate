@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { MapPin, CalendarDays, CheckCircle2 } from "lucide-react";
+import { MapPin, CalendarDays, CheckCircle2, Ticket, Users } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getCurrentAccount } from "@/lib/auth";
 import { canAccess } from "@/lib/levels";
 import { LevelBadge, LevelLockedNotice } from "@/components/site/LevelLock";
-import { SectionedContent } from "@/components/site/MarkdownContent";
+import EventSections from "@/components/site/EventSections";
 import ScheduleText from "@/components/site/ScheduleText";
 import LeadForm from "@/components/site/LeadForm";
 import BookEventButton from "@/components/site/BookEventButton";
@@ -111,79 +111,92 @@ export default async function RetreatDetailPage({
       : {}),
   };
 
+  const hasPrice = retreat.price != null && retreat.price > 0;
+  const chip = "inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-4 py-2 text-sm text-foreground/80 backdrop-blur-sm";
+
   return (
     <>
       <JsonLd data={eventJsonLd} />
       {retreat.status === "DRAFT" && <DraftPreviewBanner />}
+
+      {/* Intestazione: testo a sinistra, copertina a destra (riquadro 4:3, lo stesso rapporto del
+          ritaglio dal pannello admin, quindi la foto si vede intera). Senza copertina il testo
+          resta centrato. */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-secondary/40 via-primary/10 to-warm-surface" />
-        <div className="mx-auto max-w-4xl px-4 py-24 text-center sm:px-6">
-          <p className="text-xs font-semibold tracking-wide text-primary uppercase">{retreat.category}</p>
-          <h1 className="mt-2 font-heading text-3xl font-semibold text-foreground sm:text-4xl">{retreat.title}</h1>
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-sm text-foreground/70">
-            <span className="flex items-center gap-1">
-              <MapPin className="h-4 w-4" aria-hidden="true" />
-              {retreat.location}
-            </span>
-            {dateLabel && (
-              <span className="flex items-center gap-1">
-                <CalendarDays className="h-4 w-4" aria-hidden="true" />
-                {dateLabel}
+        <div
+          className={`mx-auto max-w-6xl gap-10 px-4 py-16 sm:px-6 sm:py-20 ${
+            cover ? "grid lg:grid-cols-[1.05fr_1fr] lg:items-center" : "max-w-4xl text-center"
+          }`}
+        >
+          <div className={cover ? "text-center lg:text-left" : ""}>
+            <p className="text-xs font-semibold tracking-wide text-primary uppercase">{retreat.category}</p>
+            <h1 className="mt-2 font-heading text-3xl font-semibold text-foreground sm:text-4xl lg:text-5xl">
+              {retreat.title}
+            </h1>
+            <div className={`mt-6 flex flex-wrap gap-2.5 ${cover ? "justify-center lg:justify-start" : "justify-center"}`}>
+              <span className={chip}>
+                <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
+                {retreat.location}
               </span>
+              {dateLabel && (
+                <span className={chip}>
+                  <CalendarDays className="h-4 w-4 text-primary" aria-hidden="true" />
+                  {dateLabel}
+                </span>
+              )}
+              {retreat.price != null && (
+                <span className={chip + " font-semibold text-foreground"}>
+                  <Ticket className="h-4 w-4 text-primary" aria-hidden="true" />
+                  da €{retreat.price}
+                </span>
+              )}
+            </div>
+            <div className={`mt-4 flex ${cover ? "justify-center lg:justify-start" : "justify-center"}`}>
+              <LevelBadge requiredLevel={retreat.requiredLevel} />
+            </div>
+            {unlocked && (
+              <div className={`mt-7 flex flex-wrap items-center gap-3 ${cover ? "justify-center lg:justify-start" : "justify-center"}`}>
+                {!isPast && (
+                  <a
+                    href="#prenota"
+                    className="inline-flex cursor-pointer items-center rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground shadow-soft-md transition-transform hover:-translate-y-0.5"
+                  >
+                    {canPay ? "Prenota il tuo posto" : retreat.ctaLabel}
+                  </a>
+                )}
+                <FavoriteButton
+                  targetType="RETREAT"
+                  targetId={retreat.id}
+                  initialFavorited={!!favorite}
+                  loggedIn={!!account}
+                />
+              </div>
             )}
-            {retreat.price != null && <span className="font-semibold text-foreground">da €{retreat.price}</span>}
           </div>
-          <div className="mt-4 flex justify-center">
-            <LevelBadge requiredLevel={retreat.requiredLevel} />
-          </div>
-          {unlocked && !isPast && (
-            <a
-              href="#prenota"
-              className="mt-6 inline-flex cursor-pointer items-center rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
-            >
-              {canPay ? "Prenota il tuo posto" : retreat.ctaLabel}
-            </a>
+
+          {cover && (
+            <div className="relative mx-auto aspect-[4/3] w-full max-w-xl overflow-hidden rounded-3xl shadow-soft-lg lg:max-w-none">
+              <Image src={cover} alt={retreat.title} fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" priority />
+            </div>
           )}
         </div>
       </section>
 
-      {cover && (
-        <div className="mx-auto -mt-4 max-w-3xl px-4 sm:px-6">
-          {/* Riquadro 4:3, lo stesso rapporto del ritaglio dal pannello admin: la copertina si
-              vede intera, senza tagli. */}
-          <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-soft-lg">
-            <Image src={cover} alt={retreat.title} fill sizes="(min-width: 768px) 48rem, 100vw" className="object-cover" priority />
-          </div>
-        </div>
-      )}
+      {!unlocked ? (
+        <section className="mx-auto max-w-3xl px-4 pt-10 pb-20 sm:px-6">
+          <p className="mb-8 text-center text-foreground/70">{retreat.excerpt}</p>
+          <LevelLockedNotice requiredLevel={retreat.requiredLevel as number} loggedIn={!!account} />
+        </section>
+      ) : (
+        <>
+          <section className="mx-auto max-w-6xl px-4 pt-6 sm:px-6">
+            <EventSections content={retreat.description} lead={retreat.excerpt} />
+          </section>
 
-      <section className="mx-auto max-w-3xl px-4 pt-10 pb-20 sm:px-6">
-        {!unlocked ? (
-          <>
-            <p className="mb-8 text-center text-foreground/70">{retreat.excerpt}</p>
-            <LevelLockedNotice requiredLevel={retreat.requiredLevel as number} loggedIn={!!account} />
-          </>
-        ) : (
-          <>
-            {/* Il contenuto usa sempre tutta la larghezza (niente più colonna laterale
-                alta quanto il resto della pagina, che lasciava un vuoto enorme non appena
-                il modulo, più corto, finiva prima del testo). Il modulo di richiesta sta
-                in fondo, dopo tutte le informazioni sul ritiro. */}
-            <div className="flex justify-end">
-              <FavoriteButton
-                targetType="RETREAT"
-                targetId={retreat.id}
-                initialFavorited={!!favorite}
-                loggedIn={!!account}
-              />
-            </div>
-
-            <div className="mt-6">
-              <SectionedContent content={retreat.description} />
-            </div>
-
-            {retreat.videoUrl && isAllowedEmbedUrl(retreat.videoUrl) && (
-              <div className="mt-10 aspect-video overflow-hidden rounded-3xl border border-border shadow-soft-sm">
+          {retreat.videoUrl && isAllowedEmbedUrl(retreat.videoUrl) && (
+            <section className="mx-auto max-w-4xl px-4 pt-14 sm:px-6">
+              <div className="aspect-video overflow-hidden rounded-3xl border border-border shadow-soft-md">
                 <iframe
                   src={retreat.videoUrl}
                   title={retreat.title}
@@ -193,55 +206,59 @@ export default async function RetreatDetailPage({
                   allowFullScreen
                 />
               </div>
-            )}
+            </section>
+          )}
 
-            {itinerary.length > 0 && (
-              <div className="mt-10">
-                <h2 className="font-heading text-xl font-semibold text-foreground">Programma</h2>
-                <ol className="mt-4 space-y-4">
-                  {itinerary.map((day) => (
-                    <li key={day.day} className="rounded-3xl border border-border bg-card p-5">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-primary/70">
-                        Giorno {day.day}
-                      </p>
-                      <p className="mt-1 font-heading text-base font-semibold text-foreground">{day.title}</p>
+          {photos.length > 0 && (
+            <section className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
+              {/* Colonne (non griglia a riquadri fissi): ogni foto mantiene le sue proporzioni
+                  originali, quindi nessun viso o dettaglio viene tagliato. */}
+              <div className={`gap-4 ${photos.length === 1 ? "mx-auto max-w-3xl" : "columns-1 sm:columns-2 lg:columns-3"}`}>
+                {photos.map((src) => (
+                  <div key={src} className="mb-4 break-inside-avoid overflow-hidden rounded-3xl shadow-soft-md">
+                    <Image
+                      src={src}
+                      alt=""
+                      width={1200}
+                      height={900}
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      className="h-auto w-full"
+                    />
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {itinerary.length > 0 && (
+            <section className="mx-auto max-w-3xl px-4 pt-14 sm:px-6">
+              <h2 className="text-center font-heading text-2xl font-semibold text-foreground sm:text-3xl">Programma</h2>
+              <ol className="relative mt-8 ml-4 space-y-5 border-l-2 border-primary/20 pl-8">
+                {itinerary.map((day) => (
+                  <li key={day.day} className="relative">
+                    <span className="absolute top-4 -left-[3.175rem] flex h-9 w-9 items-center justify-center rounded-full bg-primary font-heading text-sm font-semibold text-primary-foreground shadow-soft-sm">
+                      {day.day}
+                    </span>
+                    <div className="rounded-3xl border border-border bg-card p-5 shadow-soft-sm">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-primary/70">Giorno {day.day}</p>
+                      <p className="mt-1 font-heading text-lg font-semibold text-foreground">{day.title}</p>
                       <ScheduleText text={day.description} className="mt-1 text-base text-foreground/70" />
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            )}
-
-            {photos.length > 0 && (
-              <div className="mt-10">
-                <h2 className="font-heading text-xl font-semibold text-foreground">Le foto</h2>
-                {/* Colonne (non griglia a riquadri fissi): ogni foto mantiene le sue proporzioni
-                    originali, quindi nessun viso o dettaglio viene tagliato. */}
-                <div className="mt-4 columns-1 gap-4 sm:columns-2">
-                  {photos.map((src) => (
-                    <div key={src} className="mb-4 break-inside-avoid overflow-hidden rounded-3xl border border-border">
-                      <Image
-                        src={src}
-                        alt=""
-                        width={1200}
-                        height={900}
-                        sizes="(min-width: 768px) 24rem, 100vw"
-                        className="h-auto w-full"
-                      />
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
 
-            <div className="mt-10">
-              <h2 className="mb-6 font-heading text-xl font-semibold text-foreground">Testimonianze</h2>
-              <TestimonialCarousel />
-            </div>
+          <section className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
+            <h2 className="mb-6 text-center font-heading text-2xl font-semibold text-foreground sm:text-3xl">Testimonianze</h2>
+            <TestimonialCarousel />
+          </section>
 
-            <div id="prenota" className="mt-10 scroll-mt-24 rounded-3xl border border-border bg-card p-6 shadow-soft-sm sm:p-8">
+          <section id="prenota" className="mx-auto max-w-6xl scroll-mt-24 px-4 pt-14 pb-24 sm:px-6">
+            <div className="rounded-3xl border border-border bg-card p-8 shadow-soft-sm sm:p-10">
               {prenotazione === "riuscita" && (
-                <div className="mb-6 flex items-start gap-3 rounded-2xl border border-primary/30 bg-primary/5 p-4">
+                <div className="mb-8 flex items-start gap-3 rounded-2xl border border-primary/30 bg-primary/5 p-4">
                   <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
                   <p className="text-sm text-foreground/80">
                     <strong>Prenotazione ricevuta, grazie!</strong> Ti abbiamo scritto una email di conferma; a breve
@@ -250,62 +267,80 @@ export default async function RetreatDetailPage({
                 </div>
               )}
               {prenotazione === "annullata" && (
-                <p className="mb-6 rounded-2xl border border-border bg-muted p-4 text-sm text-foreground/70">
+                <p className="mb-8 rounded-2xl border border-border bg-muted p-4 text-sm text-foreground/70">
                   Il pagamento è stato annullato: nessun addebito. Puoi riprovare quando vuoi.
                 </p>
               )}
 
-              {isPast ? (
-                <>
-                  <h2 className="font-heading text-lg font-semibold text-foreground">Evento concluso</h2>
-                  <p className="mt-2 max-w-md text-sm text-foreground/70">
-                    Questo appuntamento si è già svolto. Lascia i tuoi dati: ti avviseremo quando ci sarà una nuova
-                    data.
+              <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-start">
+                <div>
+                  <h2 className="font-heading text-2xl font-semibold text-foreground sm:text-3xl">
+                    {isPast ? "Evento concluso" : "Prenota il tuo posto"}
+                  </h2>
+                  <p className="mt-3 text-foreground/70">
+                    {isPast
+                      ? "Questo appuntamento si è già svolto. Lascia i tuoi dati: ti avviseremo quando ci sarà una nuova data."
+                      : canPay
+                        ? "Puoi prenotare subito con pagamento sicuro online, oppure scriverci per chiedere prima qualche informazione. I posti sono limitati."
+                        : "Compila il modulo e ti risponderemo con tutti i dettagli su disponibilità e modalità di iscrizione."}
                   </p>
-                </>
-              ) : (
-                <>
-                  <h2 className="font-heading text-lg font-semibold text-foreground">Prenota il tuo posto</h2>
-                  <p className="mt-2 max-w-md text-sm text-foreground/70">
-                    {canPay
-                      ? "Puoi prenotare subito con pagamento sicuro online, oppure scriverci per chiedere prima qualche informazione. I posti sono limitati."
-                      : "Compila il modulo e ti risponderemo con tutti i dettagli su disponibilità e modalità di iscrizione."}
-                  </p>
-                  {canPay && retreat.price != null && (
-                    <div className="mt-5">
+
+                  <ul className="mt-5 space-y-2.5 text-sm text-foreground/80">
+                    <li className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> {retreat.location}
+                    </li>
+                    {dateLabel && (
+                      <li className="flex items-center gap-2">
+                        <CalendarDays className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> {dateLabel}
+                      </li>
+                    )}
+                    {hasPrice && (
+                      <li className="flex items-center gap-2">
+                        <Ticket className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> €{retreat.price}
+                      </li>
+                    )}
+                    {!isPast && (
+                      <li className="flex items-center gap-2">
+                        <Users className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> Posti limitati
+                      </li>
+                    )}
+                  </ul>
+
+                  {!isPast && canPay && retreat.price != null && (
+                    <div className="mt-7">
                       <BookEventButton retreatId={retreat.id} price={retreat.price} />
                     </div>
                   )}
-                  {retreat.ctaUrl && (
+                  {!isPast && retreat.ctaUrl && (
                     <a
                       href={retreat.ctaUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-5 inline-flex cursor-pointer items-center rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground shadow-soft-md transition-transform hover:-translate-y-0.5"
+                      className="mt-7 inline-flex cursor-pointer items-center rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground shadow-soft-md transition-transform hover:-translate-y-0.5"
                     >
                       {retreat.ctaLabel}
                     </a>
                   )}
-                </>
-              )}
+                </div>
 
-              <div className={`${isPast ? "mt-5" : "mt-8 border-t border-border pt-6"} max-w-lg`}>
-                {!isPast && (
-                  <h3 className="mb-3 font-heading text-base font-semibold text-foreground">
-                    {canPay || retreat.ctaUrl ? "Preferisci prima parlarne? Scrivici" : retreat.ctaLabel}
-                  </h3>
-                )}
-                <LeadForm
-                  retreatId={retreat.id}
-                  defaultMessage={`Vorrei ricevere informazioni su "${retreat.title}".`}
-                  submitLabel={canPay || retreat.ctaUrl ? "Richiedi informazioni" : retreat.ctaLabel}
-                  source="Richiesta evento"
-                />
+                <div>
+                  {!isPast && (canPay || retreat.ctaUrl) && (
+                    <h3 className="mb-3 font-heading text-base font-semibold text-foreground">
+                      Preferisci prima parlarne? Scrivici
+                    </h3>
+                  )}
+                  <LeadForm
+                    retreatId={retreat.id}
+                    defaultMessage={`Vorrei ricevere informazioni su "${retreat.title}".`}
+                    submitLabel={canPay || retreat.ctaUrl ? "Richiedi informazioni" : retreat.ctaLabel}
+                    source="Richiesta evento"
+                  />
+                </div>
               </div>
             </div>
-          </>
-        )}
-      </section>
+          </section>
+        </>
+      )}
     </>
   );
 }

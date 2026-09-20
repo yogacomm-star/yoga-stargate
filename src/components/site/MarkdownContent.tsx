@@ -3,12 +3,12 @@ import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import { splitIntoSections } from "@/lib/sectionize";
 
-const markdownComponents = {
+export const markdownComponents = {
   h2: (props: ComponentProps<"h2">) => <h2 className="mt-8 font-heading text-2xl font-semibold text-foreground" {...props} />,
   h3: (props: ComponentProps<"h3">) => <h3 className="mt-6 font-heading text-xl font-semibold text-foreground" {...props} />,
   p: (props: ComponentProps<"p">) => <p {...props} />,
-  ul: (props: ComponentProps<"ul">) => <ul className="list-disc space-y-1 pl-5" {...props} />,
-  ol: (props: ComponentProps<"ol">) => <ol className="list-decimal space-y-1 pl-5" {...props} />,
+  ul: (props: ComponentProps<"ul">) => <ul className="list-disc space-y-1 pl-5 marker:text-primary" {...props} />,
+  ol: (props: ComponentProps<"ol">) => <ol className="list-decimal space-y-1 pl-5 marker:font-semibold marker:text-primary" {...props} />,
   a: (props: ComponentProps<"a">) => <a className="font-medium text-primary underline underline-offset-2" {...props} />,
   strong: (props: ComponentProps<"strong">) => <strong className="font-semibold text-foreground" {...props} />,
   blockquote: (props: ComponentProps<"blockquote">) => (
