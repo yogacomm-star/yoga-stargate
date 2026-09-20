@@ -50,6 +50,16 @@ const nextConfig: NextConfig = {
     // qui riduce quanto spesso l'ottimizzatore deve ripescare l'originale da lì.
     minimumCacheTTL: 31536000,
   },
+  // I vecchi indirizzi restano validi (link condivisi, motori di ricerca, email già inviate):
+  // Ritiri & Viaggi e Percorsi Live sono confluiti in Eventi; la Gallery è tolta per ora.
+  async redirects() {
+    return [
+      { source: "/ritiri", destination: "/eventi", permanent: true },
+      { source: "/ritiri/:slug", destination: "/eventi/:slug", permanent: true },
+      { source: "/my-yoga", destination: "/eventi", permanent: true },
+      { source: "/galleria", destination: "/", permanent: false },
+    ];
+  },
   async headers() {
     return [
       {

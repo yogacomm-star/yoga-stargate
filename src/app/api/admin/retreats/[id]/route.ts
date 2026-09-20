@@ -49,7 +49,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       kind: "ritiro",
       title: retreat.title,
       excerpt: retreat.excerpt,
-      url: `${SITE_URL}/ritiri/${retreat.slug}`,
+      url: `${SITE_URL}/eventi/${retreat.slug}`,
     });
   }
 

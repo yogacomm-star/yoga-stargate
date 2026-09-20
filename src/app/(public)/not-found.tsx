@@ -18,15 +18,15 @@ export default function PublicNotFound() {
       description={
         <>
           Forse il link è vecchio, oppure il contenuto che cercavi non è più online. Puoi tornare alla home o
-          dare un&apos;occhiata a ritiri, corsi e articoli.
+          dare un&apos;occhiata a eventi, corsi e articoli.
         </>
       }
     >
       <Link href="/" className={primaryButtonClass}>
         Torna alla home
       </Link>
-      <Link href="/ritiri" className={secondaryButtonClass}>
-        Vedi i ritiri
+      <Link href="/eventi" className={secondaryButtonClass}>
+        Vedi gli eventi
       </Link>
       <Link href="/corsi" className={secondaryButtonClass}>
         Vedi i corsi

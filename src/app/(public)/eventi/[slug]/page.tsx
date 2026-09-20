@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { MapPin, CalendarDays } from "lucide-react";
+import { MapPin, CalendarDays, CheckCircle2 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getCurrentAccount } from "@/lib/auth";
 import { canAccess } from "@/lib/levels";
@@ -9,11 +9,11 @@ import { LevelBadge, LevelLockedNotice } from "@/components/site/LevelLock";
 import { SectionedContent } from "@/components/site/MarkdownContent";
 import ScheduleText from "@/components/site/ScheduleText";
 import LeadForm from "@/components/site/LeadForm";
+import BookEventButton from "@/components/site/BookEventButton";
 import FavoriteButton from "@/components/site/FavoriteButton";
 import TestimonialCarousel from "@/components/site/TestimonialCarousel";
 import JsonLd from "@/components/site/JsonLd";
 import { SITE_URL } from "@/lib/site";
-import { firstImage } from "@/lib/images";
 import { isAllowedEmbedUrl } from "@/lib/embed";
 import DraftPreviewBanner from "@/components/site/DraftPreviewBanner";
 
@@ -22,6 +22,15 @@ type Itinerary = { day: number; title: string; description: string }[];
 function parseItinerary(raw: string): Itinerary {
   try {
     return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
+function parseImages(raw: string): string[] {
+  try {
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.filter((u): u is string => typeof u === "string") : [];
   } catch {
     return [];
   }
@@ -38,13 +47,20 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: retreat.title,
     description: retreat.excerpt,
-    alternates: { canonical: `/ritiri/${retreat.slug}` },
+    alternates: { canonical: `/eventi/${retreat.slug}` },
     openGraph: { title: retreat.title, description: retreat.excerpt, type: "website" },
   };
 }
 
-export default async function RetreatDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function RetreatDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ prenotazione?: string }>;
+}) {
   const { slug } = await params;
+  const { prenotazione } = await searchParams;
   const retreat = await getRetreat(slug);
   const account = await getCurrentAccount();
   // Le bozze restano invisibili a chiunque tranne l'admin: gli permette di aprire l'indirizzo
@@ -53,6 +69,17 @@ export default async function RetreatDetailPage({ params }: { params: Promise<{ 
 
   const unlocked = canAccess(retreat.requiredLevel, account?.level);
   const itinerary = parseItinerary(retreat.itinerary);
+  const images = parseImages(retreat.images);
+  const cover = images[0] ?? null;
+  const photos = images.slice(1);
+
+  // Evento già concluso: niente pagamento, resta la possibilità di chiedere informazioni
+  // (per la prossima edizione).
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const lastDay = retreat.endDate ?? retreat.startDate;
+  const isPast = !!lastDay && lastDay < today;
+  const canPay = retreat.price != null && retreat.price > 0 && !retreat.ctaUrl && !isPast;
 
   const favorite = account
     ? await prisma.favorite.findUnique({
@@ -80,7 +107,7 @@ export default async function RetreatDetailPage({ params }: { params: Promise<{ 
     location: { "@type": "Place", name: retreat.location, address: retreat.location },
     organizer: { "@type": "Organization", name: "Yoga Stargate", url: SITE_URL },
     ...(retreat.price != null
-      ? { offers: { "@type": "Offer", price: retreat.price, priceCurrency: "EUR", url: `${SITE_URL}/ritiri/${retreat.slug}` } }
+      ? { offers: { "@type": "Offer", price: retreat.price, priceCurrency: "EUR", url: `${SITE_URL}/eventi/${retreat.slug}` } }
       : {}),
   };
 
@@ -109,13 +136,23 @@ export default async function RetreatDetailPage({ params }: { params: Promise<{ 
           <div className="mt-4 flex justify-center">
             <LevelBadge requiredLevel={retreat.requiredLevel} />
           </div>
+          {unlocked && !isPast && (
+            <a
+              href="#prenota"
+              className="mt-6 inline-flex cursor-pointer items-center rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
+            >
+              {canPay ? "Prenota il tuo posto" : retreat.ctaLabel}
+            </a>
+          )}
         </div>
       </section>
 
-      {firstImage(retreat.images) && (
-        <div className="mx-auto -mt-4 max-w-5xl px-4 sm:px-6">
-          <div className="relative h-72 overflow-hidden rounded-3xl shadow-soft-lg sm:h-[32rem]">
-            <Image src={firstImage(retreat.images)!} alt={retreat.title} fill sizes="(min-width: 1024px) 80vw, 100vw" className="object-cover" />
+      {cover && (
+        <div className="mx-auto -mt-4 max-w-3xl px-4 sm:px-6">
+          {/* Riquadro 4:3, lo stesso rapporto del ritaglio dal pannello admin: la copertina si
+              vede intera, senza tagli. */}
+          <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-soft-lg">
+            <Image src={cover} alt={retreat.title} fill sizes="(min-width: 768px) 48rem, 100vw" className="object-cover" priority />
           </div>
         </div>
       )}
@@ -175,22 +212,94 @@ export default async function RetreatDetailPage({ params }: { params: Promise<{ 
               </div>
             )}
 
+            {photos.length > 0 && (
+              <div className="mt-10">
+                <h2 className="font-heading text-xl font-semibold text-foreground">Le foto</h2>
+                {/* Colonne (non griglia a riquadri fissi): ogni foto mantiene le sue proporzioni
+                    originali, quindi nessun viso o dettaglio viene tagliato. */}
+                <div className="mt-4 columns-1 gap-4 sm:columns-2">
+                  {photos.map((src) => (
+                    <div key={src} className="mb-4 break-inside-avoid overflow-hidden rounded-3xl border border-border">
+                      <Image
+                        src={src}
+                        alt=""
+                        width={1200}
+                        height={900}
+                        sizes="(min-width: 768px) 24rem, 100vw"
+                        className="h-auto w-full"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="mt-10">
               <h2 className="mb-6 font-heading text-xl font-semibold text-foreground">Testimonianze</h2>
               <TestimonialCarousel />
             </div>
 
-            <div className="mt-10 rounded-3xl border border-border bg-card p-6 shadow-soft-sm sm:p-8">
-              <h2 className="font-heading text-lg font-semibold text-foreground">{retreat.ctaLabel}</h2>
-              <p className="mt-2 max-w-md text-sm text-foreground/70">
-                Compila il modulo e ti risponderemo con tutti i dettagli su disponibilità e modalità di iscrizione.
-              </p>
-              <div className="mt-5 max-w-lg">
+            <div id="prenota" className="mt-10 scroll-mt-24 rounded-3xl border border-border bg-card p-6 shadow-soft-sm sm:p-8">
+              {prenotazione === "riuscita" && (
+                <div className="mb-6 flex items-start gap-3 rounded-2xl border border-primary/30 bg-primary/5 p-4">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+                  <p className="text-sm text-foreground/80">
+                    <strong>Prenotazione ricevuta, grazie!</strong> Ti abbiamo scritto una email di conferma; a breve
+                    riceverai anche tutti i dettagli pratici.
+                  </p>
+                </div>
+              )}
+              {prenotazione === "annullata" && (
+                <p className="mb-6 rounded-2xl border border-border bg-muted p-4 text-sm text-foreground/70">
+                  Il pagamento è stato annullato: nessun addebito. Puoi riprovare quando vuoi.
+                </p>
+              )}
+
+              {isPast ? (
+                <>
+                  <h2 className="font-heading text-lg font-semibold text-foreground">Evento concluso</h2>
+                  <p className="mt-2 max-w-md text-sm text-foreground/70">
+                    Questo appuntamento si è già svolto. Lascia i tuoi dati: ti avviseremo quando ci sarà una nuova
+                    data.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h2 className="font-heading text-lg font-semibold text-foreground">Prenota il tuo posto</h2>
+                  <p className="mt-2 max-w-md text-sm text-foreground/70">
+                    {canPay
+                      ? "Puoi prenotare subito con pagamento sicuro online, oppure scriverci per chiedere prima qualche informazione. I posti sono limitati."
+                      : "Compila il modulo e ti risponderemo con tutti i dettagli su disponibilità e modalità di iscrizione."}
+                  </p>
+                  {canPay && retreat.price != null && (
+                    <div className="mt-5">
+                      <BookEventButton retreatId={retreat.id} price={retreat.price} />
+                    </div>
+                  )}
+                  {retreat.ctaUrl && (
+                    <a
+                      href={retreat.ctaUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-5 inline-flex cursor-pointer items-center rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground shadow-soft-md transition-transform hover:-translate-y-0.5"
+                    >
+                      {retreat.ctaLabel}
+                    </a>
+                  )}
+                </>
+              )}
+
+              <div className={`${isPast ? "mt-5" : "mt-8 border-t border-border pt-6"} max-w-lg`}>
+                {!isPast && (
+                  <h3 className="mb-3 font-heading text-base font-semibold text-foreground">
+                    {canPay || retreat.ctaUrl ? "Preferisci prima parlarne? Scrivici" : retreat.ctaLabel}
+                  </h3>
+                )}
                 <LeadForm
                   retreatId={retreat.id}
-                  defaultMessage={`Vorrei ricevere informazioni sul ritiro "${retreat.title}".`}
-                  submitLabel={retreat.ctaLabel}
-                  source="Richiesta ritiro"
+                  defaultMessage={`Vorrei ricevere informazioni su "${retreat.title}".`}
+                  submitLabel={canPay || retreat.ctaUrl ? "Richiedi informazioni" : retreat.ctaLabel}
+                  source="Richiesta evento"
                 />
               </div>
             </div>

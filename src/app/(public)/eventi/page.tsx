@@ -6,14 +6,16 @@ import RetreatCard, { type RetreatCardData } from "@/components/site/RetreatCard
 import LeadForm from "@/components/site/LeadForm";
 import { prisma } from "@/lib/prisma";
 import { firstImage } from "@/lib/images";
+import { EVENT_CATEGORIES } from "@/lib/eventCategories";
 
 export const metadata: Metadata = {
-  title: "Ritiri & Viaggi",
-  description: "Ritiri & Viaggi Yoga Stargate: esperienze immersive in Italia e nel mondo con Tina Mastandrea — mental reset, riconnessione al sé e formazione.",
-  alternates: { canonical: "/ritiri" },
+  title: "Eventi",
+  description:
+    "Eventi Yoga Stargate: masterclass, workshop, ritiri e viaggi con Tina Mastandrea — esperienze per riattivare la tua frequenza, a Milano, in Italia e nel mondo.",
+  alternates: { canonical: "/eventi" },
 };
 
-export default async function RitiriPage({
+export default async function EventiPage({
   searchParams,
 }: {
   searchParams: Promise<{ categoria?: string }>;
@@ -25,8 +27,24 @@ export default async function RitiriPage({
     orderBy: [{ startDate: "asc" }, { createdAt: "desc" }],
   });
 
-  const categories = Array.from(new Set(retreats.map((r) => r.category)));
-  const filtered = categoria ? retreats.filter((r) => r.category === categoria) : retreats;
+  // Filtri fissi (Masterclass, Workshop, Retreat, Viaggi) nell'ordine voluto; una categoria in
+  // più (es. "Sessione individuale") compare solo se esiste almeno un evento così. Gli eventi
+  // con una vecchia categoria restano visibili sotto "Tutti".
+  const present = new Set(retreats.map((r) => r.category));
+  const fixed: readonly string[] = EVENT_CATEGORIES;
+  const categories = [...EVENT_CATEGORIES, ...(present.has("Sessione individuale") ? ["Sessione individuale"] : [])].filter(
+    (c) => fixed.includes(c) || present.has(c)
+  );
+
+  // Prima gli eventi in programma (dal più vicino), poi quelli già passati.
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const isPast = (r: (typeof retreats)[number]) => {
+    const last = r.endDate ?? r.startDate;
+    return !!last && last < today;
+  };
+  const sorted = [...retreats].sort((a, b) => Number(isPast(a)) - Number(isPast(b)));
+  const filtered = categoria ? sorted.filter((r) => r.category === categoria) : sorted;
 
   const cards: RetreatCardData[] = filtered.map((r) => ({
     slug: r.slug,
@@ -44,15 +62,15 @@ export default async function RitiriPage({
   return (
     <>
       <Hero
-        eyebrow="Ritiri & Viaggi"
-        title="Ritiri & Viaggi Yoga Stargate"
+        eyebrow="Eventi"
+        title="EVENTI YOGA STARGATE"
         subtitle="Esperienze immersive per riattivare la tua frequenza: mental reset, riconnessione al sé e formazione, in Italia e nel mondo."
       />
 
       <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
         <div className="mb-8 flex flex-wrap gap-2">
           <Link
-            href="/ritiri"
+            href="/eventi"
             className={`cursor-pointer rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
               !categoria ? "border-primary bg-primary text-primary-foreground" : "border-border text-foreground/70 hover:border-primary"
             }`}
@@ -62,7 +80,7 @@ export default async function RitiriPage({
           {categories.map((c) => (
             <Link
               key={c}
-              href={`/ritiri?categoria=${encodeURIComponent(c)}`}
+              href={`/eventi?categoria=${encodeURIComponent(c)}`}
               className={`cursor-pointer rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
                 categoria === c ? "border-primary bg-primary text-primary-foreground" : "border-border text-foreground/70 hover:border-primary"
               }`}
@@ -73,7 +91,7 @@ export default async function RitiriPage({
         </div>
 
         {cards.length === 0 ? (
-          <p className="text-sm text-foreground/60">Nessun ritiro trovato per questa categoria.</p>
+          <p className="text-sm text-foreground/60">Nessun evento in questa categoria, per ora.</p>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {cards.map((r) => (

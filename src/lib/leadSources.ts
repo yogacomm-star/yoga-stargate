@@ -5,6 +5,8 @@ export const LEAD_SOURCES = [
   "Richiesta gruppo",
   "Richiesta Percorsi Live",
   "Richiesta ritiro",
+  "Richiesta evento",
+  "Prenotazione evento",
   "Richiesta Metodo",
   // Non più generabile (il checkout della lezione di prova è stato ritirato): resta nell'elenco
   // solo per continuare a filtrare correttamente le richieste storiche già ricevute con questa

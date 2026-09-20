@@ -67,7 +67,7 @@ export default async function PreferitiPage() {
         <>
           {retreatCards.length > 0 && (
             <section className="mt-10">
-              <h2 className="font-heading text-lg font-semibold text-foreground">Ritiri</h2>
+              <h2 className="font-heading text-lg font-semibold text-foreground">Eventi</h2>
               <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {retreatCards.map((r) => (
                   <RetreatCard key={r.slug} retreat={r} />

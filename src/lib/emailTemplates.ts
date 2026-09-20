@@ -14,7 +14,7 @@ export const EMAIL_TEMPLATES: Record<EmailTemplateKey, { label: string; subject:
       "Ciao,\n\nda oggi è disponibile un nuovo corso online: [nome del corso].\n\n[Racconta qui in breve il percorso e a chi è rivolto.]\n\nPuoi iniziare subito dalla sezione Corsi del sito.\n\nA presto,\nTina",
   },
   promemoria_lezione: {
-    label: "Promemoria Percorsi Live",
+    label: "Promemoria evento",
     subject: "Ci vediamo allo Spazio Yoga Lambrate",
     message:
       "Ciao,\n\nun piccolo promemoria per [nome dell'appuntamento: Masterclass/Workshop/Percorso individuale] di [giorno] [data] alle [orario], allo Spazio Yoga Lambrate a Milano.\n\nI posti sono limitati: se non riesci a venire o vuoi informazioni su un altro Percorso Live, scrivimi pure.\n\nA presto,\nTina",

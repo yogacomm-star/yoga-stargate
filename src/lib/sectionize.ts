@@ -17,7 +17,43 @@ function looksLikeHeading(firstLine: string, hasBodyAfter: boolean): boolean {
   return hasBodyAfter;
 }
 
+// Formato esplicito, usato dall'editor a riquadri del pannello admin: ogni riquadro inizia con
+// una riga "## Titolo". Se il testo ne contiene almeno una, il titolo di ogni scheda è
+// esattamente quello scelto da chi scrive, senza nessuna deduzione.
+const EXPLICIT_HEADING = /^##[ \t]+(.+?)[ \t]*$/;
+
+function splitExplicit(raw: string): Section[] {
+  const sections: Section[] = [{ heading: null, body: "" }];
+  const lines: string[][] = [[]];
+
+  for (const line of raw.split("\n")) {
+    const match = EXPLICIT_HEADING.exec(line);
+    if (match) {
+      sections.push({ heading: match[1].trim(), body: "" });
+      lines.push([]);
+    } else {
+      lines[lines.length - 1].push(line);
+    }
+  }
+
+  sections.forEach((s, i) => {
+    s.body = lines[i].join("\n").trim();
+  });
+  return sections.filter((s) => s.heading || s.body);
+}
+
+/** Riscrive i riquadri nel formato esplicito ("## Titolo" + testo) salvato nel database. */
+export function sectionsToMarkdown(sections: Section[]): string {
+  return sections
+    .filter((s) => s.heading?.trim() || s.body.trim())
+    .map((s) => (s.heading?.trim() ? `## ${s.heading.trim()}\n\n${s.body.trim()}` : s.body.trim()))
+    .join("\n\n")
+    .trim();
+}
+
 export function splitIntoSections(raw: string): Section[] {
+  if (/^##[ \t]+\S/m.test(raw)) return splitExplicit(raw);
+
   const blocks = raw
     .split(/\n{2,}/)
     .map((b) => b.trim())

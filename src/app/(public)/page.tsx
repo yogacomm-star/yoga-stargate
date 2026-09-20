@@ -16,7 +16,7 @@ const businessJsonLd = {
   "@type": "ExerciseGym",
   name: "Yoga Stargate",
   description:
-    "Scuola di yoga multidimensionale a Milano fondata da Tina Mastandrea: percorsi live, percorsi online e ritiri e viaggi in Italia e nel mondo.",
+    "Scuola di yoga multidimensionale a Milano fondata da Tina Mastandrea: eventi dal vivo, percorsi online, ritiri e viaggi in Italia e nel mondo.",
   url: SITE_URL,
   telephone: "+39 333 698 0044",
   address: {
@@ -35,14 +35,32 @@ function formatDate(iso: string | null) {
 }
 
 export default async function HomePage() {
-  const [posts, nextRetreat, publishedCourses, purchaseCounts] = await Promise.all([
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const upcoming = { OR: [{ startDate: { gte: startOfToday } }, { startDate: null }] };
+
+  const [posts, nextRetreat, nextMasterclass, nextWorkshop, publishedCourses, purchaseCounts] = await Promise.all([
     prisma.blogPost.findMany({
       where: { status: "PUBLISHED" },
       orderBy: { publishedAt: "desc" },
       take: 3,
     }),
+    // Prossimo ritiro/viaggio: gli appuntamenti di Milano (masterclass, workshop, sessioni)
+    // hanno il loro riquadro a parte.
     prisma.retreat.findFirst({
-      where: { status: "PUBLISHED", startDate: { gte: new Date() } },
+      where: {
+        status: "PUBLISHED",
+        startDate: { gte: startOfToday },
+        NOT: { category: { in: ["Masterclass", "Workshop", "Sessione individuale"] } },
+      },
+      orderBy: { startDate: "asc" },
+    }),
+    prisma.retreat.findFirst({
+      where: { status: "PUBLISHED", category: "Masterclass", ...upcoming },
+      orderBy: { startDate: "asc" },
+    }),
+    prisma.retreat.findFirst({
+      where: { status: "PUBLISHED", category: "Workshop", ...upcoming },
       orderBy: { startDate: "asc" },
     }),
     prisma.course.findMany({
@@ -57,8 +75,16 @@ export default async function HomePage() {
 
   // Percorso online "più scelto": quello con più acquisti, altrimenti il più recente.
   const counts = new Map(purchaseCounts.map((p) => [p.courseId, p._count.courseId]));
+  // In evidenza "La Via della Meditazione" (scelta della cliente) finché è pubblicata; altrimenti
+  // il percorso con più acquisti.
+  const featuredCourse = publishedCourses.find((c) => c.slug === "la-via-della-meditazione") ?? null;
   const topCourse =
-    [...publishedCourses].sort((a, b) => (counts.get(b.id) ?? 0) - (counts.get(a.id) ?? 0))[0] ?? null;
+    featuredCourse ??
+    [...publishedCourses].sort((a, b) => (counts.get(b.id) ?? 0) - (counts.get(a.id) ?? 0))[0] ??
+    null;
+  const topCourseText = featuredCourse
+    ? "Un testo e percorso di iniziazione alla meditazione per trasformare la vita in un'avventura di realizzazione di Sé."
+    : topCourse?.excerpt ?? "Pratiche guidate, rituali di trasformazione ed ebook da vivere dove vuoi, quando vuoi.";
 
   const blogCards: BlogCardData[] = posts.map((p) => ({
     slug: p.slug,
@@ -87,7 +113,7 @@ export default async function HomePage() {
         eyebrow="Yoga e Discipline Multidimensionali"
         title="Attiva la Nuova Frequenza"
         subtitle="Il metodo che unisce la tradizione yogica e le neuroscienze per il risveglio interiore e l'espansione di coscienza."
-        primaryCta={{ label: "Inizia ora — 7 meditazioni gratis", href: "/corsi/sette-giorni-per-meditare-bene" }}
+        primaryCta={{ label: "Inizia ora — percorso online gratis", href: "/corsi/sette-giorni-per-meditare-bene" }}
         secondaryCta={{ label: "Scopri di più", href: "#scegli" }}
       />
 
@@ -98,8 +124,9 @@ export default async function HomePage() {
           </span>
           <h2 className="font-heading text-3xl font-semibold sm:text-4xl">Scarica il tuo Dono per l&apos;Anima</h2>
           <p className="mx-auto mt-4 max-w-xl text-white/85">
-            7 giorni, 7 meditazioni audio guidate da Tina Mastandrea per iniziare (o ritrovare) una pratica
-            quotidiana che ti fa stare bene. Gratuito per chi si registra a Yoga Stargate.
+            Om Shaant — il percorso online guidato da Tina Mastandrea, per il tuo risveglio interiore.
+            Sperimenti rilassamento profondo, rinnovamento integrale e nuova frequenza. Gratuito per chi si
+            registra a Yoga Stargate.
           </p>
           <div className="mt-8 flex justify-center">
             <Link
@@ -121,31 +148,31 @@ export default async function HomePage() {
         </h2>
 
         <ScrollCarousel className="mt-8" itemClassName="w-[85vw] min-w-0 sm:w-[340px] first:w-[92vw] sm:first:w-[440px]" ariaLabel="Prossimi appuntamenti">
-          {/* Percorsi Live a Milano */}
-          <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-soft-sm">
-            <div className="relative h-44 w-full shrink-0">
-              <Image src="/images/lezione-parco-milano.jpeg" alt="" fill sizes="(min-width: 1024px) 40vw, 88vw" className="object-cover" />
-              <span className="absolute top-4 left-4 inline-flex items-center gap-2 rounded-full bg-card/90 px-3 py-1 text-xs font-semibold text-primary uppercase tracking-wide backdrop-blur-sm">
-                <MapPin className="h-3.5 w-3.5" aria-hidden="true" /> Milano
-              </span>
-            </div>
-            <div className="flex flex-1 flex-col p-5">
-              <h3 className="font-heading text-xl font-semibold text-foreground">Percorsi Live a Milano</h3>
-              <p className="mt-2 text-sm text-foreground/70">
-                Masterclass, workshop e percorso individuale allo Spazio Yoga Lambrate.
-                Posti sempre limitati.
-              </p>
-              <div className="mt-auto pt-3">
-                <Link
-                  href="/my-yoga"
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
-                >
-                  Scopri i Percorsi Live
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-              </div>
-            </div>
-          </div>
+          {/* Masterclass a Milano */}
+          <EventTeaser
+            image={(nextMasterclass ? firstImage(nextMasterclass.images) : null) ?? "/images/lezione-parco-milano.jpeg"}
+            badge="Milano"
+            title={nextMasterclass?.title ?? "Yoga Masterclass Milano"}
+            text={
+              nextMasterclass?.excerpt ??
+              "Approfondisci e impara nuove pratiche di risveglio — 21 ottobre, ore 17. Un'esperienza accessibile e pensata per un lavoro efficace e trasformativo. Posti sempre limitati."
+            }
+            href={nextMasterclass ? `/eventi/${nextMasterclass.slug}` : "/eventi?categoria=Masterclass"}
+            cta="Scopri la Masterclass"
+          />
+
+          {/* Workshop a Milano */}
+          <EventTeaser
+            image={(nextWorkshop ? firstImage(nextWorkshop.images) : null) ?? "/images/cerchio-meditazione-parco.png"}
+            badge="Milano"
+            title={nextWorkshop?.title ?? "Yoga Workshop"}
+            text={
+              nextWorkshop?.excerpt ??
+              "Mercoledì 4/11 dalle ore 17 entri nel cuore del metodo Yoga Stargate Multidimensionale e integri, armonizzi e rinforzi corpo, energia, visione e nuova coscienza."
+            }
+            href={nextWorkshop ? `/eventi/${nextWorkshop.slug}` : "/eventi?categoria=Workshop"}
+            cta="Scopri il Workshop"
+          />
 
           {/* Prossimo ritiro */}
           <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-soft-sm">
@@ -157,7 +184,7 @@ export default async function HomePage() {
             </div>
             <div className="flex flex-1 flex-col p-5">
               <h3 className="font-heading text-xl font-semibold text-foreground">
-                Se cerchi silenzio e natura, questo è il tuo momento
+                Se cerchi silenzio e natura, questo è per Te
               </h3>
               {nextRetreat ? (
                 <p className="mt-2 text-sm text-foreground/70">
@@ -172,10 +199,10 @@ export default async function HomePage() {
               )}
               <div className="mt-auto pt-3">
                 <Link
-                  href={nextRetreat ? `/ritiri/${nextRetreat.slug}` : "/ritiri"}
+                  href={nextRetreat ? `/eventi/${nextRetreat.slug}` : "/eventi"}
                   className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
                 >
-                  Partecipa al prossimo ritiro
+                  Partecipa al Ritiro
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </div>
@@ -194,11 +221,7 @@ export default async function HomePage() {
               <h3 className="font-heading text-xl font-semibold text-foreground">
                 {topCourse ? topCourse.title : "Percorsi Online Yoga Stargate"}
               </h3>
-              <p className="mt-2 text-sm text-foreground/70">
-                {topCourse
-                  ? topCourse.excerpt
-                  : "Pratiche guidate, rituali di trasformazione ed ebook da vivere dove vuoi, quando vuoi."}
-              </p>
+              <p className="mt-2 text-sm text-foreground/70">{topCourseText}</p>
               <div className="mt-auto pt-3">
                 <Link
                   href={topCourse ? `/corsi/${topCourse.slug}` : "/corsi"}
@@ -229,7 +252,7 @@ export default async function HomePage() {
               </p>
               <div className="mt-auto pt-3">
                 <Link
-                  href="/ritiri#gruppi"
+                  href="/eventi#gruppi"
                   className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
                 >
                   Scrivici per il tuo gruppo
@@ -311,18 +334,18 @@ export default async function HomePage() {
 
       <section className="mx-auto max-w-4xl px-4 py-24 text-center sm:px-6">
         <h2 className="font-heading text-3xl font-semibold text-foreground sm:text-4xl">
-          Pronta o pronto ad attivare la tua nuova frequenza?
+          Pronta o pronto ad attivare la nuova frequenza?
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-foreground/70">
-          Scegli una masterclass o un workshop dei Percorsi Live a Milano, inizia un percorso online o parti con
-          noi per il prossimo ritiro.
+          Scegli una masterclass o un workshop a Milano, inizia un percorso online o parti con noi per il
+          prossimo ritiro.
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
-            href="/ritiri"
+            href="/eventi"
             className="cursor-pointer rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground shadow-soft-md transition-transform hover:-translate-y-0.5"
           >
-            Scopri Ritiri &amp; Viaggi
+            Scopri gli Eventi
           </Link>
           <Link
             href="/registrati"
@@ -333,5 +356,48 @@ export default async function HomePage() {
         </div>
       </section>
     </>
+  );
+}
+
+// Riquadro del carosello "I prossimi appuntamenti" per gli eventi di Milano (masterclass,
+// workshop). Mostra l'evento vero, se Tina l'ha già pubblicato dal pannello Eventi; altrimenti
+// il testo di presentazione, con il link alla categoria giusta della pagina Eventi.
+function EventTeaser({
+  image,
+  badge,
+  title,
+  text,
+  href,
+  cta,
+}: {
+  image: string;
+  badge: string;
+  title: string;
+  text: string;
+  href: string;
+  cta: string;
+}) {
+  return (
+    <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-soft-sm">
+      <div className="relative h-44 w-full shrink-0">
+        <Image src={image} alt="" fill sizes="(min-width: 1024px) 40vw, 88vw" className="object-cover" />
+        <span className="absolute top-4 left-4 inline-flex items-center gap-2 rounded-full bg-card/90 px-3 py-1 text-xs font-semibold text-primary uppercase tracking-wide backdrop-blur-sm">
+          <MapPin className="h-3.5 w-3.5" aria-hidden="true" /> {badge}
+        </span>
+      </div>
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="font-heading text-xl font-semibold text-foreground">{title}</h3>
+        <p className="mt-2 line-clamp-5 text-sm text-foreground/70">{text}</p>
+        <div className="mt-auto pt-3">
+          <Link
+            href={href}
+            className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
+          >
+            {cta}
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -73,7 +73,7 @@ export async function POST(request: Request) {
       kind: "ritiro",
       title: retreat.title,
       excerpt: retreat.excerpt,
-      url: `${SITE_URL}/ritiri/${retreat.slug}`,
+      url: `${SITE_URL}/eventi/${retreat.slug}`,
     });
   }
 

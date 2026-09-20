@@ -9,7 +9,7 @@ import Logo from "@/components/site/Logo";
 
 const items = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { href: "/admin/ritiri", label: "Ritiri", icon: Compass },
+  { href: "/admin/ritiri", label: "Eventi", icon: Compass },
   { href: "/admin/corsi", label: "Corsi", icon: GraduationCap },
   { href: "/admin/blog", label: "Blog", icon: Newspaper },
   { href: "/admin/galleria", label: "Gallery", icon: Images },

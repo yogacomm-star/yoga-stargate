@@ -139,9 +139,9 @@ export default async function AccountPage() {
         <h2 className="font-heading text-lg font-semibold text-foreground">Le tue richieste</h2>
         {leads.length === 0 ? (
           <p className="mt-3 text-sm text-foreground/60">
-            Non hai ancora inviato richieste per nessun ritiro.{" "}
-            <Link href="/ritiri" className="cursor-pointer font-semibold text-primary">
-              Scopri i ritiri
+            Non hai ancora inviato richieste per nessun evento.{" "}
+            <Link href="/eventi" className="cursor-pointer font-semibold text-primary">
+              Scopri gli eventi
             </Link>
             .
           </p>

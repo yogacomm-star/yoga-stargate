@@ -28,15 +28,15 @@ export const adminTourSteps: TourStep[] = [
   {
     href: "/admin/ritiri",
     target: "admin-nav-ritiri",
-    title: "Sezione Ritiri",
-    description: "Da qui gestisci tutti i ritiri: titolo, categoria, date, prezzo, livello richiesto e stato (bozza o pubblicato).",
+    title: "Sezione Eventi",
+    description: "Da qui gestisci tutti gli eventi (masterclass, workshop, ritiri, viaggi): titolo, categoria, date, prezzo, livello richiesto e stato (bozza o pubblicato).",
   },
   {
     href: "/admin/ritiri",
     target: "admin-new-retreat",
-    title: "Crea un nuovo ritiro",
+    title: "Crea un nuovo evento",
     description:
-      "Con questo pulsante crei un nuovo ritiro: puoi caricare un'immagine di copertina, costruire il programma giorno per giorno e decidere se è aperto a tutti o riservato a un livello.",
+      "Con questo pulsante crei un nuovo evento: puoi caricare un'immagine di copertina, costruire il programma giorno per giorno e decidere se è aperto a tutti o riservato a un livello.",
   },
   {
     href: "/admin/corsi",

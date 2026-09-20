@@ -23,7 +23,7 @@ export default async function CercaPage({ searchParams }: { searchParams: Promis
     return (
       <div className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
         <h1 className="font-heading text-3xl font-semibold text-foreground">Cerca nel sito</h1>
-        <p className="mt-3 text-sm text-foreground/60">Trova corsi, ritiri e articoli del blog.</p>
+        <p className="mt-3 text-sm text-foreground/60">Trova corsi, eventi e articoli del blog.</p>
         <div className="mt-8">
           <SearchBar />
         </div>
@@ -96,7 +96,7 @@ export default async function CercaPage({ searchParams }: { searchParams: Promis
 
       {retreatCards.length > 0 && (
         <section className="mt-10">
-          <h2 className="font-heading text-lg font-semibold text-foreground">Ritiri</h2>
+          <h2 className="font-heading text-lg font-semibold text-foreground">Eventi</h2>
           <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {retreatCards.map((r) => (
               <RetreatCard key={r.slug} retreat={r} />

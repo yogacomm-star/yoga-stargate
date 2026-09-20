@@ -5,11 +5,9 @@ import { SITE_URL } from "@/lib/site";
 const STATIC_PAGES = [
   { path: "", priority: 1, changeFrequency: "weekly" as const },
   { path: "/chi-sono", priority: 0.7, changeFrequency: "monthly" as const },
-  { path: "/my-yoga", priority: 0.8, changeFrequency: "monthly" as const },
   { path: "/metodo", priority: 0.8, changeFrequency: "monthly" as const },
-  { path: "/ritiri", priority: 0.9, changeFrequency: "weekly" as const },
+  { path: "/eventi", priority: 0.9, changeFrequency: "weekly" as const },
   { path: "/corsi", priority: 0.9, changeFrequency: "weekly" as const },
-  { path: "/galleria", priority: 0.5, changeFrequency: "monthly" as const },
   { path: "/blog", priority: 0.8, changeFrequency: "weekly" as const },
   { path: "/contatti", priority: 0.5, changeFrequency: "yearly" as const },
   { path: "/registrati", priority: 0.4, changeFrequency: "yearly" as const },
@@ -36,7 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const retreatEntries: MetadataRoute.Sitemap = retreats.map((r) => ({
-    url: `${SITE_URL}/ritiri/${r.slug}`,
+    url: `${SITE_URL}/eventi/${r.slug}`,
     lastModified: r.updatedAt,
     changeFrequency: "weekly",
     priority: 0.8,

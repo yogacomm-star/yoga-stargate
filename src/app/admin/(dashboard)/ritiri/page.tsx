@@ -12,8 +12,8 @@ export default async function AdminRitiriPage() {
     <div>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-heading text-2xl font-semibold text-foreground">Ritiri</h1>
-          <p className="mt-1 text-sm text-foreground/60">{retreats.length} ritiri totali</p>
+          <h1 className="font-heading text-2xl font-semibold text-foreground">Eventi</h1>
+          <p className="mt-1 text-sm text-foreground/60">{retreats.length} eventi totali</p>
         </div>
         <Link
           href="/admin/ritiri/nuovo"
@@ -21,7 +21,7 @@ export default async function AdminRitiriPage() {
           className="flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"
         >
           <Plus className="h-4 w-4" aria-hidden="true" />
-          Nuovo ritiro
+          Nuovo evento
         </Link>
       </div>
 
@@ -56,7 +56,7 @@ export default async function AdminRitiriPage() {
                     </Link>
                     <DeleteButton
                       endpoint={`/api/admin/retreats/${r.id}`}
-                      confirmLabel={`Eliminare il ritiro "${r.title}"?`}
+                      confirmLabel={`Eliminare l'evento "${r.title}"?`}
                     />
                   </div>
                 </td>
@@ -65,7 +65,7 @@ export default async function AdminRitiriPage() {
             {retreats.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-5 py-8 text-center text-foreground/50">
-                  Nessun ritiro creato.
+                  Nessun evento creato.
                 </td>
               </tr>
             )}

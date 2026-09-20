@@ -1,4 +1,4 @@
-// Feed .ics dei prossimi appuntamenti dei Percorsi Live. A differenza delle vecchie lezioni
+// Feed .ics dei prossimi appuntamenti di Milano (masterclass, workshop). A differenza delle vecchie lezioni
 // settimanali (un unico evento ricorrente ogni mercoledì), Masterclass e Workshop hanno
 // cadenze diverse (mensile/trimestrale) su date specifiche: qui sotto vanno quindi aggiornate
 // a mano man mano che si fissano le prossime date, invece di un'unica regola di ricorrenza.

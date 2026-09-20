@@ -87,6 +87,55 @@ export async function sendPurchaseConfirmationEmail({
 }
 
 /**
+ * Dopo il pagamento di un evento: conferma a chi ha prenotato e avviso agli admin, così
+ * la prenotazione non passa inosservata. "Best effort": mai bloccante per il webhook.
+ */
+export async function sendEventBookingEmails({
+  email,
+  name,
+  phone,
+  eventTitle,
+  eventSlug,
+  amount,
+}: {
+  email: string;
+  name: string;
+  phone?: string | null;
+  eventTitle: string;
+  eventSlug: string;
+  amount: number;
+}) {
+  if (!emailConfigured()) return;
+  const money = amount.toLocaleString("it-IT", { style: "currency", currency: "EUR" });
+
+  try {
+    const html = brandedEmail({
+      title: "Prenotazione confermata",
+      bodyHtml: `<p style="margin:0 0 12px;">Ciao ${escapeHtml(name)}, il tuo posto per <strong>${escapeHtml(eventTitle)}</strong> è prenotato: abbiamo ricevuto il pagamento di ${money}.</p><p style="margin:0;">Ti scriveremo a breve con tutti i dettagli pratici. Per qualsiasi domanda rispondi pure a questa email.</p>`,
+      ctaLabel: "Vedi l'evento",
+      ctaUrl: `${SITE_URL}/eventi/${eventSlug}`,
+    });
+    await sendEmail({ to: email, subject: `Prenotazione confermata: ${eventTitle}`, html });
+  } catch {
+    // best-effort
+  }
+
+  try {
+    const admins = await prisma.account.findMany({ where: { role: "ADMIN" }, select: { email: true } });
+    if (admins.length === 0) return;
+    const html = brandedEmail({
+      title: "Nuova prenotazione pagata",
+      bodyHtml: `<p style="margin:0 0 12px;"><strong>${escapeHtml(name)}</strong> ha prenotato <strong>${escapeHtml(eventTitle)}</strong> (${money}).</p><p style="margin:0;">Email: ${escapeHtml(email)}${phone ? `<br/>Telefono: ${escapeHtml(phone)}` : ""}</p>`,
+      ctaLabel: "Apri i messaggi",
+      ctaUrl: `${SITE_URL}/admin/messaggi`,
+    });
+    await sendEmail({ to: admins.map((a) => a.email), subject: `Nuova prenotazione: ${eventTitle}`, html });
+  } catch {
+    // best-effort
+  }
+}
+
+/**
  * Notifica automaticamente i membri che hanno dato il consenso email quando viene
  * pubblicato un nuovo ritiro, corso o articolo. Non blocca né fa fallire la richiesta
  * chiamante se l'invio non è configurato o fallisce: è un "best effort" in background.

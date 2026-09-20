@@ -14,10 +14,8 @@ const links = [
   { href: "/", label: "Home" },
   { href: "/chi-sono", label: "Chi Sono" },
   { href: "/metodo", label: "Metodo" },
-  { href: "/ritiri", label: "Ritiri & Viaggi" },
-  { href: "/my-yoga", label: "Percorsi Live" },
+  { href: "/eventi", label: "Eventi" },
   { href: "/corsi", label: "Percorsi Online" },
-  { href: "/galleria", label: "Gallery" },
   { href: "/blog", label: "Blog" },
   { href: "/contatti", label: "Contatti" },
 ];
@@ -66,7 +64,7 @@ export default function Navbar({ account }: { account: NavAccount }) {
     >
       <nav className="relative z-[60] mx-auto flex max-w-6xl items-center justify-between px-4 py-1.5 sm:px-6">
         <Link href="/" className="flex items-center">
-          <Logo iconSize={68} textClassName="hidden sm:flex sm:flex-col text-lg" />
+          <Logo iconSize={68} textClassName="flex flex-col text-base sm:text-lg" />
         </Link>
 
         <div className="flex items-center gap-1 sm:gap-2">

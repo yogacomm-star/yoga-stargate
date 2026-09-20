@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 import { Plus, X } from "lucide-react";
 import { slugify } from "@/lib/slug";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import MultiImageField from "@/components/admin/MultiImageField";
+import SectionsEditor from "@/components/admin/SectionsEditor";
+import { splitIntoSections, sectionsToMarkdown, type Section } from "@/lib/sectionize";
+import { ALL_EVENT_CATEGORIES } from "@/lib/eventCategories";
 import AiDraftButton from "@/components/admin/AiDraftButton";
 import GenerateFullDraftButton from "@/components/admin/GenerateFullDraftButton";
 
@@ -26,11 +30,11 @@ export type RetreatFormData = {
   ctaUrl: string;
   status: "DRAFT" | "PUBLISHED";
   coverImage: string | null;
+  /** Altre foto oltre alla copertina (location, Tina, il gruppo), mostrate intere nella pagina. */
+  gallery: string[];
   videoUrl: string;
   itinerary: ItineraryDay[];
 };
-
-const CATEGORIES = ["Trasformativo", "Esperienziale", "Consapevolezza", "Viaggio"];
 
 export default function RetreatForm({ initial }: { initial?: RetreatFormData }) {
   const router = useRouter();
@@ -51,9 +55,15 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
       ctaUrl: "",
       status: "DRAFT",
       coverImage: null,
+      gallery: [],
       videoUrl: "",
       itinerary: [],
     }
+  );
+  // Il testo lungo si scrive a riquadri (titolo + testo). Un evento già esistente, scritto
+  // come testo unico, viene diviso qui nei suoi riquadri; al salvataggio torna a essere testo.
+  const [sections, setSections] = useState<Section[]>(() =>
+    initial?.description ? splitIntoSections(initial.description) : [{ heading: "", body: "" }]
   );
   const [slugTouched, setSlugTouched] = useState(isEdit);
   const [error, setError] = useState<string | null>(null);
@@ -78,9 +88,9 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
       category: draft.category,
       location: draft.location,
       excerpt: draft.excerpt,
-      description: draft.description,
       itinerary: draft.itinerary,
     }));
+    setSections(splitIntoSections(draft.description));
   }
 
   function updateItinerary(index: number, patch: Partial<ItineraryDay>) {
@@ -106,6 +116,10 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (!sectionsToMarkdown(sections)) {
+      setError("Scrivi almeno un riquadro con del testo.");
+      return;
+    }
     setLoading(true);
     setError(null);
 
@@ -115,11 +129,11 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
       category: form.category,
       location: form.location,
       excerpt: form.excerpt,
-      description: form.description,
+      description: sectionsToMarkdown(sections),
       startDate: form.startDate || null,
       endDate: form.endDate || null,
       price: form.price ? Number(form.price) : null,
-      images: form.coverImage ? [form.coverImage] : [],
+      images: [...(form.coverImage ? [form.coverImage] : []), ...form.gallery],
       videoUrl: form.videoUrl.trim() || null,
       itinerary: form.itinerary,
       requiredLevel: form.requiredLevel ? Number(form.requiredLevel) : null,
@@ -187,19 +201,22 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="retreat-category" className={labelClass}>Categoria</label>
-          <input
+          <select
             id="retreat-category"
             required
-            list="retreat-categories"
             value={form.category}
             onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
             className={inputClass}
-          />
-          <datalist id="retreat-categories">
-            {CATEGORIES.map((c) => (
-              <option key={c} value={c} />
+          >
+            <option value="" disabled>Scegli la categoria…</option>
+            {ALL_EVENT_CATEGORIES.map((c) => (
+              <option key={c} value={c}>{c}</option>
             ))}
-          </datalist>
+            {/* Eventi creati prima con un'altra categoria: resta selezionabile finché non la cambi. */}
+            {form.category && !(ALL_EVENT_CATEGORIES as readonly string[]).includes(form.category) && (
+              <option value={form.category}>{form.category} (vecchia categoria)</option>
+            )}
+          </select>
         </div>
         <div>
           <label htmlFor="retreat-location" className={labelClass}>Luogo</label>
@@ -238,7 +255,7 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
 
       <div>
         <div className="mb-1 flex items-center justify-between">
-          <label htmlFor="retreat-description" className={labelClass + " mb-0"}>Descrizione completa</label>
+          <label className={labelClass + " mb-0"}>Riquadri della pagina</label>
           <AiDraftButton
             kind="retreat"
             field="description"
@@ -246,24 +263,28 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
             category={form.category}
             location={form.location}
             notes={form.excerpt}
-            currentText={form.description}
-            onGenerated={(text) => setForm((f) => ({ ...f, description: text }))}
+            currentText={sectionsToMarkdown(sections)}
+            onGenerated={(text) => setSections(splitIntoSections(text))}
           />
         </div>
-        <textarea
-          id="retreat-description"
-          required
-          rows={6}
-          value={form.description}
-          onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-          className={inputClass}
-        />
+        <p className="mb-3 text-xs text-foreground/60">
+          Ogni riquadro ha il titolo che scegli tu (es. “A chi è rivolto”, “Programma”, “Cosa vivi”) e diventa una
+          scheda nella pagina dell&apos;evento. Con le frecce li sposti, con la X li elimini.
+        </p>
+        <SectionsEditor sections={sections} onChange={setSections} />
       </div>
 
       <ImageUploadField
         label="Immagine di copertina"
         value={form.coverImage}
         onChange={(url) => setForm((f) => ({ ...f, coverImage: url }))}
+      />
+
+      <MultiImageField
+        label="Altre foto"
+        hint="Foto della location, tue, del gruppo: le puoi aggiungere quante vuoi. Nella pagina compaiono intere, senza tagli."
+        value={form.gallery}
+        onChange={(urls) => setForm((f) => ({ ...f, gallery: urls }))}
       />
 
       <div>
@@ -276,7 +297,7 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
           className={inputClass}
         />
         <p className="mt-1 text-xs text-foreground/50">
-          Un video di presentazione del ritiro, mostrato nella pagina insieme alla foto di copertina.
+          Un video di presentazione dell&apos;evento, mostrato nella pagina insieme alla foto di copertina.
         </p>
       </div>
 
@@ -302,7 +323,7 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
           />
         </div>
         <div>
-          <label htmlFor="retreat-price" className={labelClass}>Prezzo (€)</label>
+          <label htmlFor="retreat-price" className={labelClass}>Prezzo (€) — attiva “Prenota e paga”</label>
           <input
             id="retreat-price"
             type="number"
@@ -330,7 +351,7 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label htmlFor="retreat-cta-label" className={labelClass}>Testo del pulsante</label>
+          <label htmlFor="retreat-cta-label" className={labelClass}>Testo del pulsante di richiesta</label>
           <input
             id="retreat-cta-label"
             value={form.ctaLabel}
@@ -339,7 +360,7 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
           />
         </div>
         <div>
-          <label htmlFor="retreat-cta-url" className={labelClass}>Link esterno (facoltativo)</label>
+          <label htmlFor="retreat-cta-url" className={labelClass}>Link di prenotazione esterno (facoltativo)</label>
           <input
             id="retreat-cta-url"
             value={form.ctaUrl}
@@ -411,7 +432,7 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
           disabled={loading}
           className="cursor-pointer rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {loading ? "Salvataggio..." : isEdit ? "Salva modifiche" : "Crea ritiro"}
+          {loading ? "Salvataggio..." : isEdit ? "Salva modifiche" : "Crea evento"}
         </button>
       </div>
     </form>

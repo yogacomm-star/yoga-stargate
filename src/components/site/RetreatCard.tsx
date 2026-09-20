@@ -37,7 +37,7 @@ export default function RetreatCard({ retreat }: { retreat: RetreatCardData }) {
       transition={{ duration: 0.2, ease: "easeOut" }}
       className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-soft-sm"
     >
-      <Link href={`/ritiri/${retreat.slug}`} className="flex h-full flex-col">
+      <Link href={`/eventi/${retreat.slug}`} className="flex h-full flex-col">
         <div className="relative h-52 shrink-0 overflow-hidden bg-gradient-to-br from-secondary/50 via-primary/20 to-warm-surface">
           {retreat.image ? (
             <Image

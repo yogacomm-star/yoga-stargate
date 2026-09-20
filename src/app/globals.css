@@ -46,9 +46,16 @@
   --font-body: var(--font-body);
 }
 
-/* Scritte più grandi in tutto il sito (richiesta cliente) */
+/* Scritte più grandi in tutto il sito (richiesta cliente) — ma da cellulare 18,5px risultava
+   troppo grande: sotto i 640px si torna alla dimensione standard del browser. */
 html {
-  font-size: 18.5px;
+  font-size: 16px;
+}
+
+@media (min-width: 640px) {
+  html {
+    font-size: 18.5px;
+  }
 }
 
 body {

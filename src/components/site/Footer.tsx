@@ -25,9 +25,8 @@ const columns = [
     title: "Esplora",
     links: [
       { href: "/chi-sono", label: "Chi Sono" },
-      { href: "/my-yoga", label: "Percorsi Live" },
       { href: "/metodo", label: "Metodo" },
-      { href: "/ritiri", label: "Ritiri & Viaggi" },
+      { href: "/eventi", label: "Eventi" },
       { href: "/corsi", label: "Percorsi Online" },
       { href: "/blog", label: "Blog" },
     ],

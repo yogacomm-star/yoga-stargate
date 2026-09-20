@@ -62,7 +62,7 @@ export default async function AdminDashboardPage() {
 
   const iconClass = "h-5 w-5";
   const stats: DashboardStat[] = [
-    { label: "Ritiri", value: retreatsTotal, hint: `${retreatsPublished} pubblicati`, icon: <Compass className={iconClass} aria-hidden="true" />, href: "/admin/ritiri" },
+    { label: "Eventi", value: retreatsTotal, hint: `${retreatsPublished} pubblicati`, icon: <Compass className={iconClass} aria-hidden="true" />, href: "/admin/ritiri" },
     { label: "Corsi", value: coursesTotal, hint: `${coursesPublished} pubblicati`, icon: <GraduationCap className={iconClass} aria-hidden="true" />, href: "/admin/corsi" },
     { label: "Articoli blog", value: postsTotal, hint: `${postsPublished} pubblicati`, icon: <Newspaper className={iconClass} aria-hidden="true" />, href: "/admin/blog" },
     { label: "Membri", value: membersTotal, hint: `Base ${levelCounts[1]} · Interm. ${levelCounts[2]} · Avanz. ${levelCounts[3]}`, icon: <Users className={iconClass} aria-hidden="true" />, href: "/admin/utenti" },
@@ -73,7 +73,7 @@ export default async function AdminDashboardPage() {
   return (
     <div>
       <h1 className="font-heading text-2xl font-semibold text-foreground">Ciao, {admin?.name}</h1>
-      <p className="mt-1 text-sm text-foreground/60">Da qui puoi gestire ritiri, corsi, blog e utenti del sito.</p>
+      <p className="mt-1 text-sm text-foreground/60">Da qui puoi gestire eventi, corsi, blog e utenti del sito.</p>
 
       <Link
         href="/admin/vendite"

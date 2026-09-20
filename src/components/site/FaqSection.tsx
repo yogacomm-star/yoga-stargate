@@ -7,12 +7,12 @@ const defaultFaqs: FaqItem[] = [
   {
     question: "Non ho mai praticato con Tina: da dove inizio?",
     answer:
-      "Il modo più semplice è iniziare da una Masterclass dei Percorsi Live a Milano (49€) oppure scaricare il dono gratuito \"7 Giorni per Meditare Bene\" e iniziare dalla pratica quotidiana guidata.",
+      "Il modo più semplice è iniziare da una Masterclass a Milano oppure scaricare il dono o percorso online gratuito e iniziare dalla pratica quotidiana guidata.",
   },
   {
-    question: "Come funzionano i Percorsi Live?",
+    question: "Come funzionano gli Eventi?",
     answer:
-      "Allo Spazio Yoga Lambrate a Milano, in tre formati: la Masterclass per aprire, il Workshop per approfondire, il Percorso individuale per un lavoro su misura. Posti sempre limitati.",
+      "Masterclass, workshop, ritiri, viaggi e sessioni individuali: nella pagina Eventi trovi date, programma e prenotazione di ognuno. A Milano ci vediamo allo Spazio Yoga Lambrate; i posti sono sempre limitati per mantenere gruppi raccolti.",
   },
   {
     question: "Cos'è il Metodo Yoga Stargate?",
@@ -28,11 +28,6 @@ const defaultFaqs: FaqItem[] = [
     question: "Cosa sono i Percorsi Online?",
     answer:
       "Percorsi in video e audio da seguire dove e quando vuoi: pratiche, rituali di trasformazione ed ebook. Alcuni sono aperti a tutti, altri si sbloccano proseguendo nel percorso.",
-  },
-  {
-    question: "Come funzionano i Ritiri & Viaggi?",
-    answer:
-      "Sono esperienze immersive in Italia e nel mondo, con temi come mental reset, riconnessione al sé e formazione. Trovi date e destinazioni nella pagina Ritiri & Viaggi; i posti sono limitati per mantenere gruppi raccolti.",
   },
   {
     question: "Ho un gruppo: possiamo organizzare un ritiro dedicato?",

@@ -38,6 +38,7 @@ export default async function EditRitiroPage({ params }: { params: Promise<{ id:
     ctaUrl: retreat.ctaUrl ?? "",
     status: retreat.status,
     coverImage: images[0] ?? null,
+    gallery: images.slice(1),
     videoUrl: retreat.videoUrl ?? "",
     itinerary,
   };
@@ -45,8 +46,8 @@ export default async function EditRitiroPage({ params }: { params: Promise<{ id:
   return (
     <div>
       <div className="flex items-center justify-between gap-4">
-        <h1 className="font-heading text-2xl font-semibold text-foreground">Modifica ritiro</h1>
-        <PreviewLink href={`/ritiri/${retreat.slug}`} />
+        <h1 className="font-heading text-2xl font-semibold text-foreground">Modifica evento</h1>
+        <PreviewLink href={`/eventi/${retreat.slug}`} />
       </div>
       <div className="mt-6 max-w-3xl space-y-6">
         <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
