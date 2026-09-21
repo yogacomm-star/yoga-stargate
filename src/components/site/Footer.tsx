@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import Logo from "@/components/site/Logo";
 
 function InstagramIcon() {
@@ -54,10 +54,6 @@ export default function Footer() {
               Yoga multidimensionale per il risveglio interiore, con Tina Mastandrea. Milano e non solo.
             </p>
             <div className="mt-4 flex items-center gap-3 text-sm text-foreground/70">
-              <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
-              Rimembranze di Lambrate 16, Milano
-            </div>
-            <div className="mt-2 flex items-center gap-3 text-sm text-foreground/70">
               <Phone className="h-4 w-4 text-primary" aria-hidden="true" />
               <a href="https://wa.me/393336980044" className="hover:text-primary">
                 +39 333 698 0044
