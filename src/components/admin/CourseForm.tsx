@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus, X } from "lucide-react";
 import { slugify } from "@/lib/slug";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import RichTextField from "@/components/admin/RichTextField";
 import AiDraftButton from "@/components/admin/AiDraftButton";
 import GenerateFullDraftButton from "@/components/admin/GenerateFullDraftButton";
 import AudioUploadField from "@/components/admin/AudioUploadField";
@@ -248,13 +249,12 @@ export default function CourseForm({ initial, categories = [] }: { initial?: Cou
             onGenerated={(text) => setForm((f) => ({ ...f, description: text }))}
           />
         </div>
-        <textarea
+        <RichTextField
           id="course-description"
           required
-          rows={6}
+          rows={8}
           value={form.description}
-          onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-          className={inputClass}
+          onChange={(text) => setForm((f) => ({ ...f, description: text }))}
         />
       </div>
 
@@ -294,14 +294,15 @@ export default function CourseForm({ initial, categories = [] }: { initial?: Cou
                 onChange={(e) => updateLesson(i, { videoUrl: e.target.value })}
                 className={inputClass + " mb-2"}
               />
-              <textarea
-                aria-label={`Contenuto lezione ${i + 1}`}
-                placeholder="Contenuto testuale"
-                rows={2}
-                value={lesson.content}
-                onChange={(e) => updateLesson(i, { content: e.target.value })}
-                className={inputClass + " mb-2"}
-              />
+              <div className="mb-2">
+                <RichTextField
+                  ariaLabel={`Contenuto lezione ${i + 1}`}
+                  placeholder="Contenuto testuale"
+                  rows={3}
+                  value={lesson.content}
+                  onChange={(text) => updateLesson(i, { content: text })}
+                />
+              </div>
               <AudioUploadField
                 audioUrl={lesson.audioUrl}
                 audioKey={lesson.audioKey}

@@ -2,6 +2,7 @@
 
 import { ArrowDown, ArrowUp, Plus, X } from "lucide-react";
 import type { Section } from "@/lib/sectionize";
+import RichTextField from "@/components/admin/RichTextField";
 
 // Editor a "riquadri": ogni riquadro ha un titolo scelto da chi scrive (es. "A chi è rivolto",
 // "Programma", "Cosa vivi") e un testo. Sul sito diventano schede separate, come nella pagina
@@ -76,13 +77,12 @@ export default function SectionsEditor({
               </button>
             </div>
           </div>
-          <textarea
-            aria-label={`Testo del riquadro ${i + 1}`}
-            placeholder="Testo del riquadro. Un Invio va a capo; puoi fare elenchi con «- » a inizio riga."
+          <RichTextField
+            ariaLabel={`Testo del riquadro ${i + 1}`}
+            placeholder="Testo del riquadro. Seleziona le parole e usa i pulsanti sopra per grassetto, corsivo, elenchi."
             rows={5}
             value={section.body}
-            onChange={(e) => update(i, { body: e.target.value })}
-            className={inputClass}
+            onChange={(text) => update(i, { body: text })}
           />
         </div>
       ))}

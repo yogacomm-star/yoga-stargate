@@ -7,6 +7,7 @@ import { slugify } from "@/lib/slug";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import MultiImageField from "@/components/admin/MultiImageField";
 import SectionsEditor from "@/components/admin/SectionsEditor";
+import RichTextField from "@/components/admin/RichTextField";
 import { splitIntoSections, sectionsToMarkdown, type Section } from "@/lib/sectionize";
 import { ALL_EVENT_CATEGORIES } from "@/lib/eventCategories";
 import AiDraftButton from "@/components/admin/AiDraftButton";
@@ -398,13 +399,12 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
                 onChange={(e) => updateItinerary(i, { title: e.target.value })}
                 className={inputClass + " mb-2"}
               />
-              <textarea
-                aria-label={`Descrizione del giorno ${day.day}`}
+              <RichTextField
+                ariaLabel={`Descrizione del giorno ${day.day}`}
                 placeholder="Descrizione"
-                rows={2}
+                rows={3}
                 value={day.description}
-                onChange={(e) => updateItinerary(i, { description: e.target.value })}
-                className={inputClass}
+                onChange={(text) => updateItinerary(i, { description: text })}
               />
             </div>
           ))}

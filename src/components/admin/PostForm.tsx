@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { slugify } from "@/lib/slug";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import RichTextField from "@/components/admin/RichTextField";
 import AiDraftButton from "@/components/admin/AiDraftButton";
 import GenerateFullDraftButton from "@/components/admin/GenerateFullDraftButton";
 
@@ -180,7 +181,7 @@ export default function PostForm({ initial, categories = [] }: { initial?: PostF
 
       <div>
         <div className="mb-1 flex items-center justify-between">
-          <label htmlFor="post-content" className={labelClass + " mb-0"}>Contenuto (supporta markdown)</label>
+          <label htmlFor="post-content" className={labelClass + " mb-0"}>Contenuto</label>
           <AiDraftButton
             kind="post"
             field="content"
@@ -191,13 +192,12 @@ export default function PostForm({ initial, categories = [] }: { initial?: PostF
             onGenerated={(text) => setForm((f) => ({ ...f, content: text }))}
           />
         </div>
-        <textarea
+        <RichTextField
           id="post-content"
           required
-          rows={10}
+          rows={12}
           value={form.content}
-          onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
-          className={inputClass}
+          onChange={(text) => setForm((f) => ({ ...f, content: text }))}
         />
       </div>
 
