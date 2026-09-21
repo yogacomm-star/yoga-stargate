@@ -68,6 +68,15 @@ export default function PrivacyPage() {
         </section>
 
         <section>
+          <h2 className="font-heading text-lg font-semibold text-foreground">Statistiche di visita</h2>
+          <p className="mt-2">
+            Per capire quante persone visitano il sito e quali pagine sono più viste, a ogni pagina aperta viene
+            inviato al fornitore del servizio di statistica (Astra Agency, che ha realizzato il sito) solo il
+            nome della pagina visitata. Il servizio non usa cookie, non registra dati personali e non ti identifica.
+          </p>
+        </section>
+
+        <section>
           <h2 className="font-heading text-lg font-semibold text-foreground">I tuoi diritti</h2>
           <p className="mt-2">
             In qualsiasi momento puoi richiedere l&apos;accesso, la rettifica o la cancellazione dei tuoi dati

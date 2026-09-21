@@ -131,6 +131,24 @@ export default function Footer() {
             </Link>
           </div>
         </div>
+
+        <div className="mt-6 border-t border-border pt-6 text-center">
+          <a
+            href="https://astragency.it"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex cursor-pointer items-center gap-2 rounded-full border-[1.5px] border-[#7c3aed]/[.22] bg-[#f8f6ff] py-[7px] pr-4 pl-2 font-sans shadow-[0_2px_10px_rgba(124,58,237,.1)] transition-all hover:-translate-y-px hover:border-[#7c3aed]/50 hover:bg-[#ede9ff] hover:shadow-[0_4px_18px_rgba(124,58,237,.18)]"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://astragency.it/logo.png"
+              alt="Astra Agency"
+              className="block h-6 w-6 shrink-0 rounded-full object-cover"
+            />
+            <span className="text-[.76rem] text-[#888]">Sito realizzato da</span>
+            <span className="text-[.82rem] font-bold tracking-[-.01em] text-[#7c3aed]">Astra Agency</span>
+          </a>
+        </div>
       </div>
     </footer>
   );

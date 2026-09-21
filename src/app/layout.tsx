@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Lora, Raleway } from "next/font/google";
 import "./globals.css";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, SITE_KEYWORDS } from "@/lib/site";
+import AstraTracker from "@/components/site/AstraTracker";
 
 const OG_IMAGE = {
   url: "/images/hero-meditazione-arcobaleno.jpg",
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="it" className={`${lora.variable} ${raleway.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-background text-foreground font-body">
         {children}
+        <AstraTracker />
       </body>
     </html>
   );

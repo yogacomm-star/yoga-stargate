@@ -17,10 +17,10 @@ const csp = [
   // 'unsafe-eval' serve solo in sviluppo (Fast Refresh/Turbopack); in produzione React non usa mai eval().
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  `img-src 'self' data: blob: https://*.r2.dev${extraImgSrc}`,
+  `img-src 'self' data: blob: https://*.r2.dev https://astragency.it${extraImgSrc}`,
   "media-src 'self' https://*.r2.dev https://*.r2.cloudflarestorage.com",
   "font-src 'self' data:",
-  "connect-src 'self' https://*.r2.dev https://*.r2.cloudflarestorage.com",
+  "connect-src 'self' https://*.r2.dev https://*.r2.cloudflarestorage.com https://astra-notify.jacopopelliccione.workers.dev",
   "frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com",
   "frame-ancestors 'self'",
   "base-uri 'self'",
