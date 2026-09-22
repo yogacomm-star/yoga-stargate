@@ -139,15 +139,11 @@ export default function Footer() {
             rel="noopener noreferrer"
             className="inline-flex cursor-pointer items-center gap-2 rounded-full border-[1.5px] border-[#7c3aed] bg-[#7c3aed] py-[7px] pr-4 pl-2 font-sans shadow-[0_4px_14px_rgba(124,58,237,.35)] transition-all hover:-translate-y-px hover:border-[#6d28d9] hover:bg-[#6d28d9] hover:shadow-[0_6px_20px_rgba(124,58,237,.45)]"
           >
-            {/* Il logo sta su un cerchio bianco: da solo, chiaro su fondo bianco (come il badge
-                di prima), non si leggerebbe. Sfondo pieno viola e testo bianco risolvono anche
-                il contrasto dell'intero badge. */}
-            {/* Cerchietto bianco con un margine attorno al logo (non il logo a contatto col
-                bordo): così il cerchio si vede davvero come anello, non solo come sfondo. */}
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white p-[3px]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="https://astragency.it/logo.png" alt="Astra Agency" className="block h-full w-full rounded-full object-cover" />
-            </span>
+            {/* Il logo di Astra è disegnato in un lilla quasi bianco: su un cerchio bianco
+                (il tentativo precedente) sparisce per mancanza di contrasto. Va sul viola pieno
+                del badge, senza cerchio bianco dietro: lì si vede bene. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="https://astragency.it/logo.png" alt="Astra Agency" className="block h-6 w-6 shrink-0 object-contain" />
             <span className="text-[.76rem] text-white/80">Sito realizzato da</span>
             <span className="text-[.82rem] font-bold tracking-[-.01em] text-white">Astra Agency</span>
           </a>
