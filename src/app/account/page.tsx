@@ -4,6 +4,7 @@ import { getCurrentAccount } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { LEVELS, levelLabel } from "@/lib/levels";
 import CompleteProfileForm from "@/components/site/CompleteProfileForm";
+import MarketingConsentToggle from "@/components/site/MarketingConsentToggle";
 
 export const metadata = { title: "Il mio account" };
 
@@ -61,6 +62,10 @@ export default async function AccountPage() {
           <CompleteProfileForm />
         </div>
       )}
+
+      <section className="mt-6">
+        <MarketingConsentToggle initial={account.marketingConsent} />
+      </section>
 
       <section className="mt-10">
         <h2 className="font-heading text-lg font-semibold text-foreground">I tuoi corsi</h2>

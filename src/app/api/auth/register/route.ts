@@ -11,7 +11,10 @@ const schema = z.object({
   email: z.string().trim().email().max(200),
   phone: z.string().trim().min(6, "Inserisci un numero di telefono valido.").max(30),
   password: z.string().min(8, "La password deve avere almeno 8 caratteri.").max(200),
-  marketingConsent: z.literal(true, { message: "Devi accettare i termini per registrarti." }),
+  // Accettare la privacy policy è indispensabile per creare l'account; ricevere email
+  // promozionali è invece una scelta separata e facoltativa (consenso libero, non condizionato).
+  acceptTerms: z.literal(true, { message: "Per registrarti devi accettare la Privacy Policy." }),
+  marketingConsent: z.boolean().default(false),
 });
 
 export async function POST(request: Request) {
@@ -40,7 +43,7 @@ export async function POST(request: Request) {
       passwordHash: await hashPassword(parsed.data.password),
       role: "MEMBER",
       level: 1,
-      marketingConsent: true,
+      marketingConsent: parsed.data.marketingConsent,
     },
   });
 

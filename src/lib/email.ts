@@ -2,6 +2,7 @@ import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
 import { escapeHtml, brandedEmail } from "@/lib/emailTemplate";
 import { SITE_URL } from "@/lib/site";
+import { unsubscribeUrl } from "@/lib/unsubscribe";
 
 export { escapeHtml, brandedEmail, messageToHtml, invitationEmail } from "@/lib/emailTemplate";
 
@@ -17,20 +18,38 @@ export function emailConfigured(): boolean {
   return !!process.env.RESEND_API_KEY;
 }
 
+/** Intestazioni che permettono ai client email di mostrare "Annulla iscrizione" con un clic. */
+export function unsubscribeHeaders(url: string): Record<string, string> {
+  return { "List-Unsubscribe": `<${url}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" };
+}
+
 export async function sendEmail({
   to,
   subject,
   html,
+  headers,
+  attachment,
 }: {
   to: string | string[];
   subject: string;
   html: string;
+  headers?: Record<string, string>;
+  /** Un solo allegato (es. un PDF caricato dal pannello). "path" è un URL pubblico: Resend lo
+   *  scarica da lì, non serve leggerlo noi. */
+  attachment?: { filename: string; path: string };
 }): Promise<{ ok: boolean; error?: string }> {
   const client = getClient();
   if (!client) return { ok: false, error: "not_configured" };
 
   try {
-    const { error } = await client.emails.send({ from: FROM, to, subject, html });
+    const { error } = await client.emails.send({
+      from: FROM,
+      to,
+      subject,
+      html,
+      ...(headers ? { headers } : {}),
+      ...(attachment ? { attachments: [attachment] } : {}),
+    });
     if (error) return { ok: false, error: error.message };
     return { ok: true };
   } catch (err) {
@@ -38,7 +57,7 @@ export async function sendEmail({
   }
 }
 
-export type BatchEmail = { to: string; subject: string; html: string; replyTo?: string };
+export type BatchEmail = { to: string; subject: string; html: string; replyTo?: string; headers?: Record<string, string> };
 
 /**
  * Invio di più email diverse con una sola chiamata all'API (fino a 100): molto più veloce e
@@ -55,7 +74,7 @@ export async function sendEmailBatch(
 
   try {
     const { data, error } = await client.batch.send(
-      emails.map((e) => ({ from: FROM, to: e.to, subject: e.subject, html: e.html, replyTo: e.replyTo })),
+      emails.map((e) => ({ from: FROM, to: e.to, subject: e.subject, html: e.html, replyTo: e.replyTo, ...(e.headers ? { headers: e.headers } : {}) })),
       { batchValidation: "permissive" }
     );
     if (error) return { ok: false, error: error.message };
@@ -184,19 +203,26 @@ export async function notifyNewContent({
   try {
     const subs = await prisma.account.findMany({
       where: { role: "MEMBER", marketingConsent: true },
-      select: { email: true },
+      select: { id: true, email: true },
     });
     if (subs.length === 0) return;
 
-    const kindLabel = kind === "ritiro" ? "Nuovo ritiro" : kind === "corso" ? "Nuovo corso" : "Nuovo articolo";
-    const html = brandedEmail({
-      title: `${kindLabel}: ${title}`,
-      bodyHtml: `<p style="margin:0 0 12px;">${escapeHtml(excerpt)}</p>`,
-      ctaLabel: "Scopri di più",
-      ctaUrl: url,
-    });
+    const kindLabel = kind === "ritiro" ? "Nuovo evento" : kind === "corso" ? "Nuovo corso" : "Nuovo articolo";
 
-    await Promise.all(subs.map((s) => sendEmail({ to: s.email, subject: `${kindLabel} su Yoga Stargate`, html })));
+    // Un'email per persona, ognuna con il suo link personale per annullare l'iscrizione.
+    await Promise.all(
+      subs.map((s) => {
+        const unsub = unsubscribeUrl(s.id);
+        const html = brandedEmail({
+          title: `${kindLabel}: ${title}`,
+          bodyHtml: `<p style="margin:0 0 12px;">${escapeHtml(excerpt)}</p>`,
+          ctaLabel: "Scopri di più",
+          ctaUrl: url,
+          unsubscribeUrl: unsub,
+        });
+        return sendEmail({ to: s.email, subject: `${kindLabel} su Yoga Stargate`, html, headers: unsubscribeHeaders(unsub) });
+      })
+    );
   } catch {
     // Invio best-effort: eventuali errori non devono far fallire la pubblicazione del contenuto.
   }

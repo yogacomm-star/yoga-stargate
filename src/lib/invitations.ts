@@ -1,7 +1,8 @@
 import crypto from "node:crypto";
 import { prisma } from "@/lib/prisma";
-import { sendEmailBatch, invitationEmail, emailConfigured, type BatchEmail } from "@/lib/email";
+import { sendEmailBatch, invitationEmail, emailConfigured, unsubscribeHeaders, type BatchEmail } from "@/lib/email";
 import { SITE_URL } from "@/lib/site";
+import { unsubscribeUrl } from "@/lib/unsubscribe";
 
 // Chi era già nella lista contatti del vecchio sito viene importato come account senza
 // password (passwordHash nullo: nessuno può entrarci finché non sceglie la propria dal link).
@@ -64,15 +65,20 @@ export async function sendInviteBatch(): Promise<{ sent: number; remaining: numb
     })),
   });
 
-  const emails: BatchEmail[] = tokens.map((t) => ({
-    to: t.account.email,
-    subject: INVITE_SUBJECT,
-    html: invitationEmail({
-      firstName: greetingName(t.account.name),
-      resetUrl: `${SITE_URL}/reimposta-password?token=${t.token}`,
-    }),
-    replyTo: REPLY_TO,
-  }));
+  const emails: BatchEmail[] = tokens.map((t) => {
+    const unsub = unsubscribeUrl(t.account.id);
+    return {
+      to: t.account.email,
+      subject: INVITE_SUBJECT,
+      html: invitationEmail({
+        firstName: greetingName(t.account.name),
+        resetUrl: `${SITE_URL}/reimposta-password?token=${t.token}`,
+        unsubscribeUrl: unsub,
+      }),
+      replyTo: REPLY_TO,
+      headers: unsubscribeHeaders(unsub),
+    };
+  });
 
   const result = await sendEmailBatch(emails);
   if (!result.ok) {
@@ -91,7 +97,11 @@ export async function sendInvitePreview(to: string, firstName: string | null) {
     {
       to,
       subject: `[PROVA] ${INVITE_SUBJECT}`,
-      html: invitationEmail({ firstName, resetUrl: `${SITE_URL}/reimposta-password?token=anteprima` }),
+      html: invitationEmail({
+        firstName,
+        resetUrl: `${SITE_URL}/reimposta-password?token=anteprima`,
+        unsubscribeUrl: `${SITE_URL}/disiscriviti`,
+      }),
       replyTo: REPLY_TO,
     },
   ]);

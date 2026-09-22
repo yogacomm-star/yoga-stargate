@@ -6,15 +6,16 @@ import Link from "next/link";
 
 export default function RegisterForm() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", password: "" });
-  const [consent, setConsent] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [marketing, setMarketing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!consent) {
-      setError("Devi accettare i termini per registrarti.");
+    if (!acceptTerms) {
+      setError("Per registrarti devi accettare la Privacy Policy.");
       return;
     }
     setLoading(true);
@@ -23,7 +24,7 @@ export default function RegisterForm() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, marketingConsent: consent }),
+        body: JSON.stringify({ ...form, acceptTerms, marketingConsent: marketing }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -98,16 +99,28 @@ export default function RegisterForm() {
       <label className="flex items-start gap-3 text-sm text-foreground/70">
         <input
           type="checkbox"
-          checked={consent}
-          onChange={(e) => setConsent(e.target.checked)}
+          checked={acceptTerms}
+          onChange={(e) => setAcceptTerms(e.target.checked)}
           className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-primary"
         />
         <span className="leading-relaxed">
-          Accetto i{" "}
+          Ho letto e accetto la{" "}
           <Link href="/privacy" className="cursor-pointer font-semibold text-primary">
-            Termini e la Privacy Policy
+            Privacy Policy
           </Link>
-          , e autorizzo Yoga Stargate a inviarmi comunicazioni via email su corsi, ritiri e novità.
+          .
+        </span>
+      </label>
+      <label className="flex items-start gap-3 text-sm text-foreground/70">
+        <input
+          type="checkbox"
+          checked={marketing}
+          onChange={(e) => setMarketing(e.target.checked)}
+          className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-primary"
+        />
+        <span className="leading-relaxed">
+          <span className="text-foreground/50">(Facoltativo)</span> Voglio ricevere via email pratiche, novità su corsi,
+          eventi e ritiri. Puoi annullare quando vuoi.
         </span>
       </label>
       {error && <p className="text-sm font-medium text-destructive">{error}</p>}

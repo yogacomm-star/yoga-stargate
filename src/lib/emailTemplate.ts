@@ -36,12 +36,20 @@ export function brandedEmail({
   bodyHtml,
   ctaLabel,
   ctaUrl,
+  buttons,
+  unsubscribeUrl,
 }: {
   title: string;
   bodyHtml: string;
+  /** Scorciatoia per un solo pulsante: equivale a buttons: [{ label: ctaLabel, url: ctaUrl }]. */
   ctaLabel?: string;
   ctaUrl?: string;
+  /** Più pulsanti (es. "Prenota" + "Scopri di più"), uno sotto l'altro. Se presente, ha la precedenza su ctaLabel/ctaUrl. */
+  buttons?: { label: string; url: string }[];
+  /** Solo per email promozionali: aggiunge in fondo il link per annullare l'iscrizione. */
+  unsubscribeUrl?: string;
 }): string {
+  const ctaButtons = buttons?.length ? buttons : ctaLabel && ctaUrl ? [{ label: ctaLabel, url: ctaUrl }] : [];
   return `
   <!doctype html>
   <html lang="it">
@@ -67,9 +75,19 @@ export function brandedEmail({
                   <h1 style="margin:0 0 18px;font-size:23px;line-height:1.3;color:#1f333f;font-family:Georgia,serif;">${escapeHtml(title)}</h1>
                   <div style="font-size:15px;line-height:1.65;color:#334155;">${bodyHtml}</div>
                   ${
-                    ctaLabel && ctaUrl
+                    ctaButtons.length
                       ? `<div style="margin-top:30px;text-align:center;">
-                          <a href="${ctaUrl}" style="display:inline-block;background:#1673b6;color:#ffffff;text-decoration:none;font-weight:600;font-size:14px;padding:13px 30px;border-radius:10px;">${escapeHtml(ctaLabel)}</a>
+                          ${ctaButtons
+                            .map((b, i) => {
+                              // Il primo pulsante è quello pieno (primario, es. "Prenota"); un eventuale
+                              // secondo è a contorno (secondario, es. "Scopri di più"), ognuno sulla sua riga.
+                              const style =
+                                i === 0
+                                  ? "display:inline-block;background:#1673b6;color:#ffffff;text-decoration:none;font-weight:600;font-size:14px;padding:13px 30px;border-radius:10px;"
+                                  : "display:inline-block;background:transparent;color:#1673b6;text-decoration:none;font-weight:600;font-size:14px;padding:11px 28px;border-radius:10px;border:2px solid #1673b6;";
+                              return `<div style="${i > 0 ? "margin-top:12px;" : ""}"><a href="${b.url}" style="${style}">${escapeHtml(b.label)}</a></div>`;
+                            })
+                            .join("")}
                          </div>`
                       : ""
                   }
@@ -80,7 +98,14 @@ export function brandedEmail({
                   <p style="margin:0;font-size:12px;line-height:1.6;color:#64748b;">
                     Yoga Stargate — Rimembranze di Lambrate 16, Milano<br/>
                     <a href="${SITE_URL}" style="color:#1673b6;text-decoration:none;">${SITE_URL.replace("https://", "")}</a>
-                  </p>
+                  </p>${
+                    unsubscribeUrl
+                      ? `
+                  <p style="margin:10px 0 0;font-size:11px;line-height:1.6;color:#94a3b8;">
+                    Non vuoi più ricevere queste email? <a href="${unsubscribeUrl}" style="color:#64748b;">Annulla l'iscrizione</a>
+                  </p>`
+                      : ""
+                  }
                 </td>
               </tr>
             </table>
@@ -97,7 +122,15 @@ export function brandedEmail({
  * del template standard, ma con un'impostazione più "editoriale" (novità in evidenza, un solo
  * grande pulsante). Stili inline e tabelle: è l'unico modo affidabile nei client email.
  */
-export function invitationEmail({ firstName, resetUrl }: { firstName: string | null; resetUrl: string }): string {
+export function invitationEmail({
+  firstName,
+  resetUrl,
+  unsubscribeUrl,
+}: {
+  firstName: string | null;
+  resetUrl: string;
+  unsubscribeUrl: string;
+}): string {
   const greeting = firstName ? `Ciao ${escapeHtml(firstName)},` : "Ciao,";
 
   const feature = (emoji: string, title: string, text: string) => `
@@ -186,7 +219,7 @@ export function invitationEmail({ firstName, resetUrl }: { firstName: string | n
                   </p>
                   <p style="margin:0;font-size:11px;line-height:1.6;color:#94a3b8;">
                     Ricevi questo messaggio perché ti eri iscritta/o alla mailing list di Yoga Stargate. Se non vuoi più
-                    ricevere le nostre email, rispondi a questo messaggio scrivendo «cancellami».
+                    ricevere le nostre email puoi <a href="${unsubscribeUrl}" style="color:#64748b;">annullare l'iscrizione</a>.
                   </p>
                 </td>
               </tr>
