@@ -182,6 +182,12 @@ export async function sendEventBookingEmails({
   }
 }
 
+// Disattivata su richiesta: pubblicare un ritiro, un corso o un articolo non manda più
+// un'email automatica a tutti gli iscritti. Restano attive solo le email volute esplicitamente
+// dalla persona (es. la email di benvenuto alla registrazione) o inviate di proposito
+// dall'admin (la newsletter dal pannello Email). Impostare a true per riattivarla.
+const AUTO_NOTIFY_NEW_CONTENT = false;
+
 /**
  * Notifica automaticamente i membri che hanno dato il consenso email quando viene
  * pubblicato un nuovo ritiro, corso o articolo. Non blocca né fa fallire la richiesta
@@ -198,7 +204,7 @@ export async function notifyNewContent({
   excerpt: string;
   url: string;
 }) {
-  if (!emailConfigured()) return;
+  if (!AUTO_NOTIFY_NEW_CONTENT || !emailConfigured()) return;
 
   try {
     const subs = await prisma.account.findMany({
