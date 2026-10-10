@@ -1,12 +1,10 @@
 import Link from "next/link";
 import BroadcastForm from "@/components/admin/BroadcastForm";
-import InviteImportedCard from "@/components/admin/InviteImportedCard";
 import { emailConfigured } from "@/lib/email";
-import { countPendingInvites } from "@/lib/invitations";
 import { audienceCounts, statsFor, type CampaignStats } from "@/lib/newsletter";
 import { prisma } from "@/lib/prisma";
 
-// Contatori sempre aggiornati: dopo un invio la pagina deve riflettere chi resta da invitare e le statistiche.
+// Contatori sempre aggiornati: dopo un invio la pagina deve riflettere le statistiche.
 export const dynamic = "force-dynamic";
 
 const pct = (n: number, of: number) => (of > 0 ? `${Math.round((n / of) * 100)}%` : "–");
@@ -23,7 +21,7 @@ async function loadHistory() {
 }
 
 export default async function AdminEmailPage() {
-  const [pending, counts, history] = await Promise.all([countPendingInvites(), audienceCounts(), loadHistory()]);
+  const [counts, history] = await Promise.all([audienceCounts(), loadHistory()]);
 
   return (
     <div>
@@ -95,15 +93,6 @@ export default async function AdminEmailPage() {
           </div>
         )}
       </div>
-
-      {/* Scompare da sola quando non resta più nessuno da invitare: è un compito legato
-          all'importazione dei vecchi contatti, non uno strumento per le newsletter di tutti i
-          giorni, ed è facile confonderlo con la sezione sopra se resta visibile per sempre. */}
-      {pending > 0 && (
-        <div className="mt-12 border-t border-border pt-8">
-          <InviteImportedCard initialPending={pending} emailConfigured={emailConfigured()} />
-        </div>
-      )}
     </div>
   );
 }
