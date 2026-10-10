@@ -218,6 +218,11 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
               <option value={form.category}>{form.category} (vecchia categoria)</option>
             )}
           </select>
+          <p className="mt-1 text-xs text-foreground/50">
+            {form.category === "Extra" || form.category === "Sessione individuale"
+              ? "Questo evento NON comparirà nella home: solo nella pagina Eventi."
+              : "Per un evento che non deve comparire nella home scegli “Extra”."}
+          </p>
         </div>
         <div>
           <label htmlFor="retreat-location" className={labelClass}>Luogo</label>

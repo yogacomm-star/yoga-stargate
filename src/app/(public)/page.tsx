@@ -10,6 +10,7 @@ import JsonLd from "@/components/site/JsonLd";
 import { prisma } from "@/lib/prisma";
 import { firstImage } from "@/lib/images";
 import { SITE_URL } from "@/lib/site";
+import { HIDDEN_FROM_HOME } from "@/lib/eventCategories";
 
 const businessJsonLd = {
   "@context": "https://schema.org",
@@ -51,7 +52,9 @@ export default async function HomePage() {
       where: {
         status: "PUBLISHED",
         startDate: { gte: startOfToday },
-        NOT: { category: { in: ["Masterclass", "Workshop", "Sessione individuale"] } },
+        // Masterclass e workshop hanno il loro riquadro; sessioni individuali ed "Extra" non
+        // vanno mai in home in automatico.
+        NOT: { category: { in: [...HIDDEN_FROM_HOME] } },
       },
       orderBy: { startDate: "asc" },
     }),

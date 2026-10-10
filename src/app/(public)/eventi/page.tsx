@@ -6,7 +6,7 @@ import RetreatCard, { type RetreatCardData } from "@/components/site/RetreatCard
 import LeadForm from "@/components/site/LeadForm";
 import { prisma } from "@/lib/prisma";
 import { firstImage } from "@/lib/images";
-import { EVENT_CATEGORIES } from "@/lib/eventCategories";
+import { EVENT_CATEGORIES, EXTRA_EVENT_CATEGORIES } from "@/lib/eventCategories";
 
 export const metadata: Metadata = {
   title: "Eventi",
@@ -32,9 +32,10 @@ export default async function EventiPage({
   // con una vecchia categoria restano visibili sotto "Tutti".
   const present = new Set(retreats.map((r) => r.category));
   const fixed: readonly string[] = EVENT_CATEGORIES;
-  const categories = [...EVENT_CATEGORIES, ...(present.has("Sessione individuale") ? ["Sessione individuale"] : [])].filter(
-    (c) => fixed.includes(c) || present.has(c)
-  );
+  const categories: string[] = [
+    ...EVENT_CATEGORIES,
+    ...EXTRA_EVENT_CATEGORIES.filter((c) => present.has(c)),
+  ].filter((c) => fixed.includes(c) || present.has(c));
 
   // Prima gli eventi in programma (dal più vicino), poi quelli già passati.
   const today = new Date();

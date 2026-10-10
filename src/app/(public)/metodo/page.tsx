@@ -34,26 +34,26 @@ const processes = [
   {
     number: "02",
     icon: HeartPulse,
-    title: "Processo Antar Suddhi",
+    title: "Processo di Connessione al Sé",
     subtitle: "Guarigione del cuore e del pensiero",
     focus: "Trasformazione quantistica e geometria sacra",
-    text: "Lavoriamo sulle frequenze invisibili per armonizzare le emozioni e sciogliere le memorie limitanti: pace interiore stabile e percezione più ampia.",
+    text: "Lavoriamo sulle frequenze per armonizzare le emozioni e sciogliere le memorie limitanti: pace interiore stabile e percezione più ampia del Sé autentico.",
   },
   {
     number: "03",
     icon: Sun,
     title: "Processo Shakty Radiance",
-    subtitle: "Incarna la tua luce divina superiore",
+    subtitle: "Incarna la luce divina superiore",
     focus: "Attivazione Divya Jyoti e risveglio del cuore spirituale",
     text: "Riconnetti la tua scintilla originaria e trovi la forza per guidare te stesso e gli altri con stabilità: carisma naturale, chiarezza di vita, cuore spirituale aperto.",
   },
   {
     number: "04",
     icon: Compass,
-    title: "Processo Param Dhyana",
+    title: "Viaggio nel tempo",
     subtitle: "Vivi la tua missione multidimensionale",
-    focus: "Merkabha, espansione e co-creazione consapevole",
-    text: "Diventa co-creatrice della realtà: la meditazione si trasforma in visione e azione. Attivi la tua Merkabha e ti connetti alla tua missione multidimensionale.",
+    focus: "Espansione e co-creazione consapevole",
+    text: "Diventa co-creatrice della realtà: la meditazione si trasforma in visione attiva e creazione consapevole. Attivi la tua Merkabha e ti connetti alla tua missione multidimensionale.",
   },
 ];
 
