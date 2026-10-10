@@ -241,3 +241,39 @@ model GalleryItem {
   order     Int             @default(0)
   createdAt DateTime        @default(now())
 }
+
+// Registro delle newsletter inviate dal pannello Email: una riga per invio (campagna) e una per
+// destinatario, con l'esito e le statistiche. Gli indirizzi vengono copiati al momento dell'invio
+// (non solo collegati all'account): il registro resta leggibile anche se un account viene cancellato.
+model EmailCampaign {
+  id             String   @id @default(cuid())
+  subject        String
+  message        String
+  buttons        String   @default("[]") // JSON: [{ label, url }]
+  attachmentUrl  String?
+  attachmentName String?
+  audience       String // "consenting" | "members"
+  createdAt      DateTime @default(now())
+
+  recipients EmailCampaignRecipient[]
+}
+
+model EmailCampaignRecipient {
+  id             String        @id @default(cuid())
+  campaignId     String
+  campaign       EmailCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  accountId      String
+  email          String
+  name           String
+  status         String        @default("PENDING") // PENDING | SENT | FAILED
+  error          String?
+  sentAt         DateTime?
+  openedAt       DateTime? // prima apertura (pixel: indicativa, alcuni client precaricano le immagini)
+  clickedAt      DateTime? // primo clic su un qualunque pulsante
+  clickedButton1 DateTime?
+  clickedButton2 DateTime?
+  unsubscribedAt DateTime? // si è disiscritta/o da questa email
+
+  @@unique([campaignId, accountId])
+  @@index([campaignId, status])
+}

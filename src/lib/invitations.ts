@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { prisma } from "@/lib/prisma";
 import { sendEmailBatch, invitationEmail, emailConfigured, unsubscribeHeaders, type BatchEmail } from "@/lib/email";
 import { SITE_URL } from "@/lib/site";
-import { unsubscribeUrl } from "@/lib/unsubscribe";
+import { unsubscribeUrl, unsubscribeApiUrl } from "@/lib/unsubscribe";
 
 // Chi era già nella lista contatti del vecchio sito viene importato come account senza
 // password (passwordHash nullo: nessuno può entrarci finché non sceglie la propria dal link).
@@ -76,7 +76,7 @@ export async function sendInviteBatch(): Promise<{ sent: number; remaining: numb
         unsubscribeUrl: unsub,
       }),
       replyTo: REPLY_TO,
-      headers: unsubscribeHeaders(unsub),
+      headers: unsubscribeHeaders(unsubscribeApiUrl(t.account.id)),
     };
   });
 

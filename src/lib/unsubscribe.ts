@@ -37,6 +37,18 @@ export function verifyUnsubscribeToken(token: string | null | undefined): string
   return accountId;
 }
 
-export function unsubscribeUrl(accountId: string): string {
-  return `${SITE_URL}/disiscriviti?t=${unsubscribeToken(accountId)}`;
+// "recipientId" (facoltativo) è la riga del registro newsletter: permette di contare, nelle
+// statistiche di quell'invio, chi si è disiscritto proprio da quell'email.
+function query(accountId: string, recipientId?: string): string {
+  return `t=${unsubscribeToken(accountId)}${recipientId ? `&r=${encodeURIComponent(recipientId)}` : ""}`;
+}
+
+/** Pagina con il pulsante "Non voglio più ricevere queste email" (link nel corpo dell'email). */
+export function unsubscribeUrl(accountId: string, recipientId?: string): string {
+  return `${SITE_URL}/disiscriviti?${query(accountId, recipientId)}`;
+}
+
+/** Indirizzo per la disiscrizione "con un clic" dei client email (header List-Unsubscribe, RFC 8058). */
+export function unsubscribeApiUrl(accountId: string, recipientId?: string): string {
+  return `${SITE_URL}/api/unsubscribe?${query(accountId, recipientId)}`;
 }

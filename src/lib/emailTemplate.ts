@@ -38,6 +38,7 @@ export function brandedEmail({
   ctaUrl,
   buttons,
   unsubscribeUrl,
+  trackingPixelUrl,
 }: {
   title: string;
   bodyHtml: string;
@@ -48,6 +49,8 @@ export function brandedEmail({
   buttons?: { label: string; url: string }[];
   /** Solo per email promozionali: aggiunge in fondo il link per annullare l'iscrizione. */
   unsubscribeUrl?: string;
+  /** Solo newsletter: immagine invisibile 1x1 che permette di contare le aperture. */
+  trackingPixelUrl?: string;
 }): string {
   const ctaButtons = buttons?.length ? buttons : ctaLabel && ctaUrl ? [{ label: ctaLabel, url: ctaUrl }] : [];
   return `
@@ -111,7 +114,12 @@ export function brandedEmail({
             </table>
           </td>
         </tr>
-      </table>
+      </table>${
+        trackingPixelUrl
+          ? `
+      <img src="${trackingPixelUrl}" width="1" height="1" alt="" style="display:block;width:1px;height:1px;border:0;" />`
+          : ""
+      }
     </body>
   </html>`;
 }

@@ -8,8 +8,8 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function UnsubscribePage({ searchParams }: { searchParams: Promise<{ t?: string }> }) {
-  const { t } = await searchParams;
+export default async function UnsubscribePage({ searchParams }: { searchParams: Promise<{ t?: string; r?: string }> }) {
+  const { t, r } = await searchParams;
   const valid = !!verifyUnsubscribeToken(t);
 
   return (
@@ -22,7 +22,7 @@ export default async function UnsubscribePage({ searchParams }: { searchParams: 
             solo i messaggi di servizio (per esempio la conferma di un acquisto o di una prenotazione).
           </p>
           <div className="mt-8">
-            <UnsubscribeButton token={t} />
+            <UnsubscribeButton token={t} recipientId={r} />
           </div>
         </>
       ) : (

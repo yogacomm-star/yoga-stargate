@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 
-export default function UnsubscribeButton({ token }: { token: string }) {
+export default function UnsubscribeButton({ token, recipientId }: { token: string; recipientId?: string }) {
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
 
   async function handleClick() {
     setStatus("loading");
     try {
-      const res = await fetch(`/api/unsubscribe?t=${encodeURIComponent(token)}`, { method: "POST" });
+      const qs = `t=${encodeURIComponent(token)}${recipientId ? `&r=${encodeURIComponent(recipientId)}` : ""}`;
+      const res = await fetch(`/api/unsubscribe?${qs}`, { method: "POST" });
       setStatus(res.ok ? "done" : "error");
     } catch {
       setStatus("error");

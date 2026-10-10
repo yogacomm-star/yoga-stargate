@@ -40,6 +40,18 @@ async function applyIfColumnMissing(table, column, migrationDirName) {
   console.log(`[migrate-production] Migration ${migrationDirName} applicata con successo.`);
 }
 
+async function applyIfTableMissing(table, migrationDirName) {
+  const found = await client.execute({ sql: "SELECT name FROM sqlite_master WHERE type='table' AND name=?", args: [table] });
+  if (found.rows.length > 0) {
+    console.log(`[migrate-production] Tabella "${table}" già presente: nulla da fare.`);
+    return;
+  }
+  console.log(`[migrate-production] Applico ${migrationDirName}...`);
+  const sql = readFileSync(join(migrationsDir, migrationDirName, "migration.sql"), "utf8");
+  await client.executeMultiple(sql);
+  console.log(`[migrate-production] Migration ${migrationDirName} applicata con successo.`);
+}
+
 try {
   await applyIfColumnMissing("ContactLead", "source", "20260827131546_add_lead_source_and_stripe_session");
   await applyIfColumnMissing("Account", "isOwner", "20260828211745_add_site_lock_and_owner");
@@ -47,6 +59,7 @@ try {
   // unico file: basta controllare la colonna, l'intero file (incluso il CREATE TABLE) viene
   // applicato insieme la prima volta.
   await applyIfColumnMissing("Retreat", "videoUrl", "20260903144557_add_retreat_video_and_gallery");
+  await applyIfTableMissing("EmailCampaign", "20261010155443_add_email_campaigns");
 } finally {
   client.close();
 }

@@ -1,12 +1,20 @@
 "use client";
 
 import { useMemo, useState, type FormEvent } from "react";
+import Link from "next/link";
 import { Send, Eye, EyeOff, Loader2, Paperclip } from "lucide-react";
 import { brandedEmail, messageToHtml } from "@/lib/emailTemplate";
 import { EMAIL_TEMPLATES, type EmailTemplateKey } from "@/lib/emailTemplates";
 import FileUploadField from "@/components/admin/FileUploadField";
+import { runCampaign, stoppedMessage, type SendTotals } from "@/lib/campaignClient";
 
-export default function BroadcastForm({ emailConfigured }: { emailConfigured: boolean }) {
+export default function BroadcastForm({
+  emailConfigured,
+  audienceCounts,
+}: {
+  emailConfigured: boolean;
+  audienceCounts: { consenting: number; members: number };
+}) {
   const [audience, setAudience] = useState<"consenting" | "members">("consenting");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
@@ -17,7 +25,8 @@ export default function BroadcastForm({ emailConfigured }: { emailConfigured: bo
   const [attachmentUrl, setAttachmentUrl] = useState<string | undefined>();
   const [showPreview, setShowPreview] = useState(true);
   const [status, setStatus] = useState<"idle" | "loading" | "testing" | "done" | "error">("idle");
-  const [result, setResult] = useState<{ total: number; sent: number; failed: number } | null>(null);
+  const [result, setResult] = useState<{ campaignId: string; total: number; sent: number; failed: number; pending: number; warning: string | null } | null>(null);
+  const [progress, setProgress] = useState<SendTotals & { total: number } | null>(null);
   const [testSentTo, setTestSentTo] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,12 +57,21 @@ export default function BroadcastForm({ emailConfigured }: { emailConfigured: bo
     };
   }
 
+  const recipientCount = audience === "consenting" ? audienceCounts.consenting : audienceCounts.members;
+
   async function send(test: boolean) {
-    if (!test && !window.confirm("Confermi l'invio di questa email? L'azione non può essere annullata.")) return;
+    if (
+      !test &&
+      !window.confirm(
+        `Inviare questa email a ${recipientCount} ${recipientCount === 1 ? "persona" : "persone"}? L'azione non può essere annullata.`
+      )
+    )
+      return;
     setStatus(test ? "testing" : "loading");
     setError(null);
     setResult(null);
     setTestSentTo(null);
+    setProgress(null);
     try {
       const res = await fetch("/api/admin/email/broadcast", {
         method: "POST",
@@ -69,9 +87,24 @@ export default function BroadcastForm({ emailConfigured }: { emailConfigured: bo
       if (test) {
         setTestSentTo(data.to);
         setStatus("idle");
-      } else {
-        setResult(data);
-        setStatus("done");
+        return;
+      }
+
+      // Newsletter vera: l'elenco dei destinatari è già fissato e registrato; si spedisce a gruppi.
+      const total: number = data.total;
+      setProgress({ sent: 0, failed: 0, pending: total, total });
+      const outcome = await runCampaign(data.campaignId, (t) => setProgress({ ...t, total }));
+      setResult({
+        campaignId: data.campaignId,
+        total,
+        sent: outcome.sent,
+        failed: outcome.failed,
+        pending: outcome.pending < 0 ? total : outcome.pending,
+        warning: stoppedMessage(outcome),
+      });
+      setProgress(null);
+      setStatus("done");
+      if (!outcome.stopped && outcome.pending === 0) {
         setSubject("");
         setMessage("");
         setButton1Url("");
@@ -143,8 +176,8 @@ export default function BroadcastForm({ emailConfigured }: { emailConfigured: bo
               onChange={(e) => setAudience(e.target.value as typeof audience)}
               className={inputClass}
             >
-              <option value="consenting">Membri che hanno dato il consenso email</option>
-              <option value="members">Tutti i membri registrati</option>
+              <option value="consenting">Membri che hanno dato il consenso email ({audienceCounts.consenting})</option>
+              <option value="members">Tutti i membri registrati ({audienceCounts.members})</option>
             </select>
             {audience === "members" && (
               <p className="mt-1 text-xs text-foreground/50">
@@ -248,11 +281,35 @@ export default function BroadcastForm({ emailConfigured }: { emailConfigured: bo
               Email di prova inviata a {testSentTo}. Controlla la casella (anche lo spam).
             </p>
           )}
+          {progress && (
+            <div className="rounded-lg border border-border bg-muted p-3 text-sm">
+              <p className="font-medium text-foreground">
+                Invio in corso… {progress.sent} su {progress.total}
+              </p>
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-foreground/10">
+                <div
+                  className="h-full rounded-full bg-primary transition-all"
+                  style={{ width: `${progress.total ? (progress.sent / progress.total) * 100 : 0}%` }}
+                />
+              </div>
+              <p className="mt-2 text-xs text-foreground/60">Non chiudere questa pagina finché non finisce.</p>
+            </div>
+          )}
           {result && (
-            <p className="text-sm font-medium text-primary">
-              Inviata a {result.sent} destinatari su {result.total}
-              {result.failed > 0 ? ` (${result.failed} falliti)` : ""}.
-            </p>
+            <div className="rounded-lg border border-border bg-muted p-3 text-sm">
+              <p className="font-medium text-primary">
+                Inviata a {result.sent} persone su {result.total}
+                {result.failed > 0 ? ` · ${result.failed} non raggiunte` : ""}
+                {result.pending > 0 ? ` · ${result.pending} in attesa` : ""}.
+              </p>
+              {result.warning && <p className="mt-2 text-destructive">{result.warning}</p>}
+              <Link
+                href={`/admin/email/${result.campaignId}`}
+                className="mt-2 inline-block cursor-pointer font-semibold text-primary underline underline-offset-2"
+              >
+                Vedi chi l&apos;ha ricevuta e le statistiche →
+              </Link>
+            </div>
           )}
 
           <div className="flex flex-wrap items-center gap-3">
@@ -271,7 +328,7 @@ export default function BroadcastForm({ emailConfigured }: { emailConfigured: bo
               className="flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
             >
               {status === "loading" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" aria-hidden="true" />}
-              {status === "loading" ? "Invio in corso..." : "Invia email"}
+              {status === "loading" ? "Invio in corso..." : `Invia a ${recipientCount} ${recipientCount === 1 ? "persona" : "persone"}`}
             </button>
           </div>
           <p className="text-xs text-foreground/50">

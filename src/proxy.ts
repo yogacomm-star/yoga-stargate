@@ -5,12 +5,13 @@ import { verifySessionToken, SESSION_COOKIE } from "@/lib/session";
 // eccezioni minime necessarie: asset statici/Next interni, robots/sitemap, la pagina "in
 // costruzione" stessa, l'endpoint interno usato per controllare il blocco-sito (altrimenti
 // si richiamerebbe all'infinito), e il webhook Stripe (chiamato dai server di Stripe, non
-// da un browser con cookie).
+// da un browser con cookie). Restano fuori anche il tracciamento delle newsletter (api/n/) e la
+// disiscrizione: chi riceve un'email deve poterla annullare anche mentre il sito è in costruzione.
 export const config = {
   matcher: [
     {
       source:
-        "/((?!_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|icon-512.png|manifest.webmanifest|robots.txt|sitemap.xml|api/stripe/webhook|api/internal/site-lock|entrata).*)",
+        "/((?!_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|icon-512.png|manifest.webmanifest|robots.txt|sitemap.xml|api/stripe/webhook|api/internal/site-lock|api/n/|api/unsubscribe|disiscriviti|entrata).*)",
     },
   ],
 };

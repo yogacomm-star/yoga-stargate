@@ -2,7 +2,7 @@ import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
 import { escapeHtml, brandedEmail } from "@/lib/emailTemplate";
 import { SITE_URL } from "@/lib/site";
-import { unsubscribeUrl } from "@/lib/unsubscribe";
+import { unsubscribeUrl, unsubscribeApiUrl } from "@/lib/unsubscribe";
 
 export { escapeHtml, brandedEmail, messageToHtml, invitationEmail } from "@/lib/emailTemplate";
 
@@ -29,28 +29,34 @@ export async function sendEmail({
   html,
   headers,
   attachment,
+  idempotencyKey,
 }: {
   to: string | string[];
   subject: string;
   html: string;
   headers?: Record<string, string>;
+  /** Se la stessa richiesta viene ripetuta (es. dopo un'interruzione), Resend non la reinvia. */
+  idempotencyKey?: string;
   /** Un solo allegato (es. un PDF caricato dal pannello). "path" è un URL pubblico: Resend lo
    *  scarica da lì, non serve leggerlo noi. */
   attachment?: { filename: string; path: string };
-}): Promise<{ ok: boolean; error?: string }> {
+}): Promise<{ ok: boolean; error?: string; errorName?: string }> {
   const client = getClient();
   if (!client) return { ok: false, error: "not_configured" };
 
   try {
-    const { error } = await client.emails.send({
-      from: FROM,
-      to,
-      subject,
-      html,
-      ...(headers ? { headers } : {}),
-      ...(attachment ? { attachments: [attachment] } : {}),
-    });
-    if (error) return { ok: false, error: error.message };
+    const { error } = await client.emails.send(
+      {
+        from: FROM,
+        to,
+        subject,
+        html,
+        ...(headers ? { headers } : {}),
+        ...(attachment ? { attachments: [attachment] } : {}),
+      },
+      idempotencyKey ? { idempotencyKey } : undefined
+    );
+    if (error) return { ok: false, error: error.message, errorName: error.name };
     return { ok: true };
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : "unknown_error" };
@@ -66,8 +72,9 @@ export type BatchEmail = { to: string; subject: string; html: string; replyTo?: 
  * `failedIndexes` (posizione nell'elenco passato), e le altre email partono regolarmente.
  */
 export async function sendEmailBatch(
-  emails: BatchEmail[]
-): Promise<{ ok: boolean; error?: string; failedIndexes?: number[]; failedReasons?: string[] }> {
+  emails: BatchEmail[],
+  options?: { idempotencyKey?: string }
+): Promise<{ ok: boolean; error?: string; errorName?: string; failedIndexes?: number[]; failedReasons?: string[] }> {
   const client = getClient();
   if (!client) return { ok: false, error: "not_configured" };
   if (emails.length === 0) return { ok: true };
@@ -75,9 +82,9 @@ export async function sendEmailBatch(
   try {
     const { data, error } = await client.batch.send(
       emails.map((e) => ({ from: FROM, to: e.to, subject: e.subject, html: e.html, replyTo: e.replyTo, ...(e.headers ? { headers: e.headers } : {}) })),
-      { batchValidation: "permissive" }
+      { batchValidation: "permissive", ...(options?.idempotencyKey ? { idempotencyKey: options.idempotencyKey } : {}) }
     );
-    if (error) return { ok: false, error: error.message };
+    if (error) return { ok: false, error: error.message, errorName: error.name };
     const errors = data?.errors ?? [];
     return { ok: true, failedIndexes: errors.map((e) => e.index), failedReasons: errors.map((e) => e.message) };
   } catch (err) {
@@ -226,7 +233,12 @@ export async function notifyNewContent({
           ctaUrl: url,
           unsubscribeUrl: unsub,
         });
-        return sendEmail({ to: s.email, subject: `${kindLabel} su Yoga Stargate`, html, headers: unsubscribeHeaders(unsub) });
+        return sendEmail({
+          to: s.email,
+          subject: `${kindLabel} su Yoga Stargate`,
+          html,
+          headers: unsubscribeHeaders(unsubscribeApiUrl(s.id)),
+        });
       })
     );
   } catch {

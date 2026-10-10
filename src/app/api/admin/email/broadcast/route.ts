@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { sendEmail, brandedEmail, emailConfigured, messageToHtml, unsubscribeHeaders } from "@/lib/email";
-import { unsubscribeUrl } from "@/lib/unsubscribe";
+import { unsubscribeUrl, unsubscribeApiUrl } from "@/lib/unsubscribe";
+import { createCampaign } from "@/lib/newsletter";
 
 const buttonSchema = z.object({
   label: z.string().trim().min(1).max(40),
@@ -22,6 +22,10 @@ const schema = z.object({
   test: z.boolean().optional(),
 });
 
+// Questa richiesta NON spedisce la newsletter a tutti: ne registra l'invio (fissa l'elenco dei
+// destinatari) e restituisce l'id della campagna. La spedizione vera avviene a gruppi tramite
+// /api/admin/email/campaigns/[id]/send, richiamato finché non resta nessuno: così un limite del
+// servizio email o un timeout non lasciano più persone senza email e senza che si sappia chi.
 export async function POST(request: Request) {
   const admin = await requireAdmin();
   if (!admin) return NextResponse.json({ error: "Non autorizzato." }, { status: 401 });
@@ -40,38 +44,40 @@ export async function POST(request: Request) {
   }
 
   const { audience, subject, message, buttons, attachmentUrl, attachmentName, test } = parsed.data;
-  const bodyHtml = messageToHtml(message);
-  const attachment = attachmentUrl ? { filename: attachmentName || "allegato.pdf", path: attachmentUrl } : undefined;
 
   if (test) {
-    const unsub = unsubscribeUrl(admin.id);
-    const html = brandedEmail({ title: subject, bodyHtml, buttons, unsubscribeUrl: unsub });
+    const html = brandedEmail({
+      title: subject,
+      bodyHtml: messageToHtml(message),
+      buttons,
+      unsubscribeUrl: unsubscribeUrl(admin.id),
+    });
     const result = await sendEmail({
       to: admin.email,
       subject: `[PROVA] ${subject}`,
       html,
-      headers: unsubscribeHeaders(unsub),
-      attachment,
+      headers: unsubscribeHeaders(unsubscribeApiUrl(admin.id)),
+      attachment: attachmentUrl ? { filename: attachmentName || "allegato.pdf", path: attachmentUrl } : undefined,
     });
     if (!result.ok) return NextResponse.json({ error: "Invio della prova non riuscito." }, { status: 502 });
     return NextResponse.json({ ok: true, test: true, to: admin.email });
   }
 
-  const recipients = await prisma.account.findMany({
-    where: { role: "MEMBER", ...(audience === "consenting" ? { marketingConsent: true } : {}) },
-    select: { id: true, email: true },
-  });
-
-  let sent = 0;
-  let failed = 0;
-  for (const { id, email: to } of recipients) {
-    // Ogni destinatario riceve la sua copia con il suo link personale per annullare l'iscrizione.
-    const unsub = unsubscribeUrl(id);
-    const html = brandedEmail({ title: subject, bodyHtml, buttons, unsubscribeUrl: unsub });
-    const result = await sendEmail({ to, subject, html, headers: unsubscribeHeaders(unsub), attachment });
-    if (result.ok) sent += 1;
-    else failed += 1;
+  try {
+    const campaign = await createCampaign({
+      audience,
+      subject,
+      message,
+      buttons: buttons ?? [],
+      attachmentUrl,
+      attachmentName,
+    });
+    if (!campaign) return NextResponse.json({ error: "Non ci sono destinatari per questa email." }, { status: 400 });
+    return NextResponse.json({ ok: true, campaignId: campaign.id, total: campaign.total });
+  } catch {
+    return NextResponse.json(
+      { error: "Impossibile registrare l'invio. Se l'errore si ripete, il database potrebbe non essere aggiornato." },
+      { status: 500 }
+    );
   }
-
-  return NextResponse.json({ ok: true, total: recipients.length, sent, failed });
 }
