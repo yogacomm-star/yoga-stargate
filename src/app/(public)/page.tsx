@@ -36,12 +36,16 @@ function formatDate(iso: string | null) {
   return formatEventDate(iso, { day: "numeric", month: "long", year: "numeric" });
 }
 
+// Quanti percorsi online mostra il carosello della home alla volta.
+const HOME_COURSE_SLOTS = 3;
+const DEFAULT_COURSE_IMAGE = "/images/yoga-multidimensionale-spiaggia.png";
+
 export default async function HomePage() {
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
   const upcoming = { OR: [{ startDate: { gte: startOfToday } }, { startDate: null }] };
 
-  const [posts, nextRetreat, nextMasterclass, nextWorkshop, publishedCourses, purchaseCounts] = await Promise.all([
+  const [posts, nextRetreat, nextMasterclass, nextWorkshop, allCourses, purchaseCounts] = await Promise.all([
     prisma.blogPost.findMany({
       where: { status: "PUBLISHED" },
       orderBy: { publishedAt: "desc" },
@@ -68,7 +72,7 @@ export default async function HomePage() {
       orderBy: { startDate: "asc" },
     }),
     prisma.course.findMany({
-      where: { status: "PUBLISHED", NOT: { category: "Risorsa gratuita" } },
+      where: { status: "PUBLISHED" },
       orderBy: { createdAt: "desc" },
     }),
     prisma.coursePurchase.groupBy({
@@ -77,18 +81,22 @@ export default async function HomePage() {
     }),
   ]);
 
-  // Percorso online "più scelto": quello con più acquisti, altrimenti il più recente.
+  // Percorsi online in home. Li sceglie Tina dall'elenco corsi del pannello ("Home page"): si
+  // mostrano a rotazione, a gruppi di HOME_COURSE_SLOTS, e il punto di partenza cambia ogni
+  // giorno così, nel tempo, girano tutti. Se non ne ha scelto nessuno si ripiega sul percorso
+  // con più acquisti (escluse le risorse gratuite).
   const counts = new Map(purchaseCounts.map((p) => [p.courseId, p._count.courseId]));
-  // In evidenza "La Via della Meditazione" (scelta della cliente) finché è pubblicata; altrimenti
-  // il percorso con più acquisti.
-  const featuredCourse = publishedCourses.find((c) => c.slug === "la-via-della-meditazione") ?? null;
-  const topCourse =
-    featuredCourse ??
-    [...publishedCourses].sort((a, b) => (counts.get(b.id) ?? 0) - (counts.get(a.id) ?? 0))[0] ??
-    null;
-  const topCourseText = featuredCourse
-    ? "Un testo e percorso di iniziazione alla meditazione per trasformare la vita in un'avventura di realizzazione di Sé."
-    : topCourse?.excerpt ?? "Pratiche guidate, rituali di trasformazione ed ebook da vivere dove vuoi, quando vuoi.";
+  const chosen = allCourses
+    .filter((c) => c.showOnHome)
+    .sort((a, b) => a.title.localeCompare(b.title, "it"));
+  const shift = chosen.length ? Math.round(startOfToday.getTime() / 86_400_000) % chosen.length : 0;
+  const rotated = [...chosen.slice(shift), ...chosen.slice(0, shift)];
+  const topSeller =
+    [...allCourses.filter((c) => c.category !== "Risorsa gratuita")].sort(
+      (a, b) => (counts.get(b.id) ?? 0) - (counts.get(a.id) ?? 0)
+    )[0] ?? null;
+  const coursesAreChosen = rotated.length > 0;
+  const homeCourses = (coursesAreChosen ? rotated : topSeller ? [topSeller] : []).slice(0, HOME_COURSE_SLOTS);
 
   const blogCards: BlogCardData[] = posts.map((p) => ({
     slug: p.slug,
@@ -103,7 +111,6 @@ export default async function HomePage() {
 
   const retreatDate = formatDate(nextRetreat?.startDate ? nextRetreat.startDate.toISOString() : null);
   const retreatImage = (nextRetreat ? firstImage(nextRetreat.images) : null) ?? "/images/ritiro-assisi-terrazza.png";
-  const topCourseImage = topCourse?.coverImage ?? "/images/yoga-multidimensionale-spiaggia.png";
 
   return (
     <>
@@ -213,30 +220,27 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Percorso online in evidenza */}
-          <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-soft-sm">
-            <div className="relative h-44 w-full shrink-0">
-              <Image src={topCourseImage} alt="" fill sizes="(min-width: 1024px) 40vw, 88vw" className="object-cover" />
-              <span className="absolute top-4 left-4 inline-flex items-center gap-2 rounded-full bg-card/90 px-3 py-1 text-xs font-semibold text-primary uppercase tracking-wide backdrop-blur-sm">
-                <Sparkles className="h-3.5 w-3.5" aria-hidden="true" /> Il più scelto
-              </span>
-            </div>
-            <div className="flex flex-1 flex-col p-5">
-              <h3 className="font-heading text-xl font-semibold text-foreground">
-                {topCourse ? topCourse.title : "Percorsi Online Yoga Stargate"}
-              </h3>
-              <p className="mt-2 text-sm text-foreground/70">{topCourseText}</p>
-              <div className="mt-auto pt-3">
-                <Link
-                  href={topCourse ? `/corsi/${topCourse.slug}` : "/corsi"}
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
-                >
-                  Inizia il percorso online
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-              </div>
-            </div>
-          </div>
+          {/* Percorsi online in evidenza (scelti dal pannello, a rotazione) */}
+          {homeCourses.length > 0 ? (
+            homeCourses.map((c) => (
+              <CourseTeaser
+                key={c.id}
+                image={c.coverImage ?? DEFAULT_COURSE_IMAGE}
+                badge={coursesAreChosen ? "In evidenza" : "Il più scelto"}
+                title={c.title}
+                text={c.excerpt}
+                href={`/corsi/${c.slug}`}
+              />
+            ))
+          ) : (
+            <CourseTeaser
+              image={DEFAULT_COURSE_IMAGE}
+              badge="Percorsi online"
+              title="Percorsi Online Yoga Stargate"
+              text="Pratiche guidate, rituali di trasformazione ed ebook da vivere dove vuoi, quando vuoi."
+              href="/corsi"
+            />
+          )}
 
           {/* Gruppi e ritiri privati */}
           <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-soft-sm">
@@ -398,6 +402,45 @@ function EventTeaser({
             className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
           >
             {cta}
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Riquadro di un percorso online nel carosello della home.
+function CourseTeaser({
+  image,
+  badge,
+  title,
+  text,
+  href,
+}: {
+  image: string;
+  badge: string;
+  title: string;
+  text: string;
+  href: string;
+}) {
+  return (
+    <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-soft-sm">
+      <div className="relative h-44 w-full shrink-0">
+        <Image src={image} alt="" fill sizes="(min-width: 1024px) 40vw, 88vw" className="object-cover" />
+        <span className="absolute top-4 left-4 inline-flex items-center gap-2 rounded-full bg-card/90 px-3 py-1 text-xs font-semibold text-primary uppercase tracking-wide backdrop-blur-sm">
+          <Sparkles className="h-3.5 w-3.5" aria-hidden="true" /> {badge}
+        </span>
+      </div>
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="line-clamp-2 font-heading text-xl font-semibold text-foreground">{title}</h3>
+        <p className="mt-2 line-clamp-4 text-sm text-foreground/70">{text}</p>
+        <div className="mt-auto pt-3">
+          <Link
+            href={href}
+            className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft-sm transition-transform hover:-translate-y-0.5"
+          >
+            Inizia il percorso online
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
         </div>

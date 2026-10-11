@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import StatusBadge from "@/components/admin/StatusBadge";
 import DeleteButton from "@/components/admin/DeleteButton";
 import DriveImportButton from "@/components/admin/DriveImportButton";
+import HomeToggle from "@/components/admin/HomeToggle";
 import { levelLabel } from "@/lib/levels";
 
 export default async function AdminCorsiPage() {
@@ -14,7 +15,10 @@ export default async function AdminCorsiPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-heading text-2xl font-semibold text-foreground">Corsi</h1>
-          <p className="mt-1 text-sm text-foreground/60">{courses.length} corsi totali</p>
+          <p className="mt-1 text-sm text-foreground/60">
+            {courses.length} corsi totali · {courses.filter((c) => c.showOnHome && c.status === "PUBLISHED").length} a
+            rotazione in home
+          </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <DriveImportButton />
@@ -37,6 +41,7 @@ export default async function AdminCorsiPage() {
               <th className="px-5 py-3">Categoria</th>
               <th className="px-5 py-3">Livello</th>
               <th className="px-5 py-3">Stato</th>
+              <th className="px-5 py-3">Home page</th>
               <th className="px-5 py-3" />
             </tr>
           </thead>
@@ -48,6 +53,9 @@ export default async function AdminCorsiPage() {
                 <td className="px-5 py-3 text-foreground/70">{levelLabel(c.requiredLevel)}</td>
                 <td className="px-5 py-3">
                   <StatusBadge status={c.status} />
+                </td>
+                <td className="px-5 py-3">
+                  <HomeToggle courseId={c.id} initial={c.showOnHome} published={c.status === "PUBLISHED"} />
                 </td>
                 <td className="px-5 py-3">
                   <div className="flex items-center justify-end gap-1">
@@ -65,7 +73,7 @@ export default async function AdminCorsiPage() {
             ))}
             {courses.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-5 py-8 text-center text-foreground/50">
+                <td colSpan={6} className="px-5 py-8 text-center text-foreground/50">
                   Nessun corso creato.
                 </td>
               </tr>

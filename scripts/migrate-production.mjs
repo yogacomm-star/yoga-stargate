@@ -60,6 +60,7 @@ try {
   // applicato insieme la prima volta.
   await applyIfColumnMissing("Retreat", "videoUrl", "20260903144557_add_retreat_video_and_gallery");
   await applyIfTableMissing("EmailCampaign", "20261010155443_add_email_campaigns");
+  await applyIfColumnMissing("Course", "showOnHome", "20261011120000_add_course_show_on_home");
 } finally {
   client.close();
 }

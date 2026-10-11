@@ -106,6 +106,7 @@ model Course {
   coverImage    String?
   requiredLevel Int? // null = aperto a tutti
   price         Float? // null/0 = gratuito; se impostato, l'audio è privato e richiede acquisto
+  showOnHome    Boolean       @default(false) // scelto da Tina per ruotare nella home page
   status        ContentStatus @default(DRAFT)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
