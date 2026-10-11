@@ -24,7 +24,9 @@ export type RetreatFormData = {
   excerpt: string;
   description: string;
   startDate: string;
+  startTime: string;
   endDate: string;
+  endTime: string;
   price: string;
   requiredLevel: string;
   ctaLabel: string;
@@ -49,7 +51,9 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
       excerpt: "",
       description: "",
       startDate: "",
+      startTime: "",
       endDate: "",
+      endTime: "",
       price: "",
       requiredLevel: "",
       ctaLabel: "Richiedi informazioni",
@@ -132,7 +136,9 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
       excerpt: form.excerpt,
       description: sectionsToMarkdown(sections),
       startDate: form.startDate || null,
+      startTime: form.startDate && form.startTime ? form.startTime : null,
       endDate: form.endDate || null,
+      endTime: form.endDate && form.endTime ? form.endTime : null,
       price: form.price ? Number(form.price) : null,
       images: [...(form.coverImage ? [form.coverImage] : []), ...form.gallery],
       videoUrl: form.videoUrl.trim() || null,
@@ -319,6 +325,17 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
           />
         </div>
         <div>
+          <label htmlFor="retreat-start-time" className={labelClass}>Ora inizio</label>
+          <input
+            id="retreat-start-time"
+            type="time"
+            value={form.startTime}
+            onChange={(e) => setForm((f) => ({ ...f, startTime: e.target.value }))}
+            disabled={!form.startDate}
+            className={inputClass + " disabled:cursor-not-allowed disabled:opacity-50"}
+          />
+        </div>
+        <div>
           <label htmlFor="retreat-end" className={labelClass}>Data fine</label>
           <input
             id="retreat-end"
@@ -328,6 +345,24 @@ export default function RetreatForm({ initial }: { initial?: RetreatFormData }) 
             className={inputClass}
           />
         </div>
+        <div>
+          <label htmlFor="retreat-end-time" className={labelClass}>Ora fine</label>
+          <input
+            id="retreat-end-time"
+            type="time"
+            value={form.endTime}
+            onChange={(e) => setForm((f) => ({ ...f, endTime: e.target.value }))}
+            disabled={!form.endDate}
+            className={inputClass + " disabled:cursor-not-allowed disabled:opacity-50"}
+          />
+        </div>
+      </div>
+      <p className="-mt-3 text-xs text-foreground/50">
+        Gli orari sono facoltativi (ora italiana): se li lasci vuoti l&apos;evento mostra solo il giorno. Per un evento
+        di un solo giorno basta la data di inizio, con ora di inizio e di fine.
+      </p>
+
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="retreat-price" className={labelClass}>Prezzo (€) — attiva “Prenota e paga”</label>
           <input

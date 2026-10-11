@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/auth";
 import { notifyNewContent } from "@/lib/email";
 import { SITE_URL } from "@/lib/site";
 import { isAllowedEmbedUrl } from "@/lib/embed";
+import { toEventDate } from "@/lib/eventDates";
 
 const itineraryItem = z.object({ day: z.number(), title: z.string(), description: z.string() });
 
@@ -17,6 +18,9 @@ export const retreatSchema = z.object({
   description: z.string().trim().min(1).max(10000),
   startDate: z.string().optional().nullable(),
   endDate: z.string().optional().nullable(),
+  // Orari facoltativi ("HH:mm", ora di Roma): senza orario l'evento resta "solo giorno".
+  startTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).optional().nullable(),
+  endTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).optional().nullable(),
   price: z.number().nonnegative().nullable().optional(),
   images: z.array(z.string()).default([]),
   videoUrl: z
@@ -55,8 +59,8 @@ export async function POST(request: Request) {
       location: d.location,
       excerpt: d.excerpt,
       description: d.description,
-      startDate: d.startDate ? new Date(d.startDate) : null,
-      endDate: d.endDate ? new Date(d.endDate) : null,
+      startDate: d.startDate ? toEventDate(d.startDate, d.startTime) : null,
+      endDate: d.endDate ? toEventDate(d.endDate, d.endTime) : null,
       price: d.price ?? null,
       images: JSON.stringify(d.images),
       videoUrl: d.videoUrl || null,

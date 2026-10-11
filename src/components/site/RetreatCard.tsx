@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { MapPin, CalendarDays } from "lucide-react";
 import { LevelBadge } from "@/components/site/LevelLock";
+import { formatEventDate, eventTimeRange } from "@/lib/eventDates";
 
 export type RetreatCardData = {
   slug: string;
@@ -21,11 +22,12 @@ export type RetreatCardData = {
 
 function formatRange(start: string | null, end: string | null) {
   if (!start) return null;
-  const s = new Date(start);
-  const e = end ? new Date(end) : null;
-  const fmt = (d: Date) => d.toLocaleDateString("it-IT", { day: "numeric", month: "short" });
-  if (e && e.getTime() !== s.getTime()) return `${fmt(s)} – ${fmt(e)}`;
-  return fmt(s);
+  const fmt = (d: string) => formatEventDate(d, { day: "numeric", month: "short" });
+  const s = fmt(start);
+  const e = end ? fmt(end) : null;
+  const dates = e && e !== s ? `${s} – ${e}` : s;
+  const time = eventTimeRange(start, end);
+  return time ? `${dates} · ${time}` : dates;
 }
 
 export default function RetreatCard({ retreat }: { retreat: RetreatCardData }) {

@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth";
 import { retreatSchema } from "@/app/api/admin/retreats/route";
 import { notifyNewContent } from "@/lib/email";
 import { SITE_URL } from "@/lib/site";
+import { toEventDate } from "@/lib/eventDates";
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const admin = await requireAdmin();
@@ -31,8 +32,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       location: d.location,
       excerpt: d.excerpt,
       description: d.description,
-      startDate: d.startDate ? new Date(d.startDate) : null,
-      endDate: d.endDate ? new Date(d.endDate) : null,
+      startDate: d.startDate ? toEventDate(d.startDate, d.startTime) : null,
+      endDate: d.endDate ? toEventDate(d.endDate, d.endTime) : null,
       price: d.price ?? null,
       images: JSON.stringify(d.images),
       videoUrl: d.videoUrl || null,

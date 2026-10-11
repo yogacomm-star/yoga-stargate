@@ -11,6 +11,7 @@ import { prisma } from "@/lib/prisma";
 import { firstImage } from "@/lib/images";
 import { SITE_URL } from "@/lib/site";
 import { HIDDEN_FROM_HOME } from "@/lib/eventCategories";
+import { formatEventDate } from "@/lib/eventDates";
 
 const businessJsonLd = {
   "@context": "https://schema.org",
@@ -32,7 +33,7 @@ const businessJsonLd = {
 
 function formatDate(iso: string | null) {
   if (!iso) return null;
-  return new Date(iso).toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric" });
+  return formatEventDate(iso, { day: "numeric", month: "long", year: "numeric" });
 }
 
 export default async function HomePage() {

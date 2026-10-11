@@ -2,11 +2,8 @@ import { notFound } from "next/navigation";
 import PreviewLink from "@/components/admin/PreviewLink";
 import { prisma } from "@/lib/prisma";
 import RetreatForm, { type RetreatFormData } from "@/components/admin/RetreatForm";
-
-function toDateInput(d: Date | null): string {
-  if (!d) return "";
-  return d.toISOString().slice(0, 10);
-}
+import DuplicateEventButton from "@/components/admin/DuplicateEventButton";
+import { eventDateParts } from "@/lib/eventDates";
 
 export default async function EditRitiroPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -22,6 +19,9 @@ export default async function EditRitiroPage({ params }: { params: Promise<{ id:
     itinerary = JSON.parse(retreat.itinerary);
   } catch {}
 
+  const start = eventDateParts(retreat.startDate);
+  const end = eventDateParts(retreat.endDate);
+
   const initial: RetreatFormData = {
     id: retreat.id,
     title: retreat.title,
@@ -30,8 +30,10 @@ export default async function EditRitiroPage({ params }: { params: Promise<{ id:
     location: retreat.location,
     excerpt: retreat.excerpt,
     description: retreat.description,
-    startDate: toDateInput(retreat.startDate),
-    endDate: toDateInput(retreat.endDate),
+    startDate: start.date,
+    startTime: start.time,
+    endDate: end.date,
+    endTime: end.time,
     price: retreat.price != null ? String(retreat.price) : "",
     requiredLevel: retreat.requiredLevel != null ? String(retreat.requiredLevel) : "",
     ctaLabel: retreat.ctaLabel,
@@ -47,7 +49,10 @@ export default async function EditRitiroPage({ params }: { params: Promise<{ id:
     <div>
       <div className="flex items-center justify-between gap-4">
         <h1 className="font-heading text-2xl font-semibold text-foreground">Modifica evento</h1>
-        <PreviewLink href={`/eventi/${retreat.slug}`} />
+        <div className="flex items-center gap-4">
+          <DuplicateEventButton eventId={retreat.id} variant="text" />
+          <PreviewLink href={`/eventi/${retreat.slug}`} />
+        </div>
       </div>
       <div className="mt-6 max-w-3xl space-y-6">
         <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">

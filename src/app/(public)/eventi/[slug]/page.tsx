@@ -15,6 +15,7 @@ import TestimonialCarousel from "@/components/site/TestimonialCarousel";
 import JsonLd from "@/components/site/JsonLd";
 import { SITE_URL } from "@/lib/site";
 import { isAllowedEmbedUrl } from "@/lib/embed";
+import { formatEventDate, eventTimeRange } from "@/lib/eventDates";
 import DraftPreviewBanner from "@/components/site/DraftPreviewBanner";
 
 type Itinerary = { day: number; title: string; description: string }[];
@@ -87,13 +88,19 @@ export default async function RetreatDetailPage({
       })
     : null;
 
-  const dateLabel =
+  // Giorno/i (con l'anno sull'ultimo) e, se impostati, l'orario: "4 novembre 2026 · 17:00–20:00".
+  const dayFmt: Intl.DateTimeFormatOptions = { day: "numeric", month: "long", year: "numeric" };
+  const sameDay =
+    !!retreat.startDate &&
+    !!retreat.endDate &&
+    formatEventDate(retreat.startDate, dayFmt) === formatEventDate(retreat.endDate, dayFmt);
+  const dateOnly =
     retreat.startDate &&
-    `${new Date(retreat.startDate).toLocaleDateString("it-IT", { day: "numeric", month: "long" })}${
-      retreat.endDate && retreat.endDate.getTime() !== retreat.startDate.getTime()
-        ? ` – ${new Date(retreat.endDate).toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric" })}`
-        : ""
-    }`;
+    (retreat.endDate && !sameDay
+      ? `${formatEventDate(retreat.startDate, { day: "numeric", month: "long" })} – ${formatEventDate(retreat.endDate, dayFmt)}`
+      : formatEventDate(retreat.startDate, dayFmt));
+  const timeLabel = eventTimeRange(retreat.startDate, retreat.endDate);
+  const dateLabel = dateOnly && (timeLabel ? `${dateOnly} · ${timeLabel}` : dateOnly);
 
   const eventJsonLd = {
     "@context": "https://schema.org",

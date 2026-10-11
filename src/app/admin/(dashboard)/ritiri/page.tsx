@@ -3,6 +3,8 @@ import { Plus, Pencil } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import StatusBadge from "@/components/admin/StatusBadge";
 import DeleteButton from "@/components/admin/DeleteButton";
+import DuplicateEventButton from "@/components/admin/DuplicateEventButton";
+import { formatEventDate, eventTimeRange } from "@/lib/eventDates";
 import { levelLabel } from "@/lib/levels";
 
 export default async function AdminRitiriPage() {
@@ -31,6 +33,7 @@ export default async function AdminRitiriPage() {
             <tr>
               <th className="px-5 py-3">Titolo</th>
               <th className="px-5 py-3">Categoria</th>
+              <th className="px-5 py-3">Quando</th>
               <th className="px-5 py-3">Livello</th>
               <th className="px-5 py-3">Stato</th>
               <th className="px-5 py-3" />
@@ -41,6 +44,18 @@ export default async function AdminRitiriPage() {
               <tr key={r.id} className="border-b border-border last:border-0">
                 <td className="px-5 py-3 font-medium text-foreground">{r.title}</td>
                 <td className="px-5 py-3 text-foreground/70">{r.category}</td>
+                <td className="px-5 py-3 whitespace-nowrap text-foreground/70">
+                  {r.startDate ? (
+                    <>
+                      {formatEventDate(r.startDate, { day: "numeric", month: "short", year: "numeric" })}
+                      {eventTimeRange(r.startDate, r.endDate) && (
+                        <span className="block text-xs text-foreground/50">{eventTimeRange(r.startDate, r.endDate)}</span>
+                      )}
+                    </>
+                  ) : (
+                    "—"
+                  )}
+                </td>
                 <td className="px-5 py-3 text-foreground/70">{levelLabel(r.requiredLevel)}</td>
                 <td className="px-5 py-3">
                   <StatusBadge status={r.status} />
@@ -54,6 +69,7 @@ export default async function AdminRitiriPage() {
                     >
                       <Pencil className="h-4 w-4" />
                     </Link>
+                    <DuplicateEventButton eventId={r.id} />
                     <DeleteButton
                       endpoint={`/api/admin/retreats/${r.id}`}
                       confirmLabel={`Eliminare l'evento "${r.title}"?`}
@@ -64,7 +80,7 @@ export default async function AdminRitiriPage() {
             ))}
             {retreats.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-5 py-8 text-center text-foreground/50">
+                <td colSpan={6} className="px-5 py-8 text-center text-foreground/50">
                   Nessun evento creato.
                 </td>
               </tr>
